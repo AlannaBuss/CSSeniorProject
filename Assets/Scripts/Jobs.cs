@@ -1,0 +1,97 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.IO;
+using System.Collections.Generic;
+using System;
+using Random = UnityEngine.Random;
+
+public class Jobs : MonoBehaviour {
+
+    static List<Job> jobs;
+    static int totalWeight = 0;
+	// Use this for initialization
+	public static void Start () {
+        jobs = new List<Job>();
+        string[] files = Directory.GetFiles("jobs");
+        foreach (string file in files)
+        {
+            Job job = new Job();
+            string[] lines = File.ReadAllLines(file);
+            Dictionary<string, string[]> jobFile = new Dictionary<string, string[]>();
+            foreach (string line in lines)
+            {
+                string[] l = line.Split(' ');
+                jobFile.Add(l[0], l);
+            }
+            try
+            {
+                job.name = jobFile["name"][2];
+                job.home_tag = jobFile["home_tag"][2];
+                job.work_tag = jobFile["work_tag"][2];
+                string[] invrange = jobFile["inventory"][2].Split('-');
+                job.inventoryMin = int.Parse(invrange[0]);
+                job.inventoryMax = int.Parse(invrange[1]);
+                string[] itemWeights = jobFile["item_weights"];
+                for (int i = 2; i < itemWeights.Length; i++)
+                {
+                    job.item_weights.Add(itemWeights[i].Split('(')[0], int.Parse(itemWeights[i].Split('(')[1]));
+                }
+                job.job_weight = int.Parse(jobFile["job_weight"][2]);
+                jobs.Add(job);
+                totalWeight += job.job_weight;
+            }
+            catch (Exception)
+            {
+                print("error in Job file " + file);
+            }
+
+            
+        }
+    }
+
+    internal static Items.Item getRandomItem(Job job)
+    {
+        int itemPoll = Random.Range(0, 100);
+        foreach(KeyValuePair<string, int> itemWeight in job.item_weights)
+        {
+            itemPoll -= itemWeight.Value;
+            if(itemPoll < 0)
+            {
+                return (Items.getRandomItemOfTag(itemWeight.Key));
+            }
+        }
+        return null;
+    }
+
+    public static Job getRandomJob()
+    {
+        int weight = Random.Range(0, totalWeight);
+        foreach(Job job in jobs)
+        {
+            weight -= job.job_weight;
+            if(weight < 0)
+            {
+                return job;
+            }
+        }
+        return null;
+
+    }
+
+	
+	// Update is called once per frame
+	void Update () {
+	
+	}
+
+    public class Job
+    {
+        public string name;
+        public string home_tag;
+        public string work_tag;
+        public int inventoryMin;
+        public int inventoryMax;
+        public Dictionary<string, int> item_weights;
+        public int job_weight;
+    }
+}
