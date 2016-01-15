@@ -13,13 +13,11 @@ public class NPC : MovingObject
 {
     // Sprite representing this NPC
     private npcSprite sprite;
-    public GameObject quest;
 
     // States this npc currently has
     public string name;
     public string personality;
     public List<string> states = new List<string>();
-    public Boolean hasQuest = false;
     public Boolean atWork = false;
     public Boolean atHome = false;
     public Jobs.Job job;
@@ -141,6 +139,7 @@ public class NPC : MovingObject
         home.owners.Add(this);
         work.owners.Add(this);
 
+
         // Create a random sprite and initialize it
         sprite = GetComponent<npcSprite>();
         sprite.init();
@@ -170,25 +169,13 @@ public class NPC : MovingObject
         tileY = tY;
         transform.position = pos;
 
-        if (hasQuest)
-        {
-            quest.GetComponent<Transform>().position = new Vector3(tX, tY + .8f, tZ);
-        }
+		if (hasQuest)
+		{
+			quest.GetComponent<Transform>().position = new Vector3(tX, tY + .8f, tZ);
+		}
+
         if (sprite != null)
             sprite.placeAt(pos);
-    }
-
-    // Instantiate a quest
-    public void initQuest()
-    {
-        hasQuest = true;
-        quest = Instantiate(quest) as GameObject;
-
-        if (sprite != null)
-        {
-            PlaceAt(mapX, mapY, tileX, tileY, 0);
-            quest.SetActive(false);
-        }
     }
 
     // Draws the NPC to the screen
@@ -213,7 +200,18 @@ public class NPC : MovingObject
         }
     }
 
+	//So we still know how to init our quests.
+	public override void initQuest()
+	{
+		base.initQuest ();
 
+	}
+
+	//NPCS should have an interaction special to them
+	public override void Interact ()
+	{
+		print ("Hi Player!");
+	}
 
     // Called when the object cannot move
     protected override void OnCantMove<T>(T component)

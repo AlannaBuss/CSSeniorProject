@@ -1,0 +1,6 @@
+name = spoon
+value = 1
+tags = COMMON
+canWield = true
+isArmor = false
+damage = 1

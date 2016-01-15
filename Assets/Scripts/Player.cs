@@ -121,15 +121,34 @@ public class Player : MovingObject
         RaycastHit2D rightHit = Physics2D.Linecast(start, right, blockingLayer);
         RaycastHit2D downHit = Physics2D.Linecast(start, down, blockingLayer);
         RaycastHit2D upHit = Physics2D.Linecast(start, up, blockingLayer);
+		Object target = null;
 
         //turn this back on since we have done all of our hit creation.
         boxCollider.enabled = true;
 
         //Return true if any of the surrounding area has an object you interact with it
-        if (leftHit != null || rightHit != null || downHit != null || upHit != null)
-        {
-            return true;
-        }
+
+		if (leftHit.transform != null) {
+			print ("Left hit");
+			target = leftHit.collider.gameObject.GetComponent<Object>();
+
+		} else if (rightHit.transform != null) {
+			print ("Right hit");
+			target = rightHit.collider.gameObject.GetComponent<Object>();
+
+		} else if (upHit.transform != null) {
+			print ("Up hit");
+			target = upHit.collider.gameObject.GetComponent<Object>();
+
+		} else if (downHit.transform != null) {
+			print ("down hit");
+			target = downHit.collider.gameObject.GetComponent<Object>();
+		}
+
+		if (target != null) {
+			target.Interact ();
+			return true;
+		}
 
         return false;
     }

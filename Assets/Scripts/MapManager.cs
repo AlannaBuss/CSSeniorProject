@@ -150,38 +150,7 @@ public class MapManager : MonoBehaviour
         return tiles;
     }
 
-    // Gives an NPC a quest
-    void GiveQuest()
-    {
-        int objectType = Random.Range(0, 2);
-
-        if (objectType == 0)
-        {
-            int npc = Random.Range(0, npcs.Count);
-
-            if (npcs[npc].GetComponent<NPC>().hasQuest)
-            {
-                GiveQuest();
-            }
-            else
-            {
-                npcs[npc].GetComponent<NPC>().initQuest();
-            }
-        }
-        else
-        {
-            int npc = Random.Range(0, npcs.Count - 1);
-
-            if (npcs[npc].GetComponent<NPC>().hasQuest)
-            {
-                GiveQuest();
-            }
-            else
-            {
-                npcs[npc].GetComponent<NPC>().initQuest();
-            }
-        }
-    }
+ 
 
     // Sets up the map
     private void MapSetup()
@@ -268,10 +237,7 @@ public class MapManager : MonoBehaviour
             character.map = this;
             character.init(home, work, i);
         }
-        for (int x = 0; x < Random.Range(5, 10); x++)
-        {
-            GiveQuest();
-        }
+
     }
 
     // Finds and stores all references to buildings and npcs on all tiles

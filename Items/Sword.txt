@@ -1,0 +1,6 @@
+name = sword
+value = 15
+tags = WEAPON
+canWield = true
+isArmor = false
+damage = 5

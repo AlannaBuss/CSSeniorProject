@@ -1,0 +1,6 @@
+name = Farmer
+home_tag = FARM
+work_tag = MARKET
+inventory = 2-5
+item_weights = FOOD(75) COMMON(24) VALUABLE(1)\
+job_weight = 20

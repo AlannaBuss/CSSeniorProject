@@ -1,0 +1,5 @@
+name = apple
+value = 4
+tags = FOOD
+canWield = false
+isArmor = false

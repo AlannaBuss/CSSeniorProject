@@ -1,0 +1,5 @@
+name = gold_watch
+value = 25
+tags = VALUABLE
+canWield = false
+isArmor = false
