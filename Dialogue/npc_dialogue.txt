@@ -1,0 +1,30 @@
+~ aggressive
+greeting = Hey_you!
+greeting_response = What_do_you_want?
+~ alcoholic
+greeting = Helllooo
+greeting_response = -burps-
+~ brave
+greeting = Hello!
+greeting_response = Hello!
+~ greedy
+greeting = Hello!
+greeting_response = Got_any_cash?
+~ helpful
+greeting = How_are_you?
+greeting_response = Anything_you_need_from_me?
+~ lazy
+greeting = hi
+greeting_response = hi
+~ outgoing
+greeting = Hello_there!_How_are_you_doing?
+greeting_response = Have_a_nice_day!
+~ psychotic
+greeting = -giggles-
+greeting_response = -screeches-
+~ shy
+greeting = H-hello..
+greeting_response = Eek!
+~ amoral
+greeting = Sup.
+greeting_response = Sup.

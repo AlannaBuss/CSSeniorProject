@@ -4,3 +4,4 @@ tags = WEAPON
 canWield = true
 isArmor = false
 damage = 5
+description = Stick_them_with_the_pointy_end.

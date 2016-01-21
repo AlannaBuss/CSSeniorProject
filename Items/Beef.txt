@@ -1,0 +1,6 @@
+name = beef
+value = 100
+tags = FOOD MEAT
+canWield = false
+isArmor = false
+description = The_whole_cow._Heals_full_hp.

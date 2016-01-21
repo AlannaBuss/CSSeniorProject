@@ -1,5 +1,6 @@
 name = apple
-value = 4
-tags = FOOD
+value = 5
+tags = FOOD FRUIT
 canWield = false
 isArmor = false
+description = Crunchy_and_goes_good_in_pie._Heals_5_hp.

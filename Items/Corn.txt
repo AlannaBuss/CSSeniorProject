@@ -1,0 +1,6 @@
+name = corn
+value = 10
+tags = FOOD VEGETABLE
+canWield = false
+isArmor = false
+description = No_corny_puns_here._Heals_15_hp.

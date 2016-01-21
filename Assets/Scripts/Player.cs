@@ -8,7 +8,6 @@ public class Player : MovingObject
 {
     // Player stats
     public int money = 0;
-    public List<Item> inventory = new List<Item>();
 
     // Tells player if it is in contact with something
     public bool touchingBuilding;
@@ -41,19 +40,10 @@ public class Player : MovingObject
             // Exit the market place
             if (Input.GetKeyDown(KeyCode.X))
                 building.Exit();
-
             // Player is trying to buy something
             else if (Event.current.type == EventType.KeyDown)
             {
-                int num = Event.current.keyCode - KeyCode.Alpha1 + 1;
 
-                if (num >= 0 && num <= 9)
-                {
-                    if (building.BuyGood(num))
-                        print("You bought the " + inventory[inventory.Count - 1].name);
-                    else
-                        print("You tried to buy something but failed miserably.");
-                }
             }
             return;
         }
@@ -82,7 +72,7 @@ public class Player : MovingObject
             touchingBuilding = touchingObject = touchingNPC = false;
             AttemptMove<Player>(0, -1);
         }
-        //Interaction
+        // Interaction
         else if (Input.GetKeyDown(KeyCode.Z))
         {
             if (tryToInteract())
@@ -93,12 +83,12 @@ public class Player : MovingObject
                     Building building = touching.GetComponent<Building>();
                     building.Enter();
                 }
-                print("Successful Interaction");
             }
-            else
-            {
-                print("Unsuccessful Interaction");
-            }
+        }
+        // Hide textbox
+        else if (Input.GetKeyDown(KeyCode.H))
+        {
+            textbox.Hide();
         }
     }
 
@@ -121,34 +111,39 @@ public class Player : MovingObject
         RaycastHit2D rightHit = Physics2D.Linecast(start, right, blockingLayer);
         RaycastHit2D downHit = Physics2D.Linecast(start, down, blockingLayer);
         RaycastHit2D upHit = Physics2D.Linecast(start, up, blockingLayer);
-		Object target = null;
+        Object target = null;
 
         //turn this back on since we have done all of our hit creation.
         boxCollider.enabled = true;
 
         //Return true if any of the surrounding area has an object you interact with it
 
-		if (leftHit.transform != null) {
-			print ("Left hit");
-			target = leftHit.collider.gameObject.GetComponent<Object>();
+        if (leftHit.transform != null)
+        {
+            print("Left hit");
+            target = leftHit.collider.gameObject.GetComponent<Object>();
+        }
+        else if (rightHit.transform != null)
+        {
+            print("Right hit");
+            target = rightHit.collider.gameObject.GetComponent<Object>();
+        }
+        else if (upHit.transform != null)
+        {
+            print("Up hit");
+            target = upHit.collider.gameObject.GetComponent<Object>();
+        }
+        else if (downHit.transform != null)
+        {
+            print("down hit");
+            target = downHit.collider.gameObject.GetComponent<Object>();
+        }
 
-		} else if (rightHit.transform != null) {
-			print ("Right hit");
-			target = rightHit.collider.gameObject.GetComponent<Object>();
-
-		} else if (upHit.transform != null) {
-			print ("Up hit");
-			target = upHit.collider.gameObject.GetComponent<Object>();
-
-		} else if (downHit.transform != null) {
-			print ("down hit");
-			target = downHit.collider.gameObject.GetComponent<Object>();
-		}
-
-		if (target != null) {
-			target.Interact ();
-			return true;
-		}
+        if (target != null)
+        {
+            target.Interact();
+            return true;
+        }
 
         return false;
     }
@@ -169,7 +164,7 @@ public class Player : MovingObject
 
     protected override void OnCantMove<T>(T component)
     {
-        //throw new System.NotImplementedException();
+
     }
 
     // Another object entered a trigger collider attached to this object
@@ -182,8 +177,7 @@ public class Player : MovingObject
             touchingBuilding = true;
             touching = other.gameObject;
             Building building = touching.GetComponent<Building>();
-
-            print("Press z to enter " + building.name);
+            textbox.Write("Press z to enter " + building.name, null);
         }
         // We collided with an npc
         else if (other.tag == "NPC")

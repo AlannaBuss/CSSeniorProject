@@ -1,0 +1,6 @@
+name = dragon_fruit
+value = 25
+tags = FOOD FRUIT
+canWield = false
+isArmor = false
+description = This_fruit_..._is_actually_a_bomb._Deals_50_damage._Not_recommended_for_eating.

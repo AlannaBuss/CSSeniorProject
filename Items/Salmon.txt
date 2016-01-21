@@ -1,0 +1,6 @@
+name = salmon
+value = 100
+tags = FOOD FISH
+canWield = false
+isArmor = false
+description = The_greatest_of_all_fish._Heals_full_hp.

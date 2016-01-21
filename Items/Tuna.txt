@@ -1,0 +1,6 @@
+name = tuna
+value = 10
+tags = FOOD FISH
+canWield = false
+isArmor = false
+description = Not_that_fresh_but_you're_hungry_so_heals_10_hp_anyway.

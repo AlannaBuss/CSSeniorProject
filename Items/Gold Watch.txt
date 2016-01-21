@@ -3,3 +3,4 @@ value = 25
 tags = VALUABLE
 canWield = false
 isArmor = false
+description = Well_aren't_you_fancy.
