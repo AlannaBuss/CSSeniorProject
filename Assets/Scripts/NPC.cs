@@ -208,7 +208,7 @@ public class NPC : MovingObject
 	}
 
 	//NPCS should have an interaction special to them
-	public override void Interact ()
+	public virtual override void Interact ()
 	{
 		print ("Hi Player!");
 	}
