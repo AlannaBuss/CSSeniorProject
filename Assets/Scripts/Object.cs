@@ -11,6 +11,7 @@ public class Object : MonoBehaviour
 
     public Boolean hasQuest;	    // Quest flag
     public GameObject quest;		// Object representing a quest
+	public Quest mission;
 
     // Places the object at the given map location
     public void PlaceAt(int mX, int mY, int tX, int tY, int tZ)
@@ -27,8 +28,9 @@ public class Object : MonoBehaviour
         }
     }
 
-    public virtual void initQuest()
+	public virtual void initQuest(Quest givenMission)
     {
+		mission = givenMission;
         hasQuest = true;
         quest = Instantiate(quest) as GameObject;
 
