@@ -13,7 +13,6 @@ public abstract class MovingObject : Object
     private float inverseMoveTime;          //Used to make movement more efficient.
 
 
-
     // Sets up the initial physics stuff
     protected virtual void Start()
     {
@@ -35,7 +34,6 @@ public abstract class MovingObject : Object
         //Cast a line from start point to end point checking collision on blockingLayer.
         hit = Physics2D.Linecast(start, end, blockingLayer);
         boxCollider.enabled = true;
-
 
         //Check if anything was hit
         if (hit.transform == null)
@@ -144,13 +142,15 @@ public abstract class MovingObject : Object
     protected abstract void OnCantMove<T>(T component)
         where T : Component;
 
-	//Because you can't call your parent's parent's methods
-	public override void initQuest(){
-		base.initQuest();
-	}
+    //Because you can't call your parent's parent's methods
+    public override void initQuest()
+    {
+        base.initQuest();
+    }
 
-	//Interactions for moving objects change the title
-	public override void Interact(){
-		print ("You interacted with a moving object");
-	}
+    //Interactions for moving objects change the title
+    public override void Interact()
+    {
+        print("You interacted with a moving object");
+    }
 }

@@ -6,12 +6,17 @@ using Random = UnityEngine.Random;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
+    static System.IO.StreamWriter writer;
+
+    // Prefab objects
     public GameObject player;
     public GameObject map;
+    public GameObject textbox;
+
+    // References
     private MapManager mapManager;
     private Player playerManager;
-
-    static System.IO.StreamWriter writer;
+    private Textbox textManager;
 
     public static void logger(String str)
     {
@@ -48,9 +53,17 @@ public class GameManager : MonoBehaviour
     {
         Items.Start();
         Jobs.Start();
+        Dialogue.Start();
+
+        // Draw the textbox
+        textbox = Instantiate(textbox, new Vector3(4.5f, 0.5f, 0f), Quaternion.identity) as GameObject;
+        textManager = textbox.GetComponent<Textbox>();
+        textManager.Draw();
+
         // Create the map
         map = Instantiate(map, new Vector3(5.5f, 5.5f, 0), Quaternion.identity) as GameObject;
         mapManager = map.GetComponent<MapManager>();
+        mapManager.textbox = textManager;
         mapManager.SetupScene();
 
         // Where are we on the map?
@@ -63,8 +76,9 @@ public class GameManager : MonoBehaviour
         // Create the player
         player = Instantiate(player, new Vector3(tile.x, tile.y, 10f), Quaternion.identity) as GameObject;
         playerManager = player.GetComponent<Player>();
-        playerManager.PlaceAt(mapX, mapY, (int)tile.x, (int)tile.y, (int)(10 - tile.y));
         playerManager.map = mapManager;
+        playerManager.textbox = textManager;
+        playerManager.PlaceAt(mapX, mapY, (int)tile.x, (int)tile.y, (int)(10 - tile.y));
 
         // Draw our area on the map
         mapManager.player = playerManager;

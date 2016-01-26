@@ -219,7 +219,7 @@ public class TileManager : MonoBehaviour
             bSizeY = 2;
         }
         // Tile is a home; has beds and dressers
-        else if (tileType.Equals("Home"))
+        else if (tileType.Equals("RESIDENTIAL"))
         {
             buildingCount = new Count(1, 3);    // beds
             wallCount = new Count(5, 10);       // home objects
@@ -227,7 +227,7 @@ public class TileManager : MonoBehaviour
             bSizeX = 1;
             bSizeY = 1;
         }
-        else if (tileType.Equals("Barn"))
+        else if (tileType.Equals("FARM"))
         {
             buildingCount = new Count(2, 4);    // animals
             wallCount = new Count(5, 10);       // hay and stuff
@@ -235,7 +235,7 @@ public class TileManager : MonoBehaviour
             bSizeX = 1;
             bSizeY = 1;
         }
-        else if (tileType.Equals("Cavern"))
+        else if (tileType.Equals("CAVE"))
         {
             buildingCount = new Count(0, 2);    // precious gems
             wallCount = new Count(20, 30);      // rocks
@@ -243,7 +243,7 @@ public class TileManager : MonoBehaviour
             bSizeX = 1;
             bSizeY = 1;
         }
-        else if (tileType.Equals("Inn"))
+        else if (tileType.Equals("INN"))
         {
             buildingCount = new Count(5, 10);   // beds
             wallCount = new Count(1, 3);        // home objects
@@ -328,8 +328,8 @@ public class TileManager : MonoBehaviour
         if (grid.findTile(wallLocations, x, y) != -1)
             return true;
         // There's an NPC here
-        if (grid.findTile(npcLocations, x, y) != -1)
-            return true;
+        //if (grid.findTile(npcLocations, x, y) != -1)
+        //    return true;
 
         // There was nothing there
         return false;

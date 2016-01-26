@@ -1,0 +1,6 @@
+name = tomato
+value = 10
+tags = FOOD VEGETABLE
+canWield = false
+isArmor = false
+description = Is_actually_a_fruit._You_feel_like_you've_been_lied_to._Heals_15_hp.

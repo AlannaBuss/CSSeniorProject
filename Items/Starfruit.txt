@@ -1,0 +1,6 @@
+name = star_fruit
+value = 25
+tags = FOOD FRUIT
+canWield = false
+isArmor = false
+description = Heavenly._Heals_20_hp.

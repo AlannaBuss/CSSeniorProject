@@ -1,0 +1,6 @@
+name = pork
+value = 50
+tags = FOOD MEAT
+canWield = false
+isArmor = false
+description = For_some_reason_you_feel_uncomfortable._Heals_25_hp.

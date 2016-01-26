@@ -1,0 +1,6 @@
+name = rose
+value = 25
+tags = FLOWER
+canWield = false
+isArmor = false
+description = The_most_romantic_of_flowers.

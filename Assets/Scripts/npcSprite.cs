@@ -16,11 +16,20 @@ public class npcSprite : MonoBehaviour
     public GameObject[] _mouth;  // changes based on state
     public GameObject[] _extra;  // miscellaneous (see "constants for extras")
 
+    // Defines the different pieces of the zoomed in NPC sprite
+    public GameObject _zoom_outline;
+    public GameObject _zoom_eyes;
+    public GameObject _zoom_face;
+    public GameObject _zoom_shirt;
+    public GameObject[] _zoom_outline_hair;
+    public GameObject[] _zoom_hair;
+    public GameObject[] _zoom_outline_eyes;
+    public GameObject[] _zoom_outline_mouth;
+
     // Constants
     private int _typesPeople = 5;
     private int _typesMouths = 2;
     private int _typesExtras = 2;
-
     // Constants for extras
     private int _blood = 0;     // covered in blood: person is injured or psychotic
     private int _hat1 = 1;      // it's a hat: person is wearing it
@@ -28,17 +37,22 @@ public class npcSprite : MonoBehaviour
     private int _hat3 = 3;      // it's a hat: person is wearing it
     private int _glasses = 4;   // a pair of glasses: person needs glasses
     private int _goatee = 5;    // it's a goatee: person has been converted to a follower of the wizard
-
     // Constants for mouths
     private int _neutral = 0;
     private int _smile = 1;
     private int _frown = 2;
+    // Constants for eyes
+    private int _normal = 0;
+    private int _sad = 1;
+    private int _angry = 2;
 
     // Information about our sprite
-    private int spriteType;                                     // Defines what type of sprite this NPC is
-    private List<GameObject> pieces = new List<GameObject>();   // Defines the static pieces this NPC is made of
-    private List<GameObject> extras = new List<GameObject>();   // Defines the extra pieces this NPC is carrying
-    private GameObject mouth, eyes;                             // Defines the dynamic pieces that this NPC is made of
+    private int spriteType;                                         // Defines what type of sprite this NPC is
+    private List<GameObject> pieces = new List<GameObject>();       // Defines the static pieces this NPC is made of
+    private List<GameObject> extras = new List<GameObject>();       // Defines the extra pieces this NPC is carrying
+    private GameObject mouth, eyes;                                 // Defines the dynamic pieces that this NPC is made of
+    // Zoomed in image
+    GameObject zoom_mouth, zoom_eyes, zoom_eye_color, zoomHair, zoomHairOutline, zoomSkin, zoomTop, zoomOutline;
 
 
 
@@ -71,27 +85,47 @@ public class npcSprite : MonoBehaviour
         // Mouth
         int mouthType = (spriteType * _typesMouths) + _neutral;
         mouth = Instantiate(_mouth[mouthType]) as GameObject;
+        zoom_mouth = Instantiate(_zoom_outline_mouth[_neutral], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+
         // Eyes
+        Color eyecolor = randomColorPicker();
         eyes = Instantiate(_eyes[spriteType]) as GameObject;
-        eyes.GetComponent<SpriteRenderer>().color = randomColorPicker();
+        eyes.GetComponent<SpriteRenderer>().color = eyecolor;
+        zoom_eyes = Instantiate(_zoom_outline_eyes[_normal], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+        zoom_eye_color = Instantiate(_zoom_eyes, new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+        zoom_eye_color.GetComponent<SpriteRenderer>().color = eyecolor;
+
         // Hair
+        Color haircolor = randomColorPicker();
         GameObject npcHair = Instantiate(_hair[spriteType]) as GameObject;
-        npcHair.GetComponent<SpriteRenderer>().color = randomColorPicker();
+        npcHair.GetComponent<SpriteRenderer>().color = haircolor;
+        zoomHair = Instantiate(_zoom_hair[spriteType], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+        zoomHair.GetComponent<SpriteRenderer>().color = haircolor;
+        zoomHairOutline = Instantiate(_zoom_outline_hair[spriteType], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+
+        // Skin
+        Color skinColor = skinColorPicker();
+        GameObject npcSkin = Instantiate(_skin[spriteType]) as GameObject;
+        npcSkin.GetComponent<SpriteRenderer>().color = skinColor;
+        zoomSkin = Instantiate(_zoom_face, new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+        zoomSkin.GetComponent<SpriteRenderer>().color = skinColor;
+
         // Top
+        Color topColor = randomColorPicker();
         GameObject npcTop = Instantiate(_top[spriteType]) as GameObject;
-        npcTop.GetComponent<SpriteRenderer>().color = randomColorPicker();
+        npcTop.GetComponent<SpriteRenderer>().color = topColor;
+        zoomTop = Instantiate(_zoom_shirt, new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+        zoomTop.GetComponent<SpriteRenderer>().color = topColor;
         // Bottom
         GameObject npcBottom = Instantiate(_bottom[spriteType]) as GameObject;
         npcBottom.GetComponent<SpriteRenderer>().color = randomColorPicker();
         // Shoes
         GameObject npcShoes = Instantiate(_shoes[spriteType]) as GameObject;
         npcShoes.GetComponent<SpriteRenderer>().color = randomColorPicker();
-        // Skin
-        GameObject npcSkin = Instantiate(_skin[spriteType]) as GameObject;
-        npcSkin.GetComponent<SpriteRenderer>().color = skinColorPicker();
         // Extras
         initExtras();
 
+        zoomOutline = Instantiate(_zoom_outline, new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
         pieces.Add(Instantiate(_outline[spriteType]));
         pieces.Add(npcHair);
         pieces.Add(npcSkin);
@@ -119,6 +153,7 @@ public class npcSprite : MonoBehaviour
     {
         spriteType = Random.Range(0, _typesPeople);
         initSprite();
+        undrawZoom();
     }
 
     // Draws the NPC to the screen
@@ -143,15 +178,30 @@ public class npcSprite : MonoBehaviour
             pieces[i].SetActive(false);
     }
 
-    // Destroys the sprite
-    public void destroy()
+    // Draws the zoomed NPC to the screen
+    public void drawZoom()
     {
-        Destroy(mouth);
-        Destroy(eyes);
-        for (int i = 0; i < pieces.Count; i++)
-            Destroy(pieces[i]);
-        for (int i = 0; i < extras.Count; i++)
-            Destroy(extras[i]);
+        zoom_eyes.SetActive(true);
+        zoom_eye_color.SetActive(true);
+        zoom_mouth.SetActive(true);
+        zoomHairOutline.SetActive(true);
+        zoomHair.SetActive(true);
+        zoomOutline.SetActive(true);
+        zoomSkin.SetActive(true);
+        zoomTop.SetActive(true);
+    }
+
+    // Removes the zoomed NPC from the screen
+    public void undrawZoom()
+    {
+        zoomHairOutline.SetActive(false);
+        zoomHair.SetActive(false);
+        zoomOutline.SetActive(false);
+        zoomSkin.SetActive(false);
+        zoomTop.SetActive(false);
+        zoom_eyes.SetActive(false);
+        zoom_eye_color.SetActive(false);
+        zoom_mouth.SetActive(false);
     }
 
     // Places the sprite at the given location
@@ -172,32 +222,50 @@ public class npcSprite : MonoBehaviour
         // Set sprite mouth to "neutral"
         if (state.Equals("normal"))
         {
-            Destroy(mouth);
             int mouthType = (spriteType * _typesMouths) + _neutral;
+            Destroy(mouth);
+            Destroy(zoom_mouth);
+            Destroy(zoom_eyes);
             mouth = Instantiate(_mouth[mouthType]) as GameObject;
+            zoom_mouth = Instantiate(_zoom_outline_mouth[_neutral], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+            zoom_eyes = Instantiate(_zoom_outline_eyes[_normal], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
         }
         // Set sprite mouth to "happy"
         else if (state.Equals("happy"))
         {
-            Destroy(mouth);
             int mouthType = (spriteType * _typesMouths) + _smile;
+            Destroy(mouth);
+            Destroy(zoom_mouth);
+            Destroy(zoom_eyes);
             mouth = Instantiate(_mouth[mouthType]) as GameObject;
+            zoom_mouth = Instantiate(_zoom_outline_mouth[_smile], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+            zoom_eyes = Instantiate(_zoom_outline_eyes[_normal], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
         }
         // Set sprite mouth to "frown"
         else if (state.Equals("sad") || state.Equals("angry"))
         {
-
+            Destroy(zoom_mouth);
+            Destroy(zoom_eyes);
+            zoom_mouth = Instantiate(_zoom_outline_mouth[_frown], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
+            zoom_eyes = Instantiate(_zoom_outline_eyes[_sad], new Vector3(0.5f, 0.5f, -5), Quaternion.identity) as GameObject;
         }
         // Set sprite state to "psychotic"
         else if (state.Equals("psychotic"))
         {
             // red eyes
             eyes.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f);
+            zoom_eye_color.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f);
             // smile
             setState("happy");
             // blood
             int bloodType = (spriteType * _blood) + spriteType;
             extras.Add(Instantiate(_extra[bloodType]));
         }
+
+        if (zoomOutline.activeSelf)
+            drawZoom();
+        else
+            undrawZoom();
+        undraw();
     }
 }

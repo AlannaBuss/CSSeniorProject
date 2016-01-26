@@ -1,0 +1,6 @@
+name = halibutt
+value = 25
+tags = FOOD FISH
+canWield = false
+isArmor = false
+description = The_butt_of_a_Halibut._Pretty_tasty_though._Heals_15_hp.

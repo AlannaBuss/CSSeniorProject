@@ -1,0 +1,6 @@
+name = lamb
+value = 50
+tags = FOOD MEAT
+canWield = false
+isArmor = false
+description = Why_are_children_so_juicy_and_tender._Heals_25_hp.

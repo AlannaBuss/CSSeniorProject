@@ -1,0 +1,6 @@
+name = lettuce
+value = 10
+tags = FOOD VEGETABLE
+canWield = false
+isArmor = false
+description = Lettuce_join_your_bowels._Heals_15_hp.

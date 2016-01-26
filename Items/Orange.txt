@@ -1,0 +1,6 @@
+name = orange
+value = 5
+tags = FOOD FRUIT
+canWield = false
+isArmor = false
+description = Comes_pre-sliced._Thanks,_nature._Heals_5_hp.

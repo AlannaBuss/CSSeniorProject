@@ -9,6 +9,7 @@ public class Jobs : MonoBehaviour {
 
     static List<Job> jobs;
     static int totalWeight = 0;
+
 	// Use this for initialization
 	public static void Start () {
         jobs = new List<Job>();
@@ -32,9 +33,11 @@ public class Jobs : MonoBehaviour {
                 job.inventoryMin = int.Parse(invrange[0]);
                 job.inventoryMax = int.Parse(invrange[1]);
                 string[] itemWeights = jobFile["item_weights"];
-                for (int i = 2; i < itemWeights.Length; i++)
+                job.item_weights = new Dictionary<string, int>();
+                for (int i = 2; i < itemWeights.Length - 1; i++)
                 {
-                    job.item_weights.Add(itemWeights[i].Split('(')[0], int.Parse(itemWeights[i].Split('(')[1]));
+                    string[] line = itemWeights[i].Split('(');
+                    job.item_weights.Add(line[0], int.Parse(line[1].Split(')')[0]));
                 }
                 job.job_weight = int.Parse(jobFile["job_weight"][2]);
                 jobs.Add(job);
@@ -44,8 +47,6 @@ public class Jobs : MonoBehaviour {
             {
                 print("error in Job file " + file);
             }
-
-            
         }
     }
 
@@ -75,9 +76,7 @@ public class Jobs : MonoBehaviour {
             }
         }
         return null;
-
     }
-
 	
 	// Update is called once per frame
 	void Update () {
