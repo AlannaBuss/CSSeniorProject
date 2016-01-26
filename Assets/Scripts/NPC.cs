@@ -165,14 +165,13 @@ public class NPC : MovingObject
     }
 
 
-<<<<<<< HEAD
+
 	//NPCS should have an interaction special to them
-	public virtual override void Interact ()
+	public override void Interact ()
 	{
 		print ("Hi Player!");
 	}
-=======
->>>>>>> f8405cf1634fea7d2b3d8d9c71624271f803adfd
+
 
     // Called when the object cannot move
     protected override void OnCantMove<T>(T component)
