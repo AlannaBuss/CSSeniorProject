@@ -143,9 +143,9 @@ public abstract class MovingObject : Object
         where T : Component;
 
     //Because you can't call your parent's parent's methods
-    public override void initQuest()
+	public override void initQuest(Quest givenMission)
     {
-        base.initQuest();
+		base.initQuest(givenMission);
     }
 
     //Interactions for moving objects change the title

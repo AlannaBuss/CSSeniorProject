@@ -115,9 +115,9 @@ public class NPC : MovingObject
     }
 
     //So we still know how to init our quests.
-    public override void initQuest()
+	public override void initQuest(Quest givenMission)
     {
-        base.initQuest();
+		base.initQuest(givenMission);
     }
 
     // Draws the NPC to the screen
