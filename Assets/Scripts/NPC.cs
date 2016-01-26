@@ -167,7 +167,12 @@ public class NPC : MovingObject
 	//NPCS should have an interaction special to them
 	public override void Interact ()
 	{
-		print ("Hi Player!");
+		if (hasQuest) {
+			textbox.Write (mission.questSpeech (), sprite);
+			textbox.Write (mission.finishQuest (), sprite); 
+		}else{
+			textbox.Write("Hi Player!", sprite);
+		}
 	}
 
 

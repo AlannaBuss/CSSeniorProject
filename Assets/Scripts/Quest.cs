@@ -6,8 +6,11 @@ using System;
 
 public class Quest : MonoBehaviour
 {
+	public Boolean inUse;
+
 	public Quest ()
 	{
+		inUse = true;
 	}
 
 	//Returns true if the quest is reliant on a person type
@@ -41,6 +44,12 @@ public class Quest : MonoBehaviour
 		return "I need some help!";
 	}
 		
+	//Called when the quest completes. 
+	public string finishQuest ()
+	{
+		inUse = false;
+		return "Thank you!";
+	}
 }
 
 

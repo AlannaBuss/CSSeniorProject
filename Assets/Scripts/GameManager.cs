@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     private Player playerManager;
     private Textbox textManager;
 
+	//Quest information
+	private QuestGenerator questGenerator;
+
     public static void logger(String str)
     {
         if (writer == null)
@@ -65,6 +68,9 @@ public class GameManager : MonoBehaviour
         mapManager = map.GetComponent<MapManager>();
         mapManager.textbox = textManager;
         mapManager.SetupScene();
+
+		//Set up the Quest generator
+		questGenerator = new QuestGenerator(mapManager);
 
         // Where are we on the map?
         int mapX = Random.Range(0, 10);
