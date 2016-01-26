@@ -13,13 +13,11 @@ public class NPC : MovingObject
 {
     // Sprite representing this NPC
     private npcSprite sprite;
-    public GameObject quest;
 
     // States this npc currently has
     public string name;
     public string personality;
     public List<string> states = new List<string>();
-    public Boolean hasQuest = false;
     public Boolean atWork = false;
     public Boolean atHome = false;
     public Boolean asleep = false;
