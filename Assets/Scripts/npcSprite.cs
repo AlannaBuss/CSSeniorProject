@@ -219,6 +219,9 @@ public class npcSprite : MonoBehaviour
     // Changes the sprite to match a certain state
     public void setState(string state)
     {
+        undraw();
+        undrawZoom();
+
         // Set sprite mouth to "neutral"
         if (state.Equals("normal"))
         {
@@ -262,10 +265,7 @@ public class npcSprite : MonoBehaviour
             extras.Add(Instantiate(_extra[bloodType]));
         }
 
-        if (zoomOutline.activeSelf)
-            drawZoom();
-        else
-            undrawZoom();
         undraw();
+        undrawZoom();
     }
 }

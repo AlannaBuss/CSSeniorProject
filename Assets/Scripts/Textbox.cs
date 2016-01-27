@@ -62,6 +62,8 @@ public class Textbox : MonoBehaviour
             text.Clear();
             mesh.text = "";
         }
+
+        RedrawNPC();
     }
 
     // Draws the textbox to the screen (initial setup)
@@ -177,6 +179,16 @@ public class Textbox : MonoBehaviour
         else if (renderer.color.a == 1f)
         {
             textbox.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+        }
+    }
+
+    // Redraws the NPC zoom in face
+    public void RedrawNPC()
+    {
+        if (sprite != null && mesh.text != "")
+        {
+            sprite.undrawZoom();
+            sprite.drawZoom();
         }
     }
 }

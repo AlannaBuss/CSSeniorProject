@@ -75,9 +75,7 @@ public class GameManager : MonoBehaviour
         // Where are we on the map?
         int mapX = Random.Range(0, 10);
         int mapY = Random.Range(0, 10);
-        Vector3 tile = mapManager.map[mapX][mapY].EmptyLocation();
-        while (tile.x == -1)
-            tile = mapManager.map[mapX][mapY].EmptyLocation();
+        Vector3 tile = new Vector3(4, 4, 0); // Place on the road, where there are no objects
 
         // Create the player
         player = Instantiate(player, new Vector3(tile.x, tile.y, 10f), Quaternion.identity) as GameObject;
