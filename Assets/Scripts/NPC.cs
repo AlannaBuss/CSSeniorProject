@@ -146,7 +146,7 @@ public class NPC : MovingObject
         string dialogue = Dialogue.getDialogue(personality, interactionType);
 
         // Write the text if the player is on the same screen
-        //if (display)
+        if (display)
             textbox.Write(dialogue, sprite);
 
         if (personality == "shy")
@@ -164,13 +164,13 @@ public class NPC : MovingObject
 
 
 
-	//NPCS should have an interaction special to them
+	// NPCS should have an interaction special to them
 	public override void Interact ()
 	{
 		if (hasQuest) {
 			textbox.Write (mission.questSpeech (), sprite);
 			textbox.Write (mission.finishQuest (), sprite); 
-		}else{
+		} else {
 			textbox.Write("Hi Player!", sprite);
 		}
 	}

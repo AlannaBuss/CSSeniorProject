@@ -12,6 +12,7 @@ public class MapManager : MonoBehaviour
 
     // Map information
     public string season;           // current season
+    public Vector2 townCenter;      // center of the town on this map
     private int numCave;            // # of caves on this map
     private int numMarket;          // # of markets in the town
     private int numFarm;            // # of farms on this map
@@ -131,6 +132,7 @@ public class MapManager : MonoBehaviour
         List<Vector3> town = new List<Vector3>();
         int townX = Random.Range(3, 7);
         int townY = Random.Range(3, 7);
+        townCenter = new Vector2(townX, townY);
 
         // Locations that will be the town
         for (int x = townX - 3; x <= townX + 3; x++)

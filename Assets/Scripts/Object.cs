@@ -13,6 +13,25 @@ public class Object : MonoBehaviour
     public GameObject quest;		// Object representing a quest
 	public Quest mission;
 
+    public List<String> tags;       // Represents what type of object this is
+
+    // TYPES OF OBJECT TAGS:
+    // Objects can have multiple tags, and a > denotes the following "child" tags also have that parent tag
+
+    // ANIMAL > COW PIG                             // animals can be killed to collect meat, cows can be milked
+    // WALL > BUSH >  ROSEBUSH                      // walls block the player
+    //      > ROCKWALL > OREWALL                    // ore walls have ore in them which can be mined
+    //      > BRICK                                 // rose bushes have roses in them which can be collected
+    //      > DIRTWALL
+    //      > FENCE > WOODFENCE METALFENCE
+    // OBJECT > GEMSTONE > RUBY SAPPHIRE EMERALD    // objects can be interacted with/picked up (and disappear afterwards?)
+    //        > ROCK                                // gemstones are mined to get gems, rocks are mined to get ore
+    // TREE > APPLETREE ORANGETREE                  // trees can be cut down to get wood, or have fruit collected from
+    //      > STUMP                                 // stumps will grow back into trees over time
+    // CROP > CARROT CORN LETTUCE TOMATO            // crops can be collected to get vegetables
+    // FURNITURE > BED
+
+
     // Places the object at the given map location
     public void PlaceAt(int mX, int mY, int tX, int tY, int tZ)
     {
@@ -41,6 +60,10 @@ public class Object : MonoBehaviour
     //Called when an object is interacted with.
     public virtual void Interact()
     {
-        print("Interacted with a generic object.");
+        print("Interacted with a ");
+
+        foreach (String tag in tags) {
+            print(tag);
+        }
     }
 }

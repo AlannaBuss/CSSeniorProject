@@ -327,9 +327,6 @@ public class TileManager : MonoBehaviour
         // There's a wall here
         if (grid.findTile(wallLocations, x, y) != -1)
             return true;
-        // There's an NPC here
-        //if (grid.findTile(npcLocations, x, y) != -1)
-        //    return true;
 
         // There was nothing there
         return false;

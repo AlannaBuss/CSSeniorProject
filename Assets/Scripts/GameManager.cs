@@ -73,8 +73,7 @@ public class GameManager : MonoBehaviour
 		questGenerator = new QuestGenerator(mapManager);
 
         // Where are we on the map?
-        int mapX = Random.Range(0, 10);
-        int mapY = Random.Range(0, 10);
+        Vector2 townCenter = mapManager.townCenter;
         Vector3 tile = new Vector3(4, 4, 0); // Place on the road, where there are no objects
 
         // Create the player
@@ -82,7 +81,7 @@ public class GameManager : MonoBehaviour
         playerManager = player.GetComponent<Player>();
         playerManager.map = mapManager;
         playerManager.textbox = textManager;
-        playerManager.PlaceAt(mapX, mapY, (int)tile.x, (int)tile.y, (int)(10 - tile.y));
+        playerManager.PlaceAt((int)townCenter.x, (int)townCenter.y, (int)tile.x, (int)tile.y, (int)(10 - tile.y));
 
         // Draw our area on the map
         mapManager.player = playerManager;
