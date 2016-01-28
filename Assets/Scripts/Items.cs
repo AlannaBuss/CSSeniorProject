@@ -34,6 +34,16 @@ public class Items : MonoBehaviour
                             tags.Add(l[2]);
                         item.tags = tags;
                     }
+                    else if (l[0].Equals("sprite"))
+                    {
+                        Sprite sprite = Resources.Load<Sprite>(l[2]);
+                        GameObject gameObject = new GameObject();
+                        gameObject.AddComponent<SpriteRenderer>();
+                        SpriteRenderer SR = gameObject.GetComponent<SpriteRenderer>();
+                        SR.sprite = sprite;
+                        item.sprite = Instantiate(gameObject) as GameObject;
+                        item.sprite.SetActive(false);
+                    }
                     else if (int.TryParse(l[2], out x))
                         item.GetType().GetProperty(l[0]).SetValue(item, x, null);
                     else if (bool.TryParse(l[2], out b))
@@ -60,6 +70,8 @@ public class Items : MonoBehaviour
     public class Item
     {
         public Item() { }
+
+        public GameObject sprite { get; set; }
         public int value { get; set; }
         public string name { get; set; }
         public List<string> tags { get; set; }
@@ -82,5 +94,16 @@ public class Items : MonoBehaviour
             }
         }
         return itemsWithTag[Random.Range(0, itemsWithTag.Count)];
+    }
+
+    // Gets an item with the given name
+    public static Item getItemWithName(string name)
+    {
+        foreach (Item item in items)
+        {
+            if (item.name.Equals(name))
+                return item;
+        }
+        return null;
     }
 }

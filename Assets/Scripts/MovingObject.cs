@@ -12,6 +12,8 @@ public abstract class MovingObject : Object
     protected Rigidbody2D rb2D;             //The Rigidbody2D component attached to this object.
     private float inverseMoveTime;          //Used to make movement more efficient.
 
+    public Inventory inventoryBox;
+
 
     // Sets up the initial physics stuff
     protected virtual void Start()

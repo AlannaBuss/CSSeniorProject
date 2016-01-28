@@ -12,11 +12,13 @@ public class GameManager : MonoBehaviour
     public GameObject player;
     public GameObject map;
     public GameObject textbox;
+    public GameObject inventory;
 
     // References
     private MapManager mapManager;
     private Player playerManager;
     private Textbox textManager;
+    private Inventory inventoryManager;
 
 	//Quest information
 	private QuestGenerator questGenerator;
@@ -63,10 +65,16 @@ public class GameManager : MonoBehaviour
         textManager = textbox.GetComponent<Textbox>();
         textManager.Draw();
 
+        // Create the inventory box
+        inventory = Instantiate(inventory, new Vector3(0f, 0f, 0f), Quaternion.identity) as GameObject;
+        inventoryManager = inventory.GetComponent<Inventory>();
+        inventoryManager.Setup();
+
         // Create the map
         map = Instantiate(map, new Vector3(5.5f, 5.5f, 0), Quaternion.identity) as GameObject;
         mapManager = map.GetComponent<MapManager>();
         mapManager.textbox = textManager;
+        mapManager.inventory = inventoryManager;
         mapManager.SetupScene();
 
 		//Set up the Quest generator
@@ -81,6 +89,7 @@ public class GameManager : MonoBehaviour
         playerManager = player.GetComponent<Player>();
         playerManager.map = mapManager;
         playerManager.textbox = textManager;
+        playerManager.inventoryBox = inventoryManager;
         playerManager.PlaceAt((int)townCenter.x, (int)townCenter.y, (int)tile.x, (int)tile.y, (int)(10 - tile.y));
 
         // Draw our area on the map

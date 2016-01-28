@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
+using System;
 
 // Class that holds a min and max for a count
 public class Count
@@ -17,7 +18,7 @@ public class Count
 }
 
 // Class that holds a grid of available locations
-public class Grid
+public class Grid : MonoBehaviour
 {
     // Possible locations to place tiles
     public List<Vector3> gridPositions = new List<Vector3>();

@@ -22,6 +22,7 @@ public class MapManager : MonoBehaviour
     // Outside references
     public Player player;
     public Textbox textbox;
+    public Inventory inventory;
 
     // Prefab objects
     public GameObject[] caveOutOuterWall, forestOuterWall, townOuterWall, marketOuterWall, farmOuterWall;
@@ -241,6 +242,7 @@ public class MapManager : MonoBehaviour
             // Initialize the NPC
             character.map = this;
             character.textbox = textbox;
+            character.inventoryBox = inventory;
             character.init(homeBldg, workBldg, i);
         }
     }

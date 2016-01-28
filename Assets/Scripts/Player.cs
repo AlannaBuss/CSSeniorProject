@@ -8,6 +8,7 @@ public class Player : MovingObject
 {
     // Player stats
     public int money = 0;
+    public List<Items.Item> inventory = new List<Items.Item>();
 
     // Tells player if it is in contact with something
     public bool touchingBuilding;
@@ -27,27 +28,14 @@ public class Player : MovingObject
     void Start()
     {
         base.Start();
+
+        for (int i = 0; i < 10; i++)
+            inventory.Add(Items.getRandomItemOfTag("FOOD"));
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Player is currently inside a market
-        if (insideMarket == true)
-        {
-            Building building = touching.GetComponent<Building>();
-
-            // Exit the market place
-            if (Input.GetKeyDown(KeyCode.X))
-                building.Exit();
-            // Player is trying to buy something
-            else if (Event.current.type == EventType.KeyDown)
-            {
-
-            }
-            return;
-        }
-
         // Move left
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -89,6 +77,11 @@ public class Player : MovingObject
         else if (Input.GetKeyDown(KeyCode.H))
         {
             textbox.Hide();
+        }
+        // Show inventory
+        else if (Input.GetKeyDown(KeyCode.I))
+        {
+            inventoryBox.ShowInventory(inventory);
         }
     }
 

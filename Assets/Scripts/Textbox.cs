@@ -57,10 +57,12 @@ public class Textbox : MonoBehaviour
             queue.RemoveAt(0);
         }
         // Remove the text
-        if (Time.time - timeLoc > 5)
+        if (Time.time - timeLoc > 3)
         {
             text.Clear();
             mesh.text = "";
+            if (sprite)
+                sprite.undrawZoom();
         }
 
         RedrawNPC();
