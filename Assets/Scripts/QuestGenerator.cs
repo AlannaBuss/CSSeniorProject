@@ -32,6 +32,8 @@ public class QuestGenerator : MonoBehaviour
 	// Called every game loop
 	void Update()
 	{
+        print("UPDATING YEA");
+
 		int count = 0;
 		numQuests = 0;
 

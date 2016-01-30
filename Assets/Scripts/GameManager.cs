@@ -13,12 +13,14 @@ public class GameManager : MonoBehaviour
     public GameObject map;
     public GameObject textbox;
     public GameObject inventory;
+    public GameObject questGen;
 
     // References
     private MapManager mapManager;
     private Player playerManager;
     private Textbox textManager;
     private Inventory inventoryManager;
+    private QuestGenerator questGenManager;
 
 	//Quest information
 	private QuestGenerator questGenerator;
@@ -78,7 +80,8 @@ public class GameManager : MonoBehaviour
         mapManager.SetupScene();
 
 		//Set up the Quest generator
-		questGenerator = new QuestGenerator(mapManager);
+        questGen = Instantiate(questGen) as GameObject;
+        questGenerator = questGen.GetComponent<QuestGenerator>();
 
         // Where are we on the map?
         Vector2 townCenter = mapManager.townCenter;
