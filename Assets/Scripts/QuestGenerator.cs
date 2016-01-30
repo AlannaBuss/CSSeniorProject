@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
+using UnityEngine;
+using System.Collections;
 
 public class QuestGenerator : MonoBehaviour
 {
@@ -9,11 +11,13 @@ public class QuestGenerator : MonoBehaviour
 	private MapManager map;
 	private int numQuests;
 	private const int k_maxQuests = 2;
+	private const int k_pause = 500;
+	private Boolean mapSet;
 
-	public QuestGenerator (MapManager mapm)
+	public QuestGenerator ()
 	{
 		questSet[0] = new Quest();
-		map = mapm;
+		mapSet = false;
 	}
 
 	//Tries to generate a quest starting on a given tile.
@@ -29,25 +33,34 @@ public class QuestGenerator : MonoBehaviour
 		}
 	}
 
+	//A Coroutine so that update only happens every 5 seconds.
+	IEnumerator SlowDown() {
+
+		yield return new WaitForSeconds(k_pause);
+
+	}
+
+
 	// Called every game loop
 	void Update()
 	{
-        print("UPDATING YEA");
+		StartCoroutine (SlowDown());
 
 		int count = 0;
 		numQuests = 0;
 
-		while (count <= questSet.Length)
+		while (count < questSet.Length)
 		{
-			if(questSet[count++].inUse)
+			if(questSet[count].inUse)
 			{
 				numQuests++;
 			}
+			count++;
 		}
 
 		if(numQuests < k_maxQuests)
 		{
-			if(generateQuest(map.player.mapX, map.player.mapY))
+			if(mapSet && generateQuest(map.player.mapX, map.player.mapY))
 			{
 					numQuests++;
 			}
