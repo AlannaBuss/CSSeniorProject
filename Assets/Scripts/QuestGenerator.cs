@@ -20,11 +20,17 @@ public class QuestGenerator : MonoBehaviour
 		mapSet = false;
 	}
 
+	public void setMap (MapManager map2)
+	{
+		map = map2;
+		mapSet = true;
+	}
+
 	//Tries to generate a quest starting on a given tile.
 	public Boolean generateQuest(int mapX, int mapY)
 	{
 		int questNum = Random.Range (0, questSet.Length); 
-		if (questSet [questNum].inUse) {
+		if (questSet [questNum].canBeGivenOut()) {
 			return false;
 		}
 		else 
@@ -51,7 +57,7 @@ public class QuestGenerator : MonoBehaviour
 
 		while (count < questSet.Length)
 		{
-			if(questSet[count].inUse)
+			if(questSet[count].questInUse())
 			{
 				numQuests++;
 			}

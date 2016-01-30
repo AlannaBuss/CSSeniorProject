@@ -82,6 +82,7 @@ public class GameManager : MonoBehaviour
 		//Set up the Quest generator
         questGen = Instantiate(questGen) as GameObject;
         questGenerator = questGen.GetComponent<QuestGenerator>();
+		questGenerator.setMap (mapManager);
 
         // Where are we on the map?
         Vector2 townCenter = mapManager.townCenter;

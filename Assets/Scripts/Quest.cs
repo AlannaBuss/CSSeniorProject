@@ -6,11 +6,50 @@ using System;
 
 public class Quest : MonoBehaviour
 {
-	public Boolean inUse;
+	private Boolean inUse;
+	//We want to wait some amount of quests before this one is used again
+	private int waitPeriod;
+	//How many rotations do we want to wait?
+	private static int k_numRotations = 2;
 
 	public Quest ()
 	{
+		inUse = false;
+		waitPeriod = 0;
+	}
+
+	//When the quest is given out it is in use
+	public void startQuest()
+	{
 		inUse = true;
+	}
+
+	//Checks if the quest is currently in use for the quest count
+	public Boolean questInUse ()
+	{
+		if(waitPeriod == 0)
+		{
+			return inUse;
+		}
+		else
+		{
+			if(waitPeriod > 0)
+			{
+				waitPeriod--;
+			}
+			else
+			{
+				waitPeriod = 0;
+			}
+
+			return false;
+		}
+	}
+
+	//Checks if the quest can be used as the next quest.
+	public Boolean canBeGivenOut ()
+	{
+		return (!inUse && (waitPeriod == 0));
 	}
 
 	//Returns true if the quest is reliant on a person type
@@ -48,6 +87,7 @@ public class Quest : MonoBehaviour
 	public string finishQuest ()
 	{
 		inUse = false;
+		waitPeriod = k_numRotations;
 		return "Thank you!";
 	}
 }
