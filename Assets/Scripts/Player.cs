@@ -31,15 +31,37 @@ public class Player : MovingObject
         base.Start();
 
         // Put default items in inventory
-        inventory.Add(Items.getItemWithName("sword"));
         inventory.Add(Items.getItemWithName("axe"));
+        inventory.Add(Items.getItemWithName("sword"));
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Check number keys
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+            checkNumberKey(0);
+        else if (Input.GetKeyDown(KeyCode.Alpha1))
+            checkNumberKey(1);
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+            checkNumberKey(2);
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+            checkNumberKey(3);
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+            checkNumberKey(4);
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+            checkNumberKey(5);
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
+            checkNumberKey(6);
+        else if (Input.GetKeyDown(KeyCode.Alpha7))
+            checkNumberKey(7);
+        else if (Input.GetKeyDown(KeyCode.Alpha8))
+            checkNumberKey(8);
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
+            checkNumberKey(9);
+
         // Move left
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             touchingBuilding = touchingObject = touchingNPC = false;
             AttemptMove<Player>(-1, 0);
@@ -65,15 +87,7 @@ public class Player : MovingObject
         // Interaction
         else if (Input.GetKeyDown(KeyCode.Z))
         {
-            if (tryToInteract())
-            {
-                // Enter a building
-                if (touchingBuilding)
-                {
-                    Building building = touching.GetComponent<Building>();
-                    building.Enter();
-                }
-            }
+            tryToInteract();
         }
         // Hide textbox
         else if (Input.GetKeyDown(KeyCode.H))
@@ -88,8 +102,27 @@ public class Player : MovingObject
         }
     }
 
+    private void checkNumberKey(int num)
+    {
+        if (inventory.Count >= num)
+        {
+            if (inInventory || insideMarket) {
+                List<string> text = new List<string>();
+                text.Add(inventory[num].name);
+                text.Add(inventory[num].description);
+                textbox.WriteAll(text);
+            }
+            else if (inventory[num].tags.Contains("FOOD")) {
+                textbox.Write("You ate the " + inventory[num].name);
+                inventory.RemoveAt(num);
+            }
+            else
+                tryToInteract(inventory[num]);
+        }
+    }
+
     //Sees if there is building or NPC in the surrounding tiles 
-    protected virtual bool tryToInteract()
+    protected virtual bool tryToInteract(Items.Item with = null)
     {
         //Start is where the player is
         Vector2 start = transform.position;
@@ -116,39 +149,46 @@ public class Player : MovingObject
 
         if (leftHit.transform != null)
         {
-            print("Left hit");
             target = leftHit.collider.gameObject.GetComponent<Object>();
         }
         else if (rightHit.transform != null)
         {
-            print("Right hit");
             target = rightHit.collider.gameObject.GetComponent<Object>();
         }
         else if (upHit.transform != null)
         {
-            print("Up hit");
             target = upHit.collider.gameObject.GetComponent<Object>();
         }
         else if (downHit.transform != null)
         {
-            print("down hit");
             target = downHit.collider.gameObject.GetComponent<Object>();
         }
 
         if (target != null)
         {
-            Items.Item received = target.Interact();
-            if (received != null)
-            {
-                if (inventory.Count < 10)
-                    inventory.Add(received);
-                else
-                    textbox.Write("...But your inventory is full.");
-            }
+            doInteraction(with, target);
             return true;
         }
 
         return false;
+    }
+
+    private void doInteraction(Items.Item with, Object target)
+    {
+        Items.Item received;
+
+        if (with == null)
+            received = target.Interact();
+        else
+            received = target.InteractWithItem(with);
+
+        if (received != null)
+        {
+            if (inventory.Count < 10)
+                inventory.Add(received);
+            else
+                textbox.Write("Your inventory is full.");
+        }
     }
 
     protected override void AttemptMove<T>(int xDir, int yDir)

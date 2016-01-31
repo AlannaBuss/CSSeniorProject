@@ -83,7 +83,7 @@ public class MapManager : MonoBehaviour
     // Sets up the map
     public void SetupScene()
     {
-        string[] seasons = { "winter", "spring", "summer", "fall" };
+        string[] seasons = { "WINTER", "SPRING", "SUMMER", "FALL" };
         season = seasons[Random.Range(0, 4)];
 
         numCave = Random.Range(1, 3);       // 1 to 2 caves

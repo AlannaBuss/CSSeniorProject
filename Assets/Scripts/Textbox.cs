@@ -72,12 +72,12 @@ public class Textbox : MonoBehaviour
     public void Draw()
     {
         // Draw the textbox image
-        textbox = Instantiate(textbox, new Vector3(4.5f, 0.5f, 1f), Quaternion.identity) as GameObject;
+        textbox = Instantiate(textbox, new Vector3(4.5f, 0.5f, -1f), Quaternion.identity) as GameObject;
         textbox.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
         // Create an empty game object to draw text on
         container = new GameObject();
-        container = Instantiate(container, new Vector3(1.5f, 1.3f, -1f), Quaternion.identity) as GameObject;
+        container = Instantiate(container, new Vector3(1.5f, 1.3f, -2f), Quaternion.identity) as GameObject;
         container.AddComponent<TextMesh>();
         Vector3 oldScale = container.transform.localScale;
         Vector3 newScale = new Vector3(oldScale.x * .25f, oldScale.y * .25f, oldScale.z * .25f);

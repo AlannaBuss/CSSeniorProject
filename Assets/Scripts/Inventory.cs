@@ -22,13 +22,13 @@ public class Inventory : MonoBehaviour {
     public void Setup()
     {
         // Create the inventory image
-        inventoryBox = Instantiate(inventoryBox, new Vector3(1.5f, 4.5f, -1f), Quaternion.identity) as GameObject;
+        inventoryBox = Instantiate(inventoryBox, new Vector3(1.5f, 4.5f, 0f), Quaternion.identity) as GameObject;
         inventoryBox.SetActive(false);
         isDrawn = false;
 
         // Create an empty game object to draw text on
         container = new GameObject();
-        container = Instantiate(container, new Vector3(-0.5f, 9.3f, -2f), Quaternion.identity) as GameObject;
+        container = Instantiate(container, new Vector3(-0.5f, 9.3f, -1f), Quaternion.identity) as GameObject;
         container.AddComponent<TextMesh>();
         Vector3 oldScale = container.transform.localScale;
         Vector3 newScale = new Vector3(oldScale.x * .25f, oldScale.y * .25f, oldScale.z * .25f);
