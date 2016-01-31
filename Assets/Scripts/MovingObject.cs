@@ -151,8 +151,8 @@ public abstract class MovingObject : Object
     }
 
     //Interactions for moving objects change the title
-    public override void Interact()
+    public override Items.Item Interact()
     {
-        print("You interacted with a moving object");
+        return null;
     }
 }

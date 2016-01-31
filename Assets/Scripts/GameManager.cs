@@ -62,11 +62,10 @@ public class GameManager : MonoBehaviour
         Jobs.Start();
         Dialogue.Start();
 
-        // Draw the textbox
+        // Create the textbox
         textbox = Instantiate(textbox, new Vector3(4.5f, 0.5f, 0f), Quaternion.identity) as GameObject;
         textManager = textbox.GetComponent<Textbox>();
         textManager.Draw();
-
         // Create the inventory box
         inventory = Instantiate(inventory, new Vector3(0f, 0f, 0f), Quaternion.identity) as GameObject;
         inventoryManager = inventory.GetComponent<Inventory>();
@@ -82,7 +81,7 @@ public class GameManager : MonoBehaviour
 		//Set up the Quest generator
         questGen = Instantiate(questGen) as GameObject;
         questGenerator = questGen.GetComponent<QuestGenerator>();
-		questGenerator.setMap (mapManager);
+		questGenerator.setMap(mapManager);
 
         // Where are we on the map?
         Vector2 townCenter = mapManager.townCenter;
@@ -98,6 +97,7 @@ public class GameManager : MonoBehaviour
 
         // Draw our area on the map
         mapManager.player = playerManager;
+        mapManager.GetReferences();
         mapManager.Draw(playerManager.mapX, playerManager.mapY);
     }
 }

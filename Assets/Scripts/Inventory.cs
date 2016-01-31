@@ -7,10 +7,10 @@ public class Inventory : MonoBehaviour {
     public GameObject inventoryBox;
     private GameObject container;
     private TextMesh mesh;
-    private bool isDrawn;
 
     // Can only have up to 10 items in inventory
     private List<Items.Item> items = new List<Items.Item>();
+    public bool isDrawn;
 
 	
 	// Update is called once per frame

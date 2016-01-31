@@ -8,7 +8,6 @@ using System;
 public class Building : Object
 {
     // Building information
-    public string name;             // The name of the building
     public string tag;              // The type of this building
     public TileManager inside;      // The inside of the building
     public TileManager outside;     // Reference to the tile the building is on
@@ -35,68 +34,57 @@ public class Building : Object
         owners = new List<NPC>();
     }
 
-    /*
-    // Adds a new product to the market
-    public void AddGood()
+    public String getName()
     {
-        // Check to make sure the market isn't already fully stocked
-        if (items.Count < 10)
-            items.Add(Goods.getRandomItem(itemType));
-    }
+        String name = "";
+        String type = "";
 
-    // Attempts to buy a product from the market
-    public bool BuyGood(int i)
-    {
-        bool boughtItem = false;
-
-        if (i >= 0 && i < items.Count)
+        foreach (NPC npc in owners)
+            name += " " + npc.name;
+        if (tag == "RESIDENTIAL")
+            type = "'s home";
+        else if (tag == "MARKET")
+            type = "'s market";
+        else if (tag == "FARM")
+            type = "'s farm";
+        else if (tag == "CAVE")
         {
-            if (map.player.money >= items[i].value)
-            {
-                boughtItem = true;
-                map.player.money -= items[i].value;
-                map.player.inventory.Add(items[i]);
-                RemoveGood(i);
-            }
+            name = "";
+            type = "cave";
         }
-        return boughtItem;
+
+        return name + type;
     }
-    */
 
     // Draws the inside of the building when Player enters
     public void Enter()
     {
+        textbox.Write("Entered " + getName());
+
         // Building can be entered
         if (tag != "MARKET")
         {
             player.insideBuilding = true;
-            outside.Undraw();
-            inside.Draw();
+            //outside.Undraw();
+            //inside.Draw();
         }
         // Building is a market; display goods that can be bought
         else
         {
             player.insideMarket = true;
-            /*
-            print("Choose the # of the item you wish to purchase.");
-            print("Press 'x' to exit.");
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                print("[" + i + "]   " + items[i].name + ": " + items[i].description + " " + items[i].value + "gold.");
-            }
-            */
         }
     }
 
     // Draws the outside of the building when Player exits
     public void Exit()
     {
+        textbox.Write("Exited " + getName());
+
         if (tag != "MARKET")
         {
             player.insideBuilding = false;
-            inside.Undraw();
-            outside.Draw();
+            //inside.Undraw();
+            //outside.Draw();
         }
         else
         {
@@ -104,43 +92,15 @@ public class Building : Object
         }
     }
 
-
-    /*
-    // Sets up the initial products sold here if this is a market
-    private void InitGoods()
+    public override Items.Item Interact()
     {
-        // The type of product sold here
-        string[] types = { "fish", "meat", "fruit", "vegetables", "flowers" }; // add wood and metal later for blacksmith quests
-        itemType = types[Random.Range(0, types.Length)];
-        items = new List<Item>();
-        name = itemType + " market";
+        Items.Item toReturn = null;
 
-        // The number of products sold initially
-        int numItems;
-        if (map.season == "summer")
-            numItems = 7;
-        else if (map.season == "spring")
-        {
-            numItems = 5;
-            if (itemType == "flowers")
-                numItems = 10;
-        }
-        else if (map.season == "fall")
-            numItems = 3;
-        else // winter
-            numItems = 1;
+        if (player.insideBuilding || player.insideMarket)
+            Exit();
+        else
+            Enter();
 
-        // Stock the store
-        for (int i = 0; i < numItems; i++)
-        {
-            items.Add(Goods.getRandomItem(itemType));
-        }
+        return toReturn;
     }
-
-    // Removes a product from the market
-    private void RemoveGood(int i)
-    {
-        items.RemoveAt(i);
-    }
-    */
 }

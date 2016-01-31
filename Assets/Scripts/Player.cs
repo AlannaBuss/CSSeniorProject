@@ -15,9 +15,10 @@ public class Player : MovingObject
     public bool touchingObject;
     public bool touchingNPC;
 
-    // Tells player if it is inside a building or a market
+    // Tells player if it is inside a building, market, or checking inventory
     public bool insideBuilding;
     public bool insideMarket;
+    public bool inInventory;
 
     // The thing the player is in contact with
     private GameObject touching;
@@ -29,8 +30,9 @@ public class Player : MovingObject
     {
         base.Start();
 
-        for (int i = 0; i < 10; i++)
-            inventory.Add(Items.getRandomItemOfTag("FOOD"));
+        // Put default items in inventory
+        inventory.Add(Items.getItemWithName("sword"));
+        inventory.Add(Items.getItemWithName("axe"));
     }
 
     // Update is called once per frame
@@ -82,6 +84,7 @@ public class Player : MovingObject
         else if (Input.GetKeyDown(KeyCode.I))
         {
             inventoryBox.ShowInventory(inventory);
+            inInventory = inventoryBox.isDrawn;
         }
     }
 
@@ -134,7 +137,14 @@ public class Player : MovingObject
 
         if (target != null)
         {
-            target.Interact();
+            Items.Item received = target.Interact();
+            if (received != null)
+            {
+                if (inventory.Count < 10)
+                    inventory.Add(received);
+                else
+                    textbox.Write("...But your inventory is full.");
+            }
             return true;
         }
 
@@ -166,16 +176,14 @@ public class Player : MovingObject
         // We collided with a building
         if (other.tag == "Building")
         {
-            print("Hit a building");
             touchingBuilding = true;
             touching = other.gameObject;
             Building building = touching.GetComponent<Building>();
-            textbox.Write("Press z to enter " + building.name, null);
+            textbox.Write("Press z to enter " + building.getName());
         }
         // We collided with an npc
         else if (other.tag == "NPC")
         {
-            print("Walked into an NPC");
             touchingNPC = true;
             touching = other.gameObject;
         }

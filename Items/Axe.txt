@@ -1,0 +1,8 @@
+name = axe
+value = 15
+tags = WEAPON
+canWield = true
+isArmor = false
+damage = 2
+sprite = Sprites/items/misc
+description = Chops_down_trees

@@ -64,10 +64,8 @@ public class MapManager : MonoBehaviour
             // Update map locations
             Vector3 newLoc = new Vector3(character.tileX, character.tileY, 0);
             npcLocs[i] = newLoc;
-
             // Update tile locations
             map[character.mapX][character.mapY].npcs.Add(npcs[i]);
-            map[character.mapX][character.mapY].npcLocations.Add(newLoc);
 
             // Check for interactions
             if (character.talking == true)
@@ -96,7 +94,65 @@ public class MapManager : MonoBehaviour
         grid = new Grid(columns, rows);
         initMap();
         MapSetup();
-        GetReferences();
+    }
+
+    // Finds and stores all references to buildings and npcs on all tiles
+    public void GetReferences()
+    {
+        for (int x = 0; x < columns; x++)
+        {
+            for (int y = 0; y < rows; y++)
+            {
+                // Find all the buildings
+                foreach (GameObject bldg in map[x][y].buildings)
+                {
+                    String type = "";
+                    Vector3 loc = bldg.transform.position;
+                    Building building = bldg.GetComponent<Building>();
+                    building.map = this;
+                    building.textbox = textbox;
+                    building.player = player;
+
+                    // Market place; buildings are stalls
+                    if (map[x][y].tileType == "Market")
+                        type = "MARKET";
+                    // Town; buildings are homes
+                    if (map[x][y].tileType == "Town")
+                        type = "RESIDENTIAL";
+                    // Caves are workplaces (miners)
+                    if (map[x][y].tileType == "Cave")
+                        type = "CAVE";
+                    // Farms are workplaces
+                    if (map[x][y].tileType == "Farm")
+                        type = "FARM";
+
+                    building.SetUp(map[x][y], type);
+                    building.loc = new Vector3(loc.x + 10 * x, loc.y + 10 * y, loc.z);
+                    if (!buildings.ContainsKey(type))
+                        buildings[type] = new List<Building>();
+                    buildings[type].Add(building);
+                }
+                // Find all the NPCs
+                foreach (GameObject npc in map[x][y].npcs)
+                {
+                    Vector3 loc = npc.transform.position;
+                    npcLocs.Add(new Vector3(loc.x + 10 * x, loc.y + 10 * y, loc.z));
+                    npcs.Add(npc);
+                }
+                // Find all the objects
+                foreach (GameObject wall in map[x][y].walls)
+                {
+                    if (wall.GetComponent<Object>())
+                        wall.GetComponent<Object>().textbox = textbox;
+                }
+                foreach (GameObject wall in map[x][y].floors)
+                {
+                    if (wall.GetComponent<Object>())
+                        wall.GetComponent<Object>().textbox = textbox;
+                }
+            }
+        }
+
         SetupNPCs();
     }
 
@@ -244,52 +300,6 @@ public class MapManager : MonoBehaviour
             character.textbox = textbox;
             character.inventoryBox = inventory;
             character.init(homeBldg, workBldg, i);
-        }
-    }
-
-    // Finds and stores all references to buildings and npcs on all tiles
-    private void GetReferences()
-    {
-        for (int x = 0; x < columns; x++)
-        {
-            for (int y = 0; y < rows; y++)
-            {
-                // Find all the buildings
-                for (int i = 0; i < map[x][y].buildings.Count; i++)
-                {
-                    String type = "";
-                    Vector3 loc = map[x][y].buildingLocations[i];
-                    Building building = map[x][y].buildings[i].GetComponent<Building>();
-                    building.map = this;
-                    building.textbox = textbox;
-
-                    // Market place; buildings are stalls
-                    if (map[x][y].tileType == "Market")
-                        type = "MARKET";
-                    // Town; buildings are homes
-                    if (map[x][y].tileType == "Town")
-                        type = "RESIDENTIAL";
-                    // Caves are workplaces (miners)
-                    if (map[x][y].tileType == "Cave")
-                        type = "CAVE";
-                    // Farms are workplaces
-                    if (map[x][y].tileType == "Farm")
-                        type = "FARM";
-
-                    building.SetUp(map[x][y], type);
-                    building.loc = new Vector3(loc.x + 10 * x, loc.y + 10 * y, loc.z);
-                    if (!buildings.ContainsKey(type))
-                        buildings[type] = new List<Building>();
-                    buildings[type].Add(building);
-                }
-                // Find all the NPCs
-                for (int i = 0; i < map[x][y].npcs.Count; i++)
-                {
-                    Vector3 loc = map[x][y].npcLocations[i];
-                    npcLocs.Add(new Vector3(loc.x + 10 * x, loc.y + 10 * y, loc.z));
-                    npcs.Add(map[x][y].npcs[i]);
-                }
-            }
         }
     }
 }

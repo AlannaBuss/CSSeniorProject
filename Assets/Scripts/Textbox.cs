@@ -102,9 +102,9 @@ public class Textbox : MonoBehaviour
     }
 
     // Writes the given text to the screen
-    public void Write(string t, npcSprite npc)
+    public void Write(string t, npcSprite npc = null)
     {
-        if (Time.time - timeLoc < textSpeed)
+        if (npc != null && Time.time - timeLoc < textSpeed)
         {
             queue.Add(new Message(t, npc));
             return;
@@ -128,9 +128,9 @@ public class Textbox : MonoBehaviour
     }
 
     // Writes the given text strings to the screen
-    public void WriteAll(List<string> t, npcSprite npc)
+    public void WriteAll(List<string> t, npcSprite npc = null)
     {
-        if (Time.time - timeLoc < textSpeed)
+        if (npc != null && Time.time - timeLoc < textSpeed)
         {
             queue.Add(new Message(t, npc));
             return;
