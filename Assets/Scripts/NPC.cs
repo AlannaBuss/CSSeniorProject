@@ -4,11 +4,6 @@ using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using System;
 
-public enum timeOfDay
-{
-    morning, evening, night
-}
-
 public class NPC : MovingObject
 {
     // Sprite representing this NPC
@@ -36,10 +31,7 @@ public class NPC : MovingObject
     // Movement stuff
     int ID; // npc's id on the map
     private float timeloc;
-    private float time;
     private float movementSpeed;
-    int timeOfDayLength = 5; // in minutes; 15 in total
-    timeOfDay currentTime;
 
     // Outside references
     public TileManager tile;    // tile the npc is on
@@ -49,9 +41,7 @@ public class NPC : MovingObject
     // Use this for initialization
     public void Start()
     {
-        time = Time.time;
-        timeloc = time;
-        currentTime = timeOfDay.morning;
+        timeloc = Time.time;
         fillInventoy();
         base.Start();
     }
@@ -328,7 +318,7 @@ public class NPC : MovingObject
     private void timeStep()
     {
         // NPC goes to work
-        if (currentTime == timeOfDay.morning && Time.time - timeloc > movementSpeed)
+        if (WorldTime.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed)
         {
             // NPC wakes up
             asleep = false;
@@ -343,7 +333,7 @@ public class NPC : MovingObject
             }
         }
         // NPC goes home
-        if (currentTime == timeOfDay.evening && Time.time - timeloc > movementSpeed)
+        if (WorldTime.GetTimeOfDay() == timeOfDay.evening && Time.time - timeloc > movementSpeed)
         {
             // NPC stops working
             atWork = false;
@@ -357,7 +347,7 @@ public class NPC : MovingObject
             }
         }
         // NPC goes to sleep
-        if (currentTime == timeOfDay.night)
+        if (WorldTime.GetTimeOfDay() == timeOfDay.night)
         {
             atWork = false;
             timeloc = Time.time;
@@ -369,17 +359,6 @@ public class NPC : MovingObject
                 atHome = true;
                 asleep = true;
             }
-        }
-        // Change the time of day
-        if (Time.time - time > timeOfDayLength * 60)
-        {
-            time = Time.time;
-            if (currentTime == timeOfDay.morning)
-                currentTime = timeOfDay.evening;
-            else if (currentTime == timeOfDay.evening)
-                currentTime = timeOfDay.night;
-            else
-                currentTime = timeOfDay.morning;
         }
     }
 

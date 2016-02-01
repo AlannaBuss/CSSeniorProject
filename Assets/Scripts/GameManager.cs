@@ -21,9 +21,17 @@ public class GameManager : MonoBehaviour
     private Textbox textManager;
     private Inventory inventoryManager;
     private QuestGenerator questGenManager;
+    private TextMesh textMesh;
 
-	//Quest information
-	private QuestGenerator questGenerator;
+
+    void Update()
+    {
+        int days = WorldTime.GetDaysPassed();
+        timeOfDay time = WorldTime.GetTimeOfDay();
+        string season = mapManager.season;
+
+        textMesh.text = "Day " + days + ", " + time + "\n        " + season;
+    }
 
     public static void logger(String str)
     {
@@ -52,25 +60,44 @@ public class GameManager : MonoBehaviour
 
         // Don't destroy when reloading scene
         DontDestroyOnLoad(gameObject);
+
+        InitStuff();
         InitGame();
     }
 
-    // Initializes the game
-    void InitGame()
+    void InitStuff()
     {
         Items.Start();
         Jobs.Start();
         Dialogue.Start();
+        WorldTime.Start();
 
         // Create the textbox
         textbox = Instantiate(textbox, new Vector3(4.5f, 0.5f, 0f), Quaternion.identity) as GameObject;
         textManager = textbox.GetComponent<Textbox>();
         textManager.Draw();
+
         // Create the inventory box
         inventory = Instantiate(inventory, new Vector3(0f, 0f, 0f), Quaternion.identity) as GameObject;
         inventoryManager = inventory.GetComponent<Inventory>();
         inventoryManager.Setup();
 
+        // Create the info box
+        GameObject textContainer = new GameObject();
+        textContainer = Instantiate(textContainer, new Vector3(6f, 9.5f, -1f), Quaternion.identity) as GameObject;
+        textContainer.AddComponent<TextMesh>();
+        Vector3 oldScale = textContainer.transform.localScale;
+        Vector3 newScale = new Vector3(oldScale.x * .25f, oldScale.y * .25f, oldScale.z * .25f);
+        textContainer.transform.localScale = newScale;
+        textMesh = textContainer.GetComponent<TextMesh>();
+        textMesh.alignment = TextAlignment.Left;
+        textMesh.color = Color.white;
+        textMesh.fontSize = 20;
+    }
+
+    // Initializes the game
+    void InitGame()
+    {
         // Create the map
         map = Instantiate(map, new Vector3(5.5f, 5.5f, 0), Quaternion.identity) as GameObject;
         mapManager = map.GetComponent<MapManager>();
@@ -80,8 +107,8 @@ public class GameManager : MonoBehaviour
 
 		//Set up the Quest generator
         questGen = Instantiate(questGen) as GameObject;
-        questGenerator = questGen.GetComponent<QuestGenerator>();
-		questGenerator.setMap(mapManager);
+        questGenManager = questGen.GetComponent<QuestGenerator>();
+        questGenManager.setMap(mapManager);
 
         // Where are we on the map?
         Vector2 townCenter = mapManager.townCenter;
