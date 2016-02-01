@@ -20,6 +20,7 @@ using Random = UnityEngine.Random;
  CROP > CARROT CORN LETTUCE TOMATO            // crops can be collected to get vegetables
       > SOIL                                  // grows into a crop the next day
  FURNITURE > BED
+ ITEM > goundItem
  * 
  */
 
@@ -82,7 +83,7 @@ public class Object : MonoBehaviour
         //    toReturn = checkObject();
         //else if (tags.Contains("FURNITURE"))
         //    toReturn = checkFurniture();
-
+        
         return toReturn;
     }
 
