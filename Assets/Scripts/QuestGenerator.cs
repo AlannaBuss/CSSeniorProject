@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class QuestGenerator : MonoBehaviour
 {
@@ -30,13 +31,25 @@ public class QuestGenerator : MonoBehaviour
 	public Boolean generateQuest(int mapX, int mapY)
 	{
 		int questNum = Random.Range (0, questSet.Length); 
-		if (questSet [questNum].canBeGivenOut()) {
-			return false;
+		Quest ranQuest = questSet [questNum];
+		if (ranQuest.canBeGivenOut()) {
+			List<GameObject> npcs = map.map[mapX][mapY].npcs;
+			int count;
+			for (count = 0; count < npcs.Count; count++)
+			{
+				NPC ranPerson = npcs.ElementAt (count).GetComponent<NPC> ();
+				if (ranQuest.personCheck (ranPerson)) {
+					print ("Quest given out");
+					ranQuest.startQuest (ranPerson);
+					ranPerson.hasQuest = true;
+					ranPerson.mission = ranQuest;
+					ranPerson.draw ();
+					return true;
+				}	
+			}
 		}
-		else 
-		{
-			return true;
-		}
+		return false;
+		
 	}
 
 	//A Coroutine so that update only happens every 5 seconds.

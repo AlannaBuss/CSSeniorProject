@@ -11,19 +11,14 @@ public class Quest : MonoBehaviour
 	private int waitPeriod;
 	//How many rotations do we want to wait?
 	private static int k_numRotations = 2;
+	private NPC questGiver;
 
 	public Quest ()
 	{
 		inUse = false;
 		waitPeriod = 0;
 	}
-
-	//When the quest is given out it is in use
-	public void startQuest()
-	{
-		inUse = true;
-	}
-
+		
 	//Checks if the quest is currently in use for the quest count
 	public Boolean questInUse ()
 	{
@@ -53,9 +48,9 @@ public class Quest : MonoBehaviour
 	}
 
 	//Returns true if the quest is reliant on a person type
-	public Boolean needPerson ()
+	public int numPerson ()
 	{
-		return true;
+		return 1;
 	}
 
 	//Returns true if the person matches what the quest needs and false if not
@@ -64,20 +59,23 @@ public class Quest : MonoBehaviour
 		return true;
 	}
 
-	//Returns true if the quest needs a building
-	public Boolean needBuilding ()
+
+	//When the quest gets given out it takes in the NPC it is being given to
+	public void startQuest (NPC person)
 	{
-		return false;
+		inUse = true;
+		questGiver = person;
 	}
 
-	//Returns true if the building matches the criteria that the quest needs
-	public Boolean buildingCheck(Building building)
+	//The interaction method that is called by the object with the quest when
+	//it is interacted with.
+	public void interact()
 	{
-		return false;
+		questGiver.textbox.Write ("Quest");
 	}
 
 	//Currently returns what should be said by someone with this quest
-	//TODO Make it so it is multiple speech bubbles and such
+	//TODO Make next two methods into the interact
 	public string questSpeech ()
 	{
 		return "I need some help!";
