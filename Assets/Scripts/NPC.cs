@@ -32,12 +32,14 @@ public class NPC : MovingObject
     int ID; // npc's id on the map
     private float timeloc;
     private float movementSpeed;
-
+    
     // Outside references
     public TileManager tile;    // tile the npc is on
 
-
-
+    //Economy Stuff
+    private int eaten = 0;
+    private bool hasFood = true;
+    int gold;
     // Use this for initialization
     public void Start()
     {
@@ -249,6 +251,7 @@ public class NPC : MovingObject
 
     private void fillInventoy()
     {
+        gold = Random.Range(5, 30); //need to add base gold and pay rates to jobs.
         int invSize = Random.Range(job.inventoryMin, job.inventoryMax);
         for (int i = 0; i < invSize; i++)
         {
@@ -325,7 +328,10 @@ public class NPC : MovingObject
             asleep = false;
             atHome = false;
             timeloc = Time.time;
-
+            if (eaten < 1)
+            {
+                eat();
+            }
             // NPC begins walking to work
             if (!atWork && goTowards(workTile))
             {
@@ -339,7 +345,10 @@ public class NPC : MovingObject
             // NPC stops working
             atWork = false;
             timeloc = Time.time;
-
+            if (eaten < 2)
+            {
+                eat();
+            }
             // NPC begins walking home
             if (!atHome && goTowards(homeTile))
             {
@@ -352,7 +361,7 @@ public class NPC : MovingObject
         {
             atWork = false;
             timeloc = Time.time;
-
+            eaten = 0;
             // NPC begins walking home (if not already there)
             if (!atHome && goTowards(homeTile))
             {
@@ -361,6 +370,28 @@ public class NPC : MovingObject
                 asleep = true;
             }
         }
+    }
+
+    private void eat()
+    {
+        int i;
+        eaten++;
+        Items.Item toEat = Items.getRandomItemOfTag("FOOD", inventory);
+        if (toEat == null)
+        {
+            hasFood = false;
+            return;
+        }
+        i = inventory[toEat];
+        if (i < 2)
+        {
+            inventory.Remove(toEat);
+        }
+        else
+        {
+            inventory[toEat]--;
+        }
+
     }
 
     // Sees if it can interact with anyone

@@ -89,7 +89,22 @@ public class Items : MonoBehaviour
         public int damage { get; set; }
         public int armor { get; set; }
     }
-
+    internal static Item getRandomItemOfTag(string key, Dictionary<Item, int> items)
+    {
+        List<Item> itemsWithTag = new List<Item>();
+        foreach (KeyValuePair<Item, int> item in items)
+        {
+            if (item.Key.tags.Contains(key))
+            {
+                itemsWithTag.Add(item.Key);
+            }
+        }
+        if (itemsWithTag.Count == 0)
+        {
+            return null;
+        }
+        return itemsWithTag[Random.Range(0, itemsWithTag.Count)];
+    }
     //maybe make this more effecient by keeping lists of all items with each tag
     internal static Item getRandomItemOfTag(string key)
     {
