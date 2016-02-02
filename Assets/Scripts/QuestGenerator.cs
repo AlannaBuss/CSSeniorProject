@@ -42,7 +42,7 @@ public class QuestGenerator : MonoBehaviour
 					print ("Quest given out");
 					ranQuest.startQuest (ranPerson);
 					ranPerson.hasQuest = true;
-					ranPerson.mission = ranQuest;
+					ranPerson.initQuest (ranQuest);
 					ranPerson.draw ();
 					return true;
 				}	

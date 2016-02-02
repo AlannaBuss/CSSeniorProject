@@ -51,6 +51,7 @@ public class NPC : MovingObject
     {
         timeStep();       // walking
         checkGreeting();  // check for interactions
+		hasQuest = true;
     }
 
     // Create the initial NPC
