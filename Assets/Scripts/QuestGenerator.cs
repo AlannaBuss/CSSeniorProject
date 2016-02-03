@@ -44,6 +44,8 @@ public class QuestGenerator : MonoBehaviour
 					ranPerson.hasQuest = true;
 					ranPerson.mission = ranQuest;
 					ranPerson.draw();
+					ranPerson.initQuest (ranQuest);
+					ranPerson.draw ();
 					return true;
 				}	
 			}
