@@ -10,8 +10,21 @@ public enum timeOfDay
     // night = 10-15
 }
 
-public class WorldTime : MonoBehaviour {
+public class World : MonoBehaviour {
+    // 
+    public static int QUEST_COMPLETE = -10;
+    public static int NPC_HAPPY = -5;
+    public static int WORLD_GROWS = +2;
+    // 
+    public static int NPC_DIES = +20;
+    public static int NPC_PSYCHOTIC = +10;
+    public static int NPC_UPSET = +5;
+    public static int KILL_ANIMAL = +5;
+    public static int STEAL = +2;
+    public static int DESTROY = +2;
+    public static int TAKE_ITEM = +1;
 
+    private static int chaos;               // Current chaos in the world
     private static float timeStart;         // Time the world was created
     private static timeOfDay dayTime;       // Current time of day
 
@@ -19,14 +32,20 @@ public class WorldTime : MonoBehaviour {
     private static float timeOfDayLength = 5;
     private static float lengthOfDay = timeOfDayLength * 3;
 
+    // References
+    public static Player player;
+    public static Textbox textbox;
+    public static Inventory inventoryBox;
+
 
 	// Use this for initialization
 	public static void Start ()
     {
+        chaos = 0;
         timeStart = Time.time;
         dayTime = timeOfDay.morning;
 	}
-    
+
     // Gets the # of days passed since the world's creation
     public static int GetDaysPassed()
     {
@@ -50,5 +69,22 @@ public class WorldTime : MonoBehaviour {
             return timeOfDay.night;
 
         return timeOfDay.morning;
+    }
+
+    // Gets the chaos in the world
+    public static int GetChaos()
+    {
+        return chaos;
+    }
+
+    // Adds or decreases world chaos
+    public static void AddChaos(int delta)
+    {
+        chaos += delta;
+
+        if (chaos <= 0)
+            chaos = 0;
+        else if (chaos >= 100)
+            chaos = 100;
     }
 }

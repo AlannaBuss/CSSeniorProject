@@ -10,18 +10,10 @@ public class Player : MovingObject
     public int money = 0;
     public List<Items.Item> inventory = new List<Items.Item>();
 
-    // Tells player if it is in contact with something
-    public bool touchingBuilding;
-    public bool touchingObject;
-    public bool touchingNPC;
-
     // Tells player if it is inside a building, market, or checking inventory
     public bool insideBuilding;
     public bool insideMarket;
     public bool inInventory;
-
-    // The thing the player is in contact with
-    private GameObject touching;
 
 
 
@@ -31,8 +23,8 @@ public class Player : MovingObject
         base.Start();
 
         // Put default items in inventory
-        inventory.Add(Items.getItemWithName("axe"));
         inventory.Add(Items.getItemWithName("sword"));
+        inventory.Add(Items.getItemWithName("axe"));
     }
 
     // Update is called once per frame
@@ -62,43 +54,27 @@ public class Player : MovingObject
 
         // Move left
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            touchingBuilding = touchingObject = touchingNPC = false;
             AttemptMove<Player>(-1, 0);
-        }
         // Move right
         else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            touchingBuilding = touchingObject = touchingNPC = false;
             AttemptMove<Player>(1, 0);
-        }
         // Move up
         else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            touchingBuilding = touchingObject = touchingNPC = false;
             AttemptMove<Player>(0, 1);
-        }
         // Move down
         else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            touchingBuilding = touchingObject = touchingNPC = false;
             AttemptMove<Player>(0, -1);
-        }
         // Interaction
         else if (Input.GetKeyDown(KeyCode.Z))
-        {
             tryToInteract();
-        }
-        // Hide textbox
+        // Hide or show textbox
         else if (Input.GetKeyDown(KeyCode.H))
-        {
-            textbox.Hide();
-        }
-        // Show inventory
+            World.textbox.Hide();
+        // Hide or show inventory
         else if (Input.GetKeyDown(KeyCode.I))
         {
-            inventoryBox.ShowInventory(inventory);
-            inInventory = inventoryBox.isDrawn;
+            World.inventoryBox.ShowInventory(inventory);
+            inInventory = World.inventoryBox.isDrawn;
         }
     }
 
@@ -110,10 +86,10 @@ public class Player : MovingObject
                 List<string> text = new List<string>();
                 text.Add(inventory[num].name);
                 text.Add(inventory[num].description);
-                textbox.WriteAll(text);
+                World.textbox.WriteAll(text);
             }
             else if (inventory[num].tags.Contains("FOOD")) {
-                textbox.Write("You ate the " + inventory[num].name);
+                World.textbox.Write("You ate the " + inventory[num].name);
                 inventory.RemoveAt(num);
             }
             else
@@ -146,23 +122,14 @@ public class Player : MovingObject
         boxCollider.enabled = true;
 
         //Return true if any of the surrounding area has an object you interact with it
-
         if (leftHit.transform != null)
-        {
             target = leftHit.collider.gameObject.GetComponent<Object>();
-        }
         else if (rightHit.transform != null)
-        {
             target = rightHit.collider.gameObject.GetComponent<Object>();
-        }
         else if (upHit.transform != null)
-        {
             target = upHit.collider.gameObject.GetComponent<Object>();
-        }
         else if (downHit.transform != null)
-        {
             target = downHit.collider.gameObject.GetComponent<Object>();
-        }
 
         if (target != null)
         {
@@ -175,19 +142,14 @@ public class Player : MovingObject
 
     private void doInteraction(Items.Item with, Object target)
     {
-        Items.Item received;
-
-        if (with == null)
-            received = target.Interact();
-        else
-            received = target.InteractWithItem(with);
+        Items.Item received = target.Interact(with);
 
         if (received != null)
         {
             if (inventory.Count < 10)
                 inventory.Add(received);
             else
-                textbox.Write("Your inventory is full.");
+                World.textbox.Write("Your inventory is full.");
         }
     }
 
@@ -216,16 +178,14 @@ public class Player : MovingObject
         // We collided with a building
         if (other.tag == "Building")
         {
-            touchingBuilding = true;
-            touching = other.gameObject;
+            GameObject touching = other.gameObject;
             Building building = touching.GetComponent<Building>();
-            textbox.Write("Press z to enter " + building.getName());
+            World.textbox.Write("Press z to enter " + building.getName());
         }
         // We collided with an npc
         else if (other.tag == "NPC")
         {
-            touchingNPC = true;
-            touching = other.gameObject;
+
         }
     }
 }

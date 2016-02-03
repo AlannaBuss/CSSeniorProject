@@ -37,13 +37,13 @@ public class QuestGenerator : MonoBehaviour
 			int count;
 			for (count = 0; count < npcs.Count; count++)
 			{
-				NPC ranPerson = npcs.ElementAt (count).GetComponent<NPC> ();
-				if (ranQuest.personCheck (ranPerson)) {
+				NPC ranPerson = npcs.ElementAt(count).GetComponent<NPC> ();
+				if (ranQuest.personCheck(ranPerson)) {
 					print ("Quest given out");
 					ranQuest.startQuest (ranPerson);
 					ranPerson.hasQuest = true;
 					ranPerson.mission = ranQuest;
-					ranPerson.draw ();
+					ranPerson.draw();
 					return true;
 				}	
 			}
@@ -79,7 +79,7 @@ public class QuestGenerator : MonoBehaviour
 
 		if(numQuests < k_maxQuests)
 		{
-			if(mapSet && generateQuest(map.player.mapX, map.player.mapY))
+            if (mapSet && generateQuest(World.player.mapX, World.player.mapY))
 			{
 					numQuests++;
 			}

@@ -19,11 +19,6 @@ public class MapManager : MonoBehaviour
     public TileManager tileManager;
     public TileManager[][] map = new TileManager[10][];
 
-    // Outside references
-    public Player player;
-    public Textbox textbox;
-    public Inventory inventory;
-
     // Prefab objects
     public GameObject[] caveOutOuterWall, forestOuterWall, townOuterWall, marketOuterWall, farmOuterWall;
     public GameObject[] caveOutWalls, forestWalls, townWalls, marketWalls, farmWalls;
@@ -34,7 +29,6 @@ public class MapManager : MonoBehaviour
     private Grid grid;
     public Dictionary<string, List<Building>> buildings = new Dictionary<string, List<Building>>();
     public List<GameObject> npcs = new List<GameObject>();          // List of all NPCs on all tiles
-    public List<Vector3> npcLocs = new List<Vector3>();             // List of all NPC locations
 
 
 
@@ -42,42 +36,34 @@ public class MapManager : MonoBehaviour
     void Update()
     {
         // Clear the previous npc locations on the tiles
-        for (int x = 0; x < columns; x++)
-        {
-            for (int y = 0; y < rows; y++)
-            {
-                if (map != null && map[x] != null)
-                {
+        for (int x = 0; x < columns; x++) {
+            for (int y = 0; y < rows; y++) {
+                if (map != null && map[x] != null) {
                     map[x][y].ClearNpcs();
                 }
             }
         }
 
         // Update all of the NPCs
-        for (int i = 0; i < npcs.Count; i++)
-        {
+        foreach (GameObject npc in npcs) {
             // Update the NPC
-            NPC character = npcs[i].GetComponent<NPC>();
+            NPC character = npc.GetComponent<NPC>();
             character.tile = map[character.mapX][character.mapY];
             character.Update();
 
-            // Update map locations
-            Vector3 newLoc = new Vector3(character.tileX, character.tileY, 0);
-            npcLocs[i] = newLoc;
             // Update tile locations
-            map[character.mapX][character.mapY].npcs.Add(npcs[i]);
+            map[character.mapX][character.mapY].npcs.Add(npc);
 
             // Check for interactions
-            if (character.talking == true)
-            {
-                character.speak(character.mapX == player.mapX && character.mapY == player.mapY);
+            if (character.talking == true) {
+                character.speak(character.mapX == World.player.mapX && character.mapY == World.player.mapY);
                 character.talking = false;
             }
         }
 
         // Redraw the map tile
-        if (map != null && player != null && map[player.mapX] != null)
-            map[player.mapX][player.mapY].Draw();
+        if (map != null && World.player != null && map[World.player.mapX] != null)
+            map[World.player.mapX][World.player.mapY].Draw();
     }
 
     // Sets up the map
@@ -86,7 +72,7 @@ public class MapManager : MonoBehaviour
         string[] seasons = { "WINTER", "SPRING", "SUMMER", "FALL" };
         season = seasons[Random.Range(0, 4)];
 
-        numCave = Random.Range(1, 3);       // 1 to 2 caves
+        numCave = Random.Range(2, 4);       // 2 to 3 caves
         numMarket = Random.Range(7, 11);    // 7 to 10 markets
         numFarm = Random.Range(7, 10);      // 7 to 10 farms
         tileManager = GetComponent<TileManager>();
@@ -110,8 +96,6 @@ public class MapManager : MonoBehaviour
                     Vector3 loc = bldg.transform.position;
                     Building building = bldg.GetComponent<Building>();
                     building.map = this;
-                    building.textbox = textbox;
-                    building.player = player;
 
                     // Market place; buildings are stalls
                     if (map[x][y].tileType == "Market")
@@ -136,19 +120,7 @@ public class MapManager : MonoBehaviour
                 foreach (GameObject npc in map[x][y].npcs)
                 {
                     Vector3 loc = npc.transform.position;
-                    npcLocs.Add(new Vector3(loc.x + 10 * x, loc.y + 10 * y, loc.z));
                     npcs.Add(npc);
-                }
-                // Find all the objects
-                foreach (GameObject wall in map[x][y].walls)
-                {
-                    if (wall.GetComponent<Object>())
-                        wall.GetComponent<Object>().textbox = textbox;
-                }
-                foreach (GameObject wall in map[x][y].floors)
-                {
-                    if (wall.GetComponent<Object>())
-                        wall.GetComponent<Object>().textbox = textbox;
                 }
             }
         }
@@ -297,8 +269,6 @@ public class MapManager : MonoBehaviour
 
             // Initialize the NPC
             character.map = this;
-            character.textbox = textbox;
-            character.inventoryBox = inventory;
             character.init(homeBldg, workBldg, i);
         }
     }

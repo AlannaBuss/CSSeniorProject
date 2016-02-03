@@ -137,33 +137,30 @@ public class NPC : MovingObject
 
         // Write the text if the player is on the same screen
         if (display)
-            textbox.Write(dialogue, sprite);
+            World.textbox.Write(dialogue, sprite, false);
 
-        if (personality == "shy")
-        {
-            // 20% chance to become sad
-            if (Random.Range(0, 5) == 0)
-            {
-                RemoveState("normal");
-                RemoveState("happy");
-                states.Add("sad");
-                sprite.setState("sad");
-            }
+        // 10% chance to become sad
+        if (personality == "shy") {
+            if (Random.Range(0, 10) == 0)
+                MakeSad();
         }
+        // Becomes happy
+        else if (personality == "outgoing")
+            MakeHappy();
     }
 
 
 
 	// NPCS should have an interaction special to them
-    public override Items.Item Interact()
+    public override Items.Item Interact(Items.Item item = null)
 	{
         Items.Item toReturn = null;
 
 		if (hasQuest) {
-			textbox.Write (mission.questSpeech (), sprite);
-			textbox.Write (mission.finishQuest (), sprite); 
+            World.textbox.Write(mission.questSpeech(), sprite);
+            World.textbox.Write(mission.finishQuest(), sprite); 
 		} else {
-			textbox.Write("Hi Player!", sprite);
+            World.textbox.Write(Dialogue.getDialogue(personality, "player_response"), sprite);
 		}
 
         return toReturn;
@@ -180,17 +177,18 @@ public class NPC : MovingObject
     protected override bool MoveToTile(int xDir, int yDir)
     {
         bool moved;
-        int pMapX = map.player.mapX;
-        int pMapY = map.player.mapY;
-        int pTileX = map.player.tileX;
-        int pTileY = map.player.tileY;
+        int pMapX = World.player.mapX;
+        int pMapY = World.player.mapY;
+        int pTileX = World.player.tileX;
+        int pTileY = World.player.tileY;
 
         // Collision checking
-        if (pTileX == tileX + xDir && pTileY == tileY + yDir)
+        if (distance(tileX, pTileX, tileY, pTileY) <= 1 && pMapX == mapX && pMapY == mapY)
+            moved = false;
+        else if (pTileX == tileX + xDir && pTileY == tileY + yDir)
         {
             // On the same map
-            if (pMapY == mapY && pMapX == mapX)
-            {
+            if (pMapY == mapY && pMapX == mapX) {
                 moved = false;
             }
             // Heading to a different map
@@ -227,7 +225,11 @@ public class NPC : MovingObject
 
         // 25% chance to be something other than neutral state on default
         if (Random.Range(0, 4) == 0)
-            mood = Random.Range(0, 4);
+            mood = Random.Range(0, default_states.Length);
+        if (default_states[mood] == "happy")
+            World.AddChaos(World.NPC_HAPPY);
+        else if (default_states[mood] == "sad" || default_states[mood] == "angry")
+            World.AddChaos(World.NPC_UPSET);
 
         // update sprite to match state
         states.Add(default_states[mood]);
@@ -238,11 +240,16 @@ public class NPC : MovingObject
     private void initPersonality()
     {
         // Initiate the personality
-        int persona = Random.Range(0, 10);
-        string[] personalities = { "helpful", "aggressive", "outgoing", "alcoholic", "greedy", "shy", "brave", "amoral", "lazy", "psychotic" };
+        string[] personalities = { "helpful", "aggressive", "outgoing", "alcoholic", "greedy", "shy", "brave", "amoral", "lazy"};
+        personality = personalities[Random.Range(0, personalities.Length)];
+
+        // 5% chance of being psychotic
+        if (Random.Range(0, 100) < 5) {
+            personality = "psychotic";
+            World.AddChaos(World.NPC_PSYCHOTIC);
+        }
 
         // update sprite to match personality
-        personality = personalities[persona];
         sprite.setState(personality);
     }
 
@@ -318,7 +325,7 @@ public class NPC : MovingObject
     private void timeStep()
     {
         // NPC goes to work
-        if (WorldTime.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed)
+        if (World.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed)
         {
             // NPC wakes up
             asleep = false;
@@ -333,7 +340,7 @@ public class NPC : MovingObject
             }
         }
         // NPC goes home
-        if (WorldTime.GetTimeOfDay() == timeOfDay.evening && Time.time - timeloc > movementSpeed)
+        if (World.GetTimeOfDay() == timeOfDay.evening && Time.time - timeloc > movementSpeed)
         {
             // NPC stops working
             atWork = false;
@@ -347,7 +354,7 @@ public class NPC : MovingObject
             }
         }
         // NPC goes to sleep
-        if (WorldTime.GetTimeOfDay() == timeOfDay.night)
+        if (World.GetTimeOfDay() == timeOfDay.night)
         {
             atWork = false;
             timeloc = Time.time;
@@ -421,5 +428,42 @@ public class NPC : MovingObject
             if (states[i] == toRemove)
                 states.RemoveAt(i);
         }
+    }
+
+    private void MakeHappy()
+    {
+        if (states.Contains("happy"))
+            return;
+
+        World.AddChaos(World.NPC_HAPPY);
+        RemoveState("normal");
+        RemoveState("sad");
+        RemoveState("angry");
+        states.Add("happy");
+        sprite.setState("happy");
+    }
+
+    private void MakeSad()
+    {
+        if (states.Contains("sad"))
+            return;
+
+        World.AddChaos(World.NPC_UPSET);
+        RemoveState("normal");
+        RemoveState("happy");
+        states.Add("sad");
+        sprite.setState("sad");
+    }
+
+    private void MakeAngry()
+    {
+        if (states.Contains("angry"))
+            return;
+
+        World.AddChaos(World.NPC_UPSET);
+        RemoveState("normal");
+        RemoveState("happy");
+        states.Add("angry");
+        sprite.setState("angry");
     }
 }

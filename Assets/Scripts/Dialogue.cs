@@ -8,14 +8,44 @@ using Random = UnityEngine.Random;
 
 public class Dialogue : MonoBehaviour
 {
+    public class DialogueTree
+    {
+        private Dictionary<String, List<String>> dialogue;
+
+        public DialogueTree()
+        {
+            dialogue = new Dictionary<String, List<String>>();
+        }
+
+        public void addResponse(String responseType, String response)
+        {
+            if (!dialogue.ContainsKey(responseType))
+                dialogue.Add(responseType, new List<String>());
+            dialogue[responseType].Add(response);
+        }
+
+        public List<String> getResponses(String responseType)
+        {
+            return dialogue[responseType];
+        }
+
+        public String getRandomResponse(String responseType)
+        {
+            List<String> responses = getResponses(responseType);
+            if (responses == null || responses.Count == 0)
+                return "";
+            return responses[Random.Range(0, responses.Count)];
+        }
+    }
+
     // Holds the different kinds of dialogues different kinds of personalities have
-    public static Dictionary<String, Dictionary<String, String>> dialogue;
+    public static Dictionary<String, DialogueTree> dialogueTree;
 
     // Initializes dialogue from text files
     public static void Start()
     {
         string[] files = Directory.GetFiles("dialogue");
-        dialogue = new Dictionary<String, Dictionary<String, String>>();
+        dialogueTree = new Dictionary<String, DialogueTree>();
 
         foreach (string file in files)
         {
@@ -31,10 +61,10 @@ public class Dialogue : MonoBehaviour
                     if (l[0] == "~")
                     {
                         personality = l[1];
-                        dialogue.Add(l[1], new Dictionary<String, String>());
+                        dialogueTree.Add(l[1], new DialogueTree());
                     }
                     else
-                        dialogue[personality].Add(l[0], l[2]);
+                        dialogueTree[personality].addResponse(l[0], l[2]);
                 }
                 catch (NullReferenceException)
                 {
@@ -46,6 +76,6 @@ public class Dialogue : MonoBehaviour
 
     public static string getDialogue(string personality, string type)
     {
-        return (dialogue[personality])[type];
+        return (dialogueTree[personality]).getRandomResponse(type).Replace('_', ' ');
     }
 }

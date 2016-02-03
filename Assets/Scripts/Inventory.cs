@@ -65,7 +65,6 @@ public class Inventory : MonoBehaviour {
 
         for (int n = 0; n < items.Count; n++)
         {
-            //items[n].sprite.SetActive(true);
             mesh.text += n + " " + items[n].name;
             if (shop)
                 mesh.text += " [" + items[n].value + "G]";
@@ -80,10 +79,5 @@ public class Inventory : MonoBehaviour {
         mesh.text = "";
         inventoryBox.SetActive(false);
         container.SetActive(false);
-
-        foreach (Items.Item item in items)
-        {
-            //item.sprite.SetActive(false);
-        }
     }
 }

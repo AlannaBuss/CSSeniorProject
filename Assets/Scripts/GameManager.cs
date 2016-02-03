@@ -26,11 +26,13 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        int days = WorldTime.GetDaysPassed();
-        timeOfDay time = WorldTime.GetTimeOfDay();
+        int days = World.GetDaysPassed();
+        timeOfDay time = World.GetTimeOfDay();
         string season = mapManager.season;
 
-        textMesh.text = "Day " + days + ", " + time + "\n        " + season;
+        textMesh.text = "     CHAOS: " + World.GetChaos();
+        textMesh.text += "\nDay " + days + ", " + time;
+        textMesh.text += "\n        " + season;
     }
 
     public static void logger(String str)
@@ -70,7 +72,7 @@ public class GameManager : MonoBehaviour
         Items.Start();
         Jobs.Start();
         Dialogue.Start();
-        WorldTime.Start();
+        World.Start();
 
         // Create the textbox
         textbox = Instantiate(textbox, new Vector3(4.5f, 0.5f, 0f), Quaternion.identity) as GameObject;
@@ -101,8 +103,6 @@ public class GameManager : MonoBehaviour
         // Create the map
         map = Instantiate(map, new Vector3(5.5f, 5.5f, 0), Quaternion.identity) as GameObject;
         mapManager = map.GetComponent<MapManager>();
-        mapManager.textbox = textManager;
-        mapManager.inventory = inventoryManager;
         mapManager.SetupScene();
 
 		//Set up the Quest generator
@@ -118,13 +118,14 @@ public class GameManager : MonoBehaviour
         player = Instantiate(player, new Vector3(tile.x, tile.y, 10f), Quaternion.identity) as GameObject;
         playerManager = player.GetComponent<Player>();
         playerManager.map = mapManager;
-        playerManager.textbox = textManager;
-        playerManager.inventoryBox = inventoryManager;
         playerManager.PlaceAt((int)townCenter.x, (int)townCenter.y, (int)tile.x, (int)tile.y, (int)(10 - tile.y));
 
         // Draw our area on the map
-        mapManager.player = playerManager;
         mapManager.GetReferences();
         mapManager.Draw(playerManager.mapX, playerManager.mapY);
+
+        World.player = playerManager;
+        World.textbox = textManager;
+        World.inventoryBox = inventoryManager;
     }
 }

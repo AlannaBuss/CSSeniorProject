@@ -17,11 +17,7 @@ public class Building : Object
     // Prefab objects
     public GameObject[] outerWalls, walls, floors, objects;
 
-    // Used for if the building is a market
-    public string itemType;         // types of items that are generally sold here
-
     // Outside references
-    public Player player;
     public MapManager map;
 
 
@@ -59,44 +55,32 @@ public class Building : Object
     // Draws the inside of the building when Player enters
     public void Enter()
     {
-        textbox.Write("Entered " + getName());
+        World.textbox.Write("Entered " + getName());
 
         // Building can be entered
         if (tag != "MARKET")
-        {
-            player.insideBuilding = true;
-            //outside.Undraw();
-            //inside.Draw();
-        }
+            World.player.insideBuilding = true;
         // Building is a market; display goods that can be bought
         else
-        {
-            player.insideMarket = true;
-        }
+            World.player.insideMarket = true;
     }
 
     // Draws the outside of the building when Player exits
     public void Exit()
     {
-        textbox.Write("Exited " + getName());
+        World.textbox.Write("Exited " + getName());
 
         if (tag != "MARKET")
-        {
-            player.insideBuilding = false;
-            //inside.Undraw();
-            //outside.Draw();
-        }
+            World.player.insideBuilding = false;
         else
-        {
-            player.insideMarket = false;
-        }
+            World.player.insideMarket = false;
     }
 
-    public override Items.Item Interact()
+    public override Items.Item Interact(Items.Item item = null)
     {
         Items.Item toReturn = null;
 
-        if (player.insideBuilding || player.insideMarket)
+        if (World.player.insideBuilding || World.player.insideMarket)
             Exit();
         else
             Enter();

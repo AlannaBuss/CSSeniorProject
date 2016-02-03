@@ -1,30 +1,68 @@
 ~ aggressive
 greeting = Hey_you!
+greeting = I'm_talking_to_you!
+greeting = Hey!_Listen!
 greeting_response = What_do_you_want?
+greeting_response = Why_are_you_talking_to_me?
+player_response = What_do_you_want_Player?
 ~ alcoholic
 greeting = Helllooo
+greeting = Hiiii
 greeting_response = -burps-
+greeting_response = -hic-
+greeting_response = I'm_not_drunk!
+player_response = Hellooo_Player!
+player_response = I'm_not_drunk,_Player!
 ~ brave
 greeting = Hello!
 greeting_response = Hello!
+player_response = Off_to_do_brave_things_Player?
+player_response = Defeat_the_Wizard_Player!
+player_response = Only_you_can_save_us_Player!
 ~ greedy
 greeting = Hello!
 greeting_response = Got_any_cash?
+player_response = Got_any_cash_Player?
+player_response = Give_me_some_cash,_Player!
 ~ helpful
 greeting = How_are_you?
+greeting = Need_any_help?
 greeting_response = Anything_you_need_from_me?
+player_response = Let_me_help_your_journey_Player!
+player_response = Press_i_to_view_your_inventory.
+player_response = Press_h_to_hide_the_textbox.
+player_response = Press_z_to_interact_with_things.
+player_response = People_with_an_!_need_your_help_Player!
+player_response = Press_number_to_use/check_an_item.
+player_response = Stealing_and_killing_increase_CHAOS.
+player_response = Help_people_to_decrease_CHAOS.
 ~ lazy
 greeting = hi
 greeting_response = hi
+player_response = hi_Player.
+player_response = too_tired...
 ~ outgoing
 greeting = Hello_there!_How_are_you_doing?
 greeting_response = Have_a_nice_day!
+player_response = Enjoy_your_stay_here_Player!
+player_response = Talk_to_everyone_you_meet_Player!
 ~ psychotic
 greeting = -giggles-
 greeting_response = -screeches-
+player_response = -screeches-
+player_response = More...More_CHAOS_Player
+player_response = giggles...Can_you_feel_the_CHAOS?
 ~ shy
 greeting = H-hello..
 greeting_response = Eek!
+player_response = Oh...H-hello_Player...
+player_response = Don't_hurt_me_Player!
+player_response = Psychopaths_are_scary,_Player...
 ~ amoral
 greeting = Sup.
 greeting_response = Sup.
+player_response = Destroying_things_is_fun,_Player!
+player_response = You_can_steal_from_farms,_Player!
+player_response = You_can_kill_animals,_Player!
+player_response = You_can_kill_people,_Player!
+player_response = You_can_chop_down_trees,_Player!

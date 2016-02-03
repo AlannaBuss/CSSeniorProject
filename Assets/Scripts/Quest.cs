@@ -71,7 +71,7 @@ public class Quest : MonoBehaviour
 	//it is interacted with.
 	public void interact()
 	{
-		questGiver.textbox.Write ("Quest");
+		World.textbox.Write("Quest");
 	}
 
 	//Currently returns what should be said by someone with this quest
