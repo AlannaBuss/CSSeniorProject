@@ -272,4 +272,19 @@ public class MapManager : MonoBehaviour
             character.init(homeBldg, workBldg, i);
         }
     }
+
+    public NPC getRandomNpcWithTag(string tag, bool work)
+    {
+        List<NPC> npcsWithTag = new List<NPC>();
+        foreach (GameObject obj in npcs)
+        {
+            NPC npc = (NPC) obj.GetComponent(typeof(NPC));
+            if (npc.job.work_tag.Contains(tag) && work || !work && npc.job.home_tag.Contains(tag))
+            {
+                npcsWithTag.Add(npc);
+            }
+        }
+        return npcsWithTag[Random.Range(0, npcsWithTag.Count)];
+    }
+
 }

@@ -2,5 +2,5 @@ name = City_Slicker
 home_tag = RESIDENTIAL
 work_tag = RESIDENTIAL
 inventory = 5-10
-item_weights = FOOD(20) COMMON(60) VALUABLE(20)
+item_weights = FOOD(40) COMMON(40) VALUABLE(20)
 job_weight = 80
