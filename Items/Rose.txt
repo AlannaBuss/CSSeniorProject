@@ -1,6 +1,7 @@
 name = rose
-value = 25
+value = 4
 tags = FLOWER
 canWield = false
 isArmor = false
+sprite = Sprites/items/flower
 description = The_most_romantic_of_flowers.

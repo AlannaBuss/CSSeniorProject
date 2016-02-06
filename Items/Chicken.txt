@@ -1,6 +1,8 @@
 name = chicken
-value = 25
+value = 10
 tags = FOOD MEAT
 canWield = false
 isArmor = false
-description = Are_actually_brave._You_feel_like_you've_been_lied_to._Heals_15_hp.
+heal = 15
+sprite = Sprites/items/meat
+description = Are_actually_brave._Heals_15hp.

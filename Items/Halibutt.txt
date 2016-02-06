@@ -1,6 +1,8 @@
 name = halibutt
-value = 25
+value = 10
 tags = FOOD FISH
 canWield = false
 isArmor = false
-description = The_butt_of_a_Halibut._Pretty_tasty_though._Heals_15_hp.
+heal = 15
+sprite = Sprites/items/fish
+description = The_butt_of_a_Halibut._Tasty._Heals_15hp.

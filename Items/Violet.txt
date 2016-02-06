@@ -1,6 +1,7 @@
 name = violet
-value = 7
+value = 3
 tags = FLOWER
 canWield = false
 isArmor = false
-description = Is_actually_blue._You_feel_like_you've_been_lied_to.
+sprite = Sprites/items/flower
+description = Is_actually_blue._You've_been_lied_to.

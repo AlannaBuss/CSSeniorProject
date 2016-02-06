@@ -1,6 +1,7 @@
 name = gold_watch
-value = 25
+value = 30
 tags = VALUABLE
 canWield = false
 isArmor = false
+sprite = Sprites/items/misc
 description = Well_aren't_you_fancy.

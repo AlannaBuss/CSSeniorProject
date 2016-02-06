@@ -1,6 +1,7 @@
 name = milk
-value = 10
+value = 2
 tags = FOOD
 canWield = false
 isArmor = false
+heal = 5
 description = Fresh_milk._Still_warm.

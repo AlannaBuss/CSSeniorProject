@@ -4,4 +4,5 @@ tags = COMMON
 canWield = true
 isArmor = false
 damage = 1
-description = You_eat_with_it._Can_also_scoop_out_the_eyes_of_your_enemies.
+sprite = Sprites/items/misc
+description = Also_for_scooping_out_your_enemy's_eyes.

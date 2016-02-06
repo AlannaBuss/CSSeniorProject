@@ -1,6 +1,8 @@
 name = apple
-value = 5
+value = 1
 tags = FOOD FRUIT
 canWield = false
 isArmor = false
-description = Crunchy_and_goes_good_in_pie._Heals_5_hp.
+heal = 5
+sprite = Sprites/items/fruit
+description = Crunchy_and_good_in_pie._Heals_5hp.

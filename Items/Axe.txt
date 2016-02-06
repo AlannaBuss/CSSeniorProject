@@ -1,8 +1,8 @@
 name = axe
-value = 15
+value = 10
 tags = WEAPON
 canWield = true
 isArmor = false
-damage = 2
+damage = 5
 sprite = Sprites/items/misc
-description = Chops_down_trees
+description = Chops_down_trees.

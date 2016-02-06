@@ -1,6 +1,8 @@
 name = lettuce
-value = 10
+value = 3
 tags = FOOD VEGETABLE
 canWield = false
 isArmor = false
-description = Lettuce_join_your_bowels._Heals_15_hp.
+heal = 7
+sprite = Sprites/items/vegetable
+description = Grown_fresh._Heals_7hp.

@@ -1,6 +1,8 @@
 name = lamb
-value = 50
+value = 15
 tags = FOOD MEAT
 canWield = false
 isArmor = false
-description = Why_are_children_so_juicy_and_tender._Heals_25_hp.
+heal = 25
+sprite = Sprites/items/meat
+description = Juicy_and_tender._Heals_25hp.

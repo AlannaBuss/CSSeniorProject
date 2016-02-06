@@ -1,6 +1,7 @@
 name = daisy
-value = 5
+value = 2
 tags = FLOWER
 canWield = false
 isArmor = false
-description = Bright_and_yellow._Like_the_bee_that_sat_on_it.
+sprite = Sprites/items/flower
+description = Bright_and_yellow.

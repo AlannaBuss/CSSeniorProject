@@ -1,6 +1,8 @@
 name = star_fruit
-value = 25
+value = 7
 tags = FOOD FRUIT
 canWield = false
 isArmor = false
+heal = 20
+sprite = Sprites/items/fruit
 description = Heavenly._Heals_20_hp.

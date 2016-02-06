@@ -79,6 +79,7 @@ public class Items : MonoBehaviour
             canWield = wield;
             isArmor = armor;
         }
+
 		public GameObject sprite { get; set; }
         public int value { get; set; }
         public string name { get; set; }
@@ -88,7 +89,9 @@ public class Items : MonoBehaviour
         public bool isArmor { get; set; }
         public int damage { get; set; }
         public int armor { get; set; }
+        public int heal { get; set; }
     }
+
     internal static Item getRandomItemOfTag(string key, Dictionary<Item, int> items)
     {
         List<Item> itemsWithTag = new List<Item>();
@@ -105,6 +108,7 @@ public class Items : MonoBehaviour
         }
         return itemsWithTag[Random.Range(0, itemsWithTag.Count)];
     }
+
     //maybe make this more effecient by keeping lists of all items with each tag
     internal static Item getRandomItemOfTag(string key)
     {
@@ -118,6 +122,7 @@ public class Items : MonoBehaviour
         }
         return itemsWithTag[Random.Range(0, itemsWithTag.Count)];
     }
+
 	// Gets an item with the given name
     public static Item getItemWithName(string name)
     {

@@ -1,6 +1,8 @@
 name = tuna
-value = 10
+value = 3
 tags = FOOD FISH
 canWield = false
 isArmor = false
-description = Not_that_fresh_but_you're_hungry_so_heals_10_hp_anyway.
+heal = 5
+sprite = Sprites/items/fish
+description = Not_that_fresh_but_you're_hungry._Heals_5hp.

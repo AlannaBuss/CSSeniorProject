@@ -1,6 +1,8 @@
 name = beef
-value = 100
+value = 20
 tags = FOOD MEAT
 canWield = false
 isArmor = false
+heal = 9999
+sprite = Sprites/items/meat
 description = The_whole_cow._Heals_full_hp.

@@ -1,6 +1,7 @@
 name = dandelion
-value = 3
+value = 1
 tags = FLOWER
 canWield = false
 isArmor = false
+sprite = Sprites/items/flower
 description = Actually_a_weed,_but_they_won't_care._Probably.

@@ -1,6 +1,8 @@
 name = orange
-value = 5
+value = 1
 tags = FOOD FRUIT
 canWield = false
 isArmor = false
-description = Comes_pre-sliced._Thanks,_nature._Heals_5_hp.
+heal = 5
+sprite = Sprites/items/fruit
+description = Comes_pre-sliced._Heals_5hp.

@@ -1,6 +1,8 @@
 name = carrots
-value = 10
+value = 3
 tags = FOOD VEGETABLE
 canWield = false
 isArmor = false
-description = Because_you_really_carrots_about_healthy_eating._Heals_15_hp.
+heal = 7
+sprite = Sprites/items/vegetable
+description = Grown_fresh._Heals_7hp.

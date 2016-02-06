@@ -1,6 +1,8 @@
 name = salmon
-value = 100
+value = 20
 tags = FOOD FISH
 canWield = false
 isArmor = false
+heal = 9999
+sprite = Sprites/items/fish
 description = The_greatest_of_all_fish._Heals_full_hp.
