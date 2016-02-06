@@ -40,11 +40,13 @@ public class NPC : MovingObject
     private int eaten = 0;
     private bool hasFood = true;
     int gold;
+    private bool goingToStore = false;
+    private NPC storeTarget;
     // Use this for initialization
     public void Start()
     {
         timeloc = Time.time;
-        fillInventoy();
+        
         base.Start();
     }
 
@@ -79,7 +81,7 @@ public class NPC : MovingObject
         // We're done with the sprite for now
         sprite.placeAt(new Vector3(tileX, tileY, 0));
         sprite.undraw();
-
+        fillInventoy();
         // How fast the NPC moves initially
         if (personality == "lazy")
             movementSpeed = Random.Range(1.5f, 2.0f);
@@ -258,7 +260,8 @@ public class NPC : MovingObject
 
     private void fillInventoy()
     {
-        gold = Random.Range(5, 30); //need to add base gold and pay rates to jobs.
+        
+        gold = Random.Range(100, 400); //need to add base gold and pay rates to jobs.
         int invSize = Random.Range(job.inventoryMin, job.inventoryMax);
         for (int i = 0; i < invSize; i++)
         {
@@ -328,6 +331,14 @@ public class NPC : MovingObject
     // Timebased checking for what NPC is doing
     private void timeStep()
     {
+        if (goingToStore && goTowards(storeTarget.workTile) && Time.time - timeloc > movementSpeed)
+        {
+            atWork = false;
+            Transaction("FOOD", Random.Range(2, 6), this ,storeTarget);
+            hasFood = true;
+            goingToStore = false;
+        }
+
         // NPC goes to work
         if (World.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed)
         {
@@ -339,9 +350,22 @@ public class NPC : MovingObject
             {
                 eat();
             }
+            if (atWork && !hasFood && !goingToStore)
+            {
+                //sends them to get food at a randomized time
+                if (Random.Range(0, 5) == 0)
+                {
+                    goingToStore = true;
+                    storeTarget = tile.map.getRandomNpcWithTag("FARM", false);
+                }
+
+            }
+            
+
             // NPC begins walking to work
             if (!atWork && goTowards(workTile))
             {
+               
                 // enter work
                 atWork = true;
             }
@@ -377,6 +401,35 @@ public class NPC : MovingObject
                 asleep = true;
             }
         }
+    }
+
+
+    public static  void Transaction(string tag, int amount, NPC buyer, NPC seller)
+    {
+        do
+        {
+            Items.Item tobuy = Items.getRandomItemOfTag(tag, seller.inventory);
+            if (tobuy == null)
+            {
+                break;
+            }
+
+            seller.inventory[tobuy]--;
+            if (seller.inventory[tobuy] == 0)
+            {
+                seller.inventory.Remove(tobuy);
+            }
+
+            if (!buyer.inventory.ContainsKey(tobuy))
+            {
+                buyer.inventory.Add(tobuy, 0);
+            }
+            buyer.inventory[tobuy]++;
+            buyer.gold -= tobuy.value;
+            seller.gold += tobuy.value;
+            print(tobuy.name + " bought for " + tobuy.value + " buyer now has " + buyer.gold + " gold and seller now has " + seller.gold);
+            amount--;
+        } while (buyer.gold > 0 && amount > 0);
     }
 
     private void eat()

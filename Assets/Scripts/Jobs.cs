@@ -53,15 +53,17 @@ public class Jobs : MonoBehaviour {
     internal static Items.Item getRandomItem(Job job)
     {
         int itemPoll = Random.Range(0, 100);
+        KeyValuePair<string, int> lastItemWeight = new KeyValuePair<string, int>("FOOD", 1);
         foreach(KeyValuePair<string, int> itemWeight in job.item_weights)
         {
             itemPoll -= itemWeight.Value;
-            if(itemPoll < 0)
+            if(itemPoll <= 0)
             {
                 return (Items.getRandomItemOfTag(itemWeight.Key));
             }
+            lastItemWeight = itemWeight;
         }
-        return null;
+        return (Items.getRandomItemOfTag(lastItemWeight.Key));
     }
 
     public static Job getRandomJob()
