@@ -30,6 +30,9 @@ public class Textbox : MonoBehaviour
     private List<string> text = new List<string>();    // Actual text
     private List<Message> queue = new List<Message>(); // Queue of text messages
 
+    // Stop scrolling/showing text if in quest speech
+    public bool paused = false;
+
     // Text scrolling stuff
     private float time;             // Time created in seconds
     private float timeLoc;          // Current time in seconds
@@ -39,6 +42,9 @@ public class Textbox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (paused)
+            return;
+
         // Scroll the text
         if (text.Count > 3 && text.Count - textScroll > 3 && Time.time - timeLoc > textSpeed)
         {
