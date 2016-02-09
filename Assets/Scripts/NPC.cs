@@ -55,7 +55,6 @@ public class NPC : MovingObject
     {
         timeStep();       // walking
         checkGreeting();  // check for interactions
-		hasQuest = true;
     }
 
     // Create the initial NPC
@@ -128,7 +127,6 @@ public class NPC : MovingObject
     public void undraw()
     {
         sprite.undraw();
-
         if (hasQuest)
         {
             quest.SetActive(false);
@@ -162,8 +160,7 @@ public class NPC : MovingObject
         Items.Item toReturn = null;
 
 		if (hasQuest) {
-            World.textbox.Write(mission.questSpeech(), sprite);
-            World.textbox.Write(mission.finishQuest(), sprite); 
+			World.textbox.Write (mission.interact (), sprite); 
 		} else {
             World.textbox.Write(Dialogue.getDialogue(personality, "player_response"), sprite);
 		}

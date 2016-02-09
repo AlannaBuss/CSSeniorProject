@@ -7,6 +7,7 @@ using System;
 public class Quest : MonoBehaviour
 {
 	private Boolean inUse;
+	private Boolean start;
 	//We want to wait some amount of quests before this one is used again
 	private int waitPeriod;
 	//How many rotations do we want to wait?
@@ -17,6 +18,7 @@ public class Quest : MonoBehaviour
 	{
 		inUse = false;
 		waitPeriod = 0;
+		start = false;
 	}
 		
 	//Checks if the quest is currently in use for the quest count
@@ -65,28 +67,26 @@ public class Quest : MonoBehaviour
 	{
 		inUse = true;
 		questGiver = person;
-	}
-
-	//The interaction method that is called by the object with the quest when
-	//it is interacted with.
-	public void interact()
-	{
-		World.textbox.Write("Quest");
-	}
-
-	//Currently returns what should be said by someone with this quest
-	//TODO Make next two methods into the interact
-	public string questSpeech ()
-	{
-		return "I need some help!";
+		start = false;
 	}
 		
-	//Called when the quest completes. 
-	public string finishQuest ()
+
+	//What happens when an NPC is interacted with when they have a quest
+	public string interact()
 	{
+		if (!start) 
+		{
+			start = true;
+			return "Hi, this is a tutorial quest! Talk to me again to finish.";
+		}
+		World.AddChaos(World.QUEST_COMPLETE);
+		questGiver.hasQuest = false;
+		questGiver.mission = null;
+		questGiver.quest.SetActive(false);
 		inUse = false;
 		waitPeriod = k_numRotations;
 		return "Thank you!";
+		
 	}
 }
 
