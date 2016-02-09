@@ -82,7 +82,7 @@ public class Quest : MonoBehaviour
 		World.AddChaos(World.QUEST_COMPLETE);
 		questGiver.hasQuest = false;
 		questGiver.mission = null;
-		questGiver.quest.SetActive(false);
+		questGiver.quest.active = false;
 		inUse = false;
 		waitPeriod = k_numRotations;
 		return "Thank you!";

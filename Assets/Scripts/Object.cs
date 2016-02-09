@@ -50,10 +50,12 @@ public class Object : MonoBehaviour
     {
 		mission = givenMission;
         hasQuest = true;
+		quest.active = false;
         quest = Instantiate(quest) as GameObject;
 
         PlaceAt(mapX, mapY, tileX, tileY, 0);
-        quest.SetActive(false);
+		quest.SetActive(false);
+
     }
 
     // Called when an object is interacted with.
@@ -63,6 +65,11 @@ public class Object : MonoBehaviour
 
         World.textbox.Write("It's a thingy.");
         
+		if(hasQuest = false) 
+		{
+			quest.active = false;
+		}
+
         return toReturn;
     }
 
