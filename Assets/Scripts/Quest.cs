@@ -7,7 +7,7 @@ using System;
 public class Quest : MonoBehaviour
 {
 	private Boolean inUse;
-	private Boolean start;
+	private int speechCounter;
 	//We want to wait some amount of quests before this one is used again
 	private int waitPeriod;
 	//How many rotations do we want to wait?
@@ -18,7 +18,7 @@ public class Quest : MonoBehaviour
 	{
 		inUse = false;
 		waitPeriod = 0;
-		start = false;
+		speechCounter = 0;
 	}
 		
 	//Checks if the quest is currently in use for the quest count
@@ -67,25 +67,33 @@ public class Quest : MonoBehaviour
 	{
 		inUse = true;
 		questGiver = person;
-		start = false;
+		speechCounter = 0;
 	}
 		
 
 	//What happens when an NPC is interacted with when they have a quest
 	public string interact()
 	{
-		if (!start) 
-		{
-			start = true;
-			return "Hi, this is a tutorial quest! Talk to me again to finish.";
+		string forReturn;
+		if (speechCounter == 0) {
+			forReturn = "Hi, could you just talk to me for" + "\n" +  "awhile?";
+		} else if (speechCounter == 1) {
+			forReturn = "I guess the world is just getting" + "\n" + "so...chaotic.";
+		} else if (speechCounter == 2) {
+			forReturn = "And I guess I'm feeling like I'm" + "\n" +  "not important.";
+		}else if (speechCounter == 3) {
+			forReturn = "But...I guess I have to go" + "\n" + "and make myself important!";
+		} else {
+			World.AddChaos (World.QUEST_COMPLETE);
+			questGiver.hasQuest = false;
+			questGiver.mission = null;
+			questGiver.quest.active = false;
+			inUse = false;
+			waitPeriod = k_numRotations;
+			forReturn = "Thanks for listening. You've really" + "\n" + "helped.";
 		}
-		World.AddChaos(World.QUEST_COMPLETE);
-		questGiver.hasQuest = false;
-		questGiver.mission = null;
-		questGiver.quest.active = false;
-		inUse = false;
-		waitPeriod = k_numRotations;
-		return "Thank you!";
+		speechCounter++;
+		return forReturn;
 		
 	}
 }
