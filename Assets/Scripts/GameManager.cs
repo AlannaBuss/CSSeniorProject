@@ -103,6 +103,7 @@ public class GameManager : MonoBehaviour
         // Create the map
         map = Instantiate(map, new Vector3(5.5f, 5.5f, 0), Quaternion.identity) as GameObject;
         mapManager = map.GetComponent<MapManager>();
+        World.map = mapManager;
         mapManager.SetupScene();
 
 		//Set up the Quest generator
@@ -117,8 +118,7 @@ public class GameManager : MonoBehaviour
         // Create the player
         player = Instantiate(player, new Vector3(tile.x, tile.y, 10f), Quaternion.identity) as GameObject;
         playerManager = player.GetComponent<Player>();
-        playerManager.map = mapManager;
-        playerManager.PlaceAt((int)townCenter.x, (int)townCenter.y, (int)tile.x, (int)tile.y, (int)(10 - tile.y));
+        playerManager.PlaceAt((int)townCenter.x, (int)townCenter.y, (int)tile.x, (int)tile.y);
 
         // Draw our area on the map
         mapManager.GetReferences();

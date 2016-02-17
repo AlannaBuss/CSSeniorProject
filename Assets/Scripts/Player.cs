@@ -15,6 +15,8 @@ public class Player : MovingObject
     public bool insideMarket;
     public bool inInventory;
 
+    // Detect but don't collide with NPCs
+    public LayerMask npcLayer;
 
 
     // Use this for initialization
@@ -52,8 +54,14 @@ public class Player : MovingObject
         else if (Input.GetKeyDown(KeyCode.Alpha9))
             checkNumberKey(9);
 
+        // Interaction
+        else if (Input.GetKeyDown(KeyCode.Z))
+            tryToInteract();
+        if (insideMarket || insideBuilding)
+            return;
+
         // Move left
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
             AttemptMove<Player>(-1, 0);
         // Move right
         else if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -64,15 +72,11 @@ public class Player : MovingObject
         // Move down
         else if (Input.GetKeyDown(KeyCode.DownArrow))
             AttemptMove<Player>(0, -1);
-        // Interaction
-        else if (Input.GetKeyDown(KeyCode.Z))
-            tryToInteract();
         // Hide or show textbox
         else if (Input.GetKeyDown(KeyCode.H))
             World.textbox.Hide();
         // Hide or show inventory
-        else if (Input.GetKeyDown(KeyCode.I))
-        {
+        else if (Input.GetKeyDown(KeyCode.I)) {
             World.inventoryBox.ShowInventory(inventory);
             inInventory = World.inventoryBox.isDrawn;
         }
@@ -102,20 +106,18 @@ public class Player : MovingObject
     {
         //Start is where the player is
         Vector2 start = transform.position;
+
         //Make vectors for the surrounding area.
         Vector2 left = start + new Vector2(-1, 0);
         Vector2 right = start + new Vector2(1, 0);
         Vector2 down = start + new Vector2(0, -1);
         Vector2 up = start + new Vector2(0, 1);
-
-        //We don't want to have the player be considered something to interact with so
-        //we turn this off temporarily
         boxCollider.enabled = false;
 
-        RaycastHit2D leftHit = Physics2D.Linecast(start, left, blockingLayer);
-        RaycastHit2D rightHit = Physics2D.Linecast(start, right, blockingLayer);
-        RaycastHit2D downHit = Physics2D.Linecast(start, down, blockingLayer);
-        RaycastHit2D upHit = Physics2D.Linecast(start, up, blockingLayer);
+        RaycastHit2D leftHit = Physics2D.Linecast(start, left, blockingLayer | npcLayer);
+        RaycastHit2D rightHit = Physics2D.Linecast(start, right, blockingLayer | npcLayer);
+        RaycastHit2D downHit = Physics2D.Linecast(start, down, blockingLayer | npcLayer);
+        RaycastHit2D upHit = Physics2D.Linecast(start, up, blockingLayer | npcLayer);
         Object target = null;
 
         //turn this back on since we have done all of our hit creation.
@@ -131,8 +133,7 @@ public class Player : MovingObject
         else if (downHit.transform != null)
             target = downHit.collider.gameObject.GetComponent<Object>();
 
-        if (target != null)
-        {
+        if (target != null) {
             doInteraction(with, target);
             return true;
         }
@@ -163,8 +164,8 @@ public class Player : MovingObject
         base.AttemptMove<T>(xDir, yDir);
 
         // Draw the new tile we're on
-        map.Undraw(oldX, oldY);
-        map.Draw(mapX, mapY);
+        World.map.Undraw(oldX, oldY);
+        World.map.Draw(mapX, mapY);
     }
 
     protected override void OnCantMove<T>(T component)
@@ -176,16 +177,10 @@ public class Player : MovingObject
     private void OnTriggerEnter2D(Collider2D other)
     {
         // We collided with a building
-        if (other.tag == "Building")
-        {
+        if (other.tag == "Building") {
             GameObject touching = other.gameObject;
             Building building = touching.GetComponent<Building>();
             World.textbox.Write("Press z to enter " + building.getName());
-        }
-        // We collided with an npc
-        else if (other.tag == "NPC")
-        {
-
         }
     }
 }

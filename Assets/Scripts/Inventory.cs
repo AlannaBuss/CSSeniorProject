@@ -12,13 +12,9 @@ public class Inventory : MonoBehaviour {
     private List<Items.Item> items = new List<Items.Item>();
     public bool isDrawn;
 
-	
-	// Update is called once per frame
-	void Update ()
-    {
-	
-	}
 
+
+    // Instantiate the inventory
     public void Setup()
     {
         // Create the inventory image
@@ -42,10 +38,10 @@ public class Inventory : MonoBehaviour {
         mesh.fontSize = 17;
     }
 
+    // Draw or undraw the inventory
     public void ShowInventory(List<Items.Item> i, bool shop = false)
     {
-        if (isDrawn)
-        {
+        if (isDrawn) {
             Undraw();
             if (items != i)
                 Draw(i, shop);
@@ -53,6 +49,8 @@ public class Inventory : MonoBehaviour {
         else
             Draw(i, shop);
     }
+
+
 
     // Draws the inventory to the screen
     private void Draw(List<Items.Item> i, bool shop)

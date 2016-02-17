@@ -19,34 +19,29 @@ public class NPC : MovingObject
     public Jobs.Job job;
     public Dictionary<Items.Item, int> inventory = new Dictionary<Items.Item, int>();
 
-    // NPC this npc is talking to
+    // Talking stuff
     public Boolean talking = false;
     public string interactionType;
     private NPC interactingWith;
 
-    // Places this npc goes
-    public Building home, work;
-    public Vector3 homeTile, workTile;
-
     // Movement stuff
-    int ID; // npc's id on the map
+    public Building home, work;
     private float timeloc;
     private float movementSpeed;
     
-    // Outside references
-    public TileManager tile;    // tile the npc is on
-
-    //Economy Stuff
+    // Economy Stuff
+    int gold;
     private int eaten = 0;
     private bool hasFood = true;
-    int gold;
     private bool goingToStore = false;
     private NPC storeTarget;
+
+
+
     // Use this for initialization
     public void Start()
     {
         timeloc = Time.time;
-        
         base.Start();
     }
 
@@ -58,14 +53,11 @@ public class NPC : MovingObject
     }
 
     // Create the initial NPC
-    public void init(Building h, Building w, int ID)
+    public void init(Building h, Building w)
     {
         // Decide where the npc works and lives
         home = h;
         work = w;
-        homeTile = home.loc;
-        workTile = work.loc;
-        this.ID = ID;
         home.owners.Add(this);
         work.owners.Add(this);
 
@@ -76,22 +68,22 @@ public class NPC : MovingObject
         // Create a random state and personality for the npc
         initState();
         initPersonality();
-
-        // We're done with the sprite for now
         sprite.placeAt(new Vector3(tileX, tileY, 0));
         sprite.undraw();
+
         fillInventoy();
-        // How fast the NPC moves initially
+
+        // How fast the NPC moves
         if (personality == "lazy")
-            movementSpeed = Random.Range(1.5f, 2.0f);
+            movementSpeed = Random.Range(1.0f, 1.5f);
         else
             movementSpeed = Random.Range(0.5f, 1.0f);
     }
 
     // Places the npc at the given location
-    public void PlaceAt(int mX, int mY, int tX, int tY, int tZ)
+    public override void PlaceAt(int mX, int mY, int tX, int tY)
     {
-        Vector3 pos = new Vector3(tX, tY, tZ);
+        Vector3 pos = new Vector3(tX, tY, 0);
         mapX = mX;
         mapY = mY;
         tileX = tX;
@@ -99,9 +91,7 @@ public class NPC : MovingObject
         transform.position = pos;
 
         if (hasQuest)
-        {
-            quest.GetComponent<Transform>().position = new Vector3(tX, tY + .8f, tZ);
-        }
+            quest.GetComponent<Transform>().position = new Vector3(tX, tY + .8f, 0);
         if (sprite != null)
             sprite.placeAt(pos);
     }
@@ -116,11 +106,8 @@ public class NPC : MovingObject
     public void draw()
     {
         sprite.draw();
-
         if (hasQuest)
-        {
             quest.SetActive(true);
-        }
     }
 
     // Removes the npc from the screen
@@ -128,9 +115,7 @@ public class NPC : MovingObject
     {
         sprite.undraw();
         if (hasQuest)
-        {
             quest.SetActive(false);
-        }
     }
 
     // NPC is saying something
@@ -159,11 +144,10 @@ public class NPC : MovingObject
 	{
         Items.Item toReturn = null;
 
-		if (hasQuest) {
-			World.textbox.Write (mission.interact (), sprite); 
-		} else {
+		if (hasQuest)
+			World.textbox.Write(mission.interact (), sprite); 
+		else
             World.textbox.Write(Dialogue.getDialogue(personality, "player_response"), sprite);
-		}
 
         return toReturn;
 	}
@@ -184,34 +168,12 @@ public class NPC : MovingObject
         int pTileX = World.player.tileX;
         int pTileY = World.player.tileY;
 
-        // Collision checking
+        // Collision checking with player
         if (distance(tileX, pTileX, tileY, pTileY) <= 1 && pMapX == mapX && pMapY == mapY)
             moved = false;
-        else if (pTileX == tileX + xDir && pTileY == tileY + yDir)
-        {
-            // On the same map
-            if (pMapY == mapY && pMapX == mapX) {
-                moved = false;
-            }
-            // Heading to a different map
-            else if ( (tileX == 0 && xDir == -1 && mapX - 1 == pMapX && mapY == pMapY) || // map left
-                 (tileX == 9 && xDir == 1 && mapX + 1 == pMapX && mapY == pMapY) ||  // map right
-                 (tileY == 0 && yDir == -1 && mapY - 1 == pMapY && mapX == pMapX) || // map below
-                 (tileY == 9 && yDir == 1 && mapY + 1 == pMapY && mapX == pMapX) )   // map above
-            {
-                moved = false;
-            }
-            // No collision
-            else
-            {
-                moved = base.MoveToTile(xDir, yDir);
-                PlaceAt(mapX, mapY, tileX, tileY, 0);
-            }
-        }
-        else
-        {
+        else {
             moved = base.MoveToTile(xDir, yDir);
-            PlaceAt(mapX, mapY, tileX, tileY, 0);
+            PlaceAt(mapX, mapY, tileX, tileY);
         }
 
         return moved;
@@ -246,9 +208,10 @@ public class NPC : MovingObject
         personality = personalities[Random.Range(0, personalities.Length)];
 
         // 5% chance of being psychotic
-        if (Random.Range(0, 100) < 5) {
+        if (Random.Range(0, 100) < 5 && World.GetNumPsychopaths() < 5) {
             personality = "psychotic";
             World.AddChaos(World.NPC_PSYCHOTIC);
+            World.AddPsychopath(1);
         }
 
         // update sprite to match personality
@@ -257,7 +220,6 @@ public class NPC : MovingObject
 
     private void fillInventoy()
     {
-        
         gold = Random.Range(100, 400); //need to add base gold and pay rates to jobs.
         int invSize = Random.Range(job.inventoryMin, job.inventoryMax);
         for (int i = 0; i < invSize; i++)
@@ -328,71 +290,61 @@ public class NPC : MovingObject
     // Timebased checking for what NPC is doing
     private void timeStep()
     {
-        if (goingToStore && goTowards(storeTarget.workTile) && Time.time - timeloc > movementSpeed)
-        {
+        if (goingToStore && goTowards(storeTarget.work.getLocation()) && Time.time - timeloc > movementSpeed) {
             atWork = false;
-            Transaction("FOOD", Random.Range(2, 6), this ,storeTarget);
+            Transaction("FOOD", Random.Range(2, 6), this, storeTarget);
             hasFood = true;
             goingToStore = false;
         }
 
         // NPC goes to work
-        if (World.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed)
-        {
+        if (World.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed) {
             // NPC wakes up
             asleep = false;
             atHome = false;
             timeloc = Time.time;
-            if (eaten < 1)
-            {
-                eat();
-            }
-            if (atWork && !hasFood && !goingToStore)
-            {
-                //sends them to get food at a randomized time
-                if (Random.Range(0, 5) == 0)
-                {
-                    goingToStore = true;
-                    storeTarget = tile.map.getRandomNpcWithTag("FARM", false);
-                }
 
+            if (eaten < 1)
+                eat();
+            if (atWork && !hasFood && !goingToStore) {
+                //sends them to get food at a randomized time
+                if (Random.Range(0, 5) == 0) {
+                    goingToStore = true;
+                    storeTarget = World.map.getRandomNpcWithTag("FARM", false);
+                }
             }
             
-
             // NPC begins walking to work
-            if (!atWork && goTowards(workTile))
-            {
-               
+            if (!atWork && goTowards(work.getLocation())) {
                 // enter work
                 atWork = true;
             }
         }
+
         // NPC goes home
-        if (World.GetTimeOfDay() == timeOfDay.evening && Time.time - timeloc > movementSpeed)
-        {
+        if (World.GetTimeOfDay() == timeOfDay.evening && Time.time - timeloc > movementSpeed) {
             // NPC stops working
             atWork = false;
             timeloc = Time.time;
+
             if (eaten < 2)
-            {
                 eat();
-            }
             // NPC begins walking home
-            if (!atHome && goTowards(homeTile))
-            {
+            if (!atHome && goTowards(home.getLocation())) {
                 // enter home
                 atHome = true;
             }
         }
+
         // NPC goes to sleep
         if (World.GetTimeOfDay() == timeOfDay.night)
         {
             atWork = false;
             timeloc = Time.time;
             eaten = 0;
+
             // NPC begins walking home (if not already there)
-            if (!atHome && goTowards(homeTile))
-            {
+            if (!atHome && goTowards(home.getLocation())) {
                 // enter home and start sleeping
                 atHome = true;
                 asleep = true;
@@ -454,7 +406,7 @@ public class NPC : MovingObject
     // Sees if it can interact with anyone
     private void checkGreeting()
     {
-        List<GameObject> npcs = tile.npcs;
+        List<GameObject> npcs = World.map.map[mapX][mapY].npcs;
 
         // NPC is already talking to someone else
         if (talking)
@@ -473,18 +425,22 @@ public class NPC : MovingObject
                     return;
 
                 // Check if this NPC wants to initiate interaction
-                if (personality == "outgoing") // 100% chance
-                {
+                if (personality == "outgoing") {
+                    // 100% chance
                     talking = true;
                     interactionType = "greeting";
                 }
-                else if (personality == "shy" && Random.Range(0, 10) == 0) // 10% chance
-                {
+                else if (personality == "shy" && Random.Range(0, 10) == 0) {
+                    // 10% chance
                     talking = true;
                     interactionType = "greeting";
                 }
-                else if (Random.Range(0, 2) == 0) // 50% chance
-                {
+                else if (personality == "psychotic") {
+                    // % chance to talk
+                    // % chance to kill NPC
+                }
+                else if (Random.Range(0, 2) == 0) {
+                    // 50% chance
                     talking = true;
                     interactionType = "greeting";
                 }

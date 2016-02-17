@@ -4,7 +4,6 @@ using System.Collections;
 //The abstract keyword enables you to create classes and class members that are incomplete and must be implemented in a derived class.
 public abstract class MovingObject : Object
 {
-    public MapManager map;                  // reference to the map
     public float moveTime = 0.1f;           //Frames it will take object to move
     public LayerMask blockingLayer;         //Layer on which collision will be checked.
 
@@ -57,7 +56,7 @@ public abstract class MovingObject : Object
         if (tileX == 0 && xDir == -1)
         {
             // There's an object on the other side blocking movement
-            if (map.map[mapX - 1][mapY].ObjectAt(9, tileY))
+            if (World.map.map[mapX - 1][mapY].ObjectAt(9, tileY))
                 return false;
             // Move onto the tile next to us
             else
@@ -71,7 +70,7 @@ public abstract class MovingObject : Object
         else if (tileX == 9 && xDir == 1)
         {
             // There's an object on the other side blocking movement
-            if (map.map[mapX + 1][mapY].ObjectAt(0, tileY))
+            if (World.map.map[mapX + 1][mapY].ObjectAt(0, tileY))
                 return false;
             // Move onto the tile next to us
             else
@@ -85,7 +84,7 @@ public abstract class MovingObject : Object
         else if (tileY == 0 && yDir == -1)
         {
             // There's an object on the other side blocking movement
-            if (map.map[mapX][mapY - 1].ObjectAt(tileX, 9))
+            if (World.map.map[mapX][mapY - 1].ObjectAt(tileX, 9))
                 return false;
             // Move onto the tile next to us
             else
@@ -99,7 +98,7 @@ public abstract class MovingObject : Object
         else if (tileY == 9 && yDir == 1)
         {
             // There's an object on the other side blocking movement
-            if (map.map[mapX][mapY + 1].ObjectAt(tileX, 0))
+            if (World.map.map[mapX][mapY + 1].ObjectAt(tileX, 0))
                 return false;
             // Move onto the tile next to us
             else

@@ -27,6 +27,7 @@ public class Textbox : MonoBehaviour
     private GameObject container;   // Placeholder for containing the text
     private TextMesh mesh;          // Text on screen
     private npcSprite sprite;       // Sprite of speaking npc
+
     private List<string> text = new List<string>();    // Actual text
     private List<Message> queue = new List<Message>(); // Queue of text messages
 

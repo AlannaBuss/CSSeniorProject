@@ -11,11 +11,11 @@ public class MapManager : MonoBehaviour
     private int townSize = 7;       // size of the town
 
     // Map information
-    public string season;           // current season
-    public Vector2 townCenter;      // center of the town on this map
     private int numCave;            // # of caves on this map
     private int numMarket;          // # of markets in the town
     private int numFarm;            // # of farms on this map
+    public string season;           // current season
+    public Vector2 townCenter;      // center of the town on this map
     public TileManager tileManager;
     public TileManager[][] map = new TileManager[10][];
 
@@ -28,7 +28,7 @@ public class MapManager : MonoBehaviour
     // Grid information
     private Grid grid;
     public Dictionary<string, List<Building>> buildings = new Dictionary<string, List<Building>>();
-    public List<GameObject> npcs = new List<GameObject>();          // List of all NPCs on all tiles
+    public List<GameObject> npcs = new List<GameObject>();  // List of all NPCs on all tiles
 
 
 
@@ -38,9 +38,8 @@ public class MapManager : MonoBehaviour
         // Clear the previous npc locations on the tiles
         for (int x = 0; x < columns; x++) {
             for (int y = 0; y < rows; y++) {
-                if (map != null && map[x] != null) {
+                if (map != null && map[x] != null)
                     map[x][y].ClearNpcs();
-                }
             }
         }
 
@@ -48,7 +47,6 @@ public class MapManager : MonoBehaviour
         foreach (GameObject npc in npcs) {
             // Update the NPC
             NPC character = npc.GetComponent<NPC>();
-            character.tile = map[character.mapX][character.mapY];
             character.Update();
 
             // Update tile locations
@@ -74,7 +72,7 @@ public class MapManager : MonoBehaviour
 
         numCave = Random.Range(2, 4);       // 2 to 3 caves
         numMarket = Random.Range(7, 11);    // 7 to 10 markets
-        numFarm = Random.Range(7, 10);      // 7 to 10 farms
+        numFarm = Random.Range(5, 11);      // 5 to 10 farms
         tileManager = GetComponent<TileManager>();
 
         grid = new Grid(columns, rows);
@@ -92,40 +90,37 @@ public class MapManager : MonoBehaviour
                 // Find all the buildings
                 foreach (GameObject bldg in map[x][y].buildings)
                 {
-                    String type = "";
                     Vector3 loc = bldg.transform.position;
                     Building building = bldg.GetComponent<Building>();
-                    building.map = this;
+                    String type = building.buildingType;
 
-                    // Market place; buildings are stalls
-                    if (map[x][y].tileType == "Market")
-                        type = "MARKET";
-                    // Town; buildings are homes
-                    if (map[x][y].tileType == "Town")
-                        type = "RESIDENTIAL";
-                    // Caves are workplaces (miners)
-                    if (map[x][y].tileType == "Cave")
-                        type = "CAVE";
-                    // Farms are workplaces
-                    if (map[x][y].tileType == "Farm")
-                        type = "FARM";
-
-                    building.SetUp(map[x][y], type);
-                    building.loc = new Vector3(loc.x + 10 * x, loc.y + 10 * y, loc.z);
+                    building.PlaceAt(x, y, (int)loc.x, (int)loc.y);
                     if (!buildings.ContainsKey(type))
                         buildings[type] = new List<Building>();
                     buildings[type].Add(building);
                 }
                 // Find all the NPCs
                 foreach (GameObject npc in map[x][y].npcs)
-                {
-                    Vector3 loc = npc.transform.position;
                     npcs.Add(npc);
-                }
             }
         }
 
         SetupNPCs();
+    }
+
+    // 
+    public NPC getRandomNpcWithTag(string tag, bool work)
+    {
+        List<NPC> npcsWithTag = new List<NPC>();
+        foreach (GameObject obj in npcs)
+        {
+            NPC npc = (NPC)obj.GetComponent(typeof(NPC));
+            if (npc.job.work_tag.Contains(tag) && work || !work && npc.job.home_tag.Contains(tag))
+            {
+                npcsWithTag.Add(npc);
+            }
+        }
+        return npcsWithTag[Random.Range(0, npcsWithTag.Count)];
     }
 
     // Draws the tile at the given location to the screen
@@ -149,9 +144,7 @@ public class MapManager : MonoBehaviour
         {
             map[x] = new TileManager[11];
             for (int y = 0; y < rows; y++)
-            {
                 map[x][y] = (TileManager)Instantiate(tileManager, new Vector3(5, 5, 0), Quaternion.identity);
-            }
         }
     }
 
@@ -167,9 +160,7 @@ public class MapManager : MonoBehaviour
         for (int x = townX - 3; x <= townX + 3; x++)
         {
             for (int y = townY - 3; y <= townY + 3; y++)
-            {
                 town.Add(new Vector3(x, y, 0f));
-            }
         }
         return town;
     }
@@ -208,8 +199,6 @@ public class MapManager : MonoBehaviour
         {
             for (int y = 0; y < rows; y++)
             {
-                map[x][y].map = this;
-
                 // Market
                 if (grid.findTile(markets, x, y) != -1)
                 {
@@ -248,10 +237,10 @@ public class MapManager : MonoBehaviour
     private void SetupNPCs()
     {
         // Give each of the NPCs a home and a workplace
-        for (int i = 0; i < npcs.Count; i++)
+        foreach (GameObject npc in npcs)
         {
             // Choose a random house and workplace
-            NPC character = npcs[i].GetComponent<NPC>();
+            NPC character = npc.GetComponent<NPC>();
             character.job = Jobs.getRandomJob();
             string workType = character.job.work_tag;
             string homeType = character.job.home_tag;
@@ -268,23 +257,7 @@ public class MapManager : MonoBehaviour
             }
 
             // Initialize the NPC
-            character.map = this;
-            character.init(homeBldg, workBldg, i);
+            character.init(homeBldg, workBldg);
         }
     }
-
-    public NPC getRandomNpcWithTag(string tag, bool work)
-    {
-        List<NPC> npcsWithTag = new List<NPC>();
-        foreach (GameObject obj in npcs)
-        {
-            NPC npc = (NPC) obj.GetComponent(typeof(NPC));
-            if (npc.job.work_tag.Contains(tag) && work || !work && npc.job.home_tag.Contains(tag))
-            {
-                npcsWithTag.Add(npc);
-            }
-        }
-        return npcsWithTag[Random.Range(0, npcsWithTag.Count)];
-    }
-
 }

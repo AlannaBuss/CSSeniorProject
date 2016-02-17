@@ -4,36 +4,33 @@ using System.Collections;
 public enum timeOfDay
 {
     morning, evening, night
-
-    // morning = 0-5
-    // evening = 5-10
-    // night = 10-15
 }
 
 public class World : MonoBehaviour {
-    // 
-    public static int QUEST_COMPLETE = -10;
-    public static int NPC_HAPPY = -5;
-    public static int WORLD_GROWS = +2;
-    // 
-    public static int NPC_DIES = +20;
-    public static int NPC_PSYCHOTIC = +10;
-    public static int NPC_UPSET = +5;
-    public static int KILL_ANIMAL = +5;
-    public static int STEAL = +2;
-    public static int DESTROY = +2;
-    public static int TAKE_ITEM = +1;
+    // CHAOS CONSTANTS
+    public static int NPC_DIES = +5; // chaos
+    public static int NPC_PSYCHOTIC = +5;
+    public static int NPC_UPSET = +2;
+    public static int NPC_HAPPY = -1;
+    public static int QUEST_COMPLETE = -5;
+    public static int KILL_ANIMAL = +2;
+    public static int STEAL = +1;
+    public static int DESTROY = +1;
+    public static int TAKE_ITEM = 0;
 
-    private static int chaos;               // Current chaos in the world
-    private static float timeStart;         // Time the world was created
-    private static timeOfDay dayTime;       // Current time of day
+    // World Chaos
+    private static int chaos;
+    private static int numPsychopaths;
 
-    // Length of each time of day in minutes
-    private static float timeOfDayLength = 5;
+    // World Time
+    private static float timeOfDayLength = 3;    // length of morning
+    private static float timeStart;              // Time the world was created
+    private static timeOfDay dayTime;            // Current time of day
     private static float lengthOfDay = timeOfDayLength * 3;
 
-    // References
+    // World References
     public static Player player;
+    public static MapManager map;
     public static Textbox textbox;
     public static Inventory inventoryBox;
 
@@ -42,6 +39,7 @@ public class World : MonoBehaviour {
 	public static void Start ()
     {
         chaos = 0;
+        numPsychopaths = 0;
         timeStart = Time.time;
         dayTime = timeOfDay.morning;
 	}
@@ -50,7 +48,7 @@ public class World : MonoBehaviour {
     public static int GetDaysPassed()
     {
         float totalMinutes = (Time.time - timeStart) / 60;
-        float totalDays = totalMinutes / (timeOfDayLength * 3);
+        float totalDays = totalMinutes / lengthOfDay;
 
         return (int)totalDays;
     }
@@ -58,8 +56,8 @@ public class World : MonoBehaviour {
     // Gets the current time of the day (morning/evening/night)
     public static timeOfDay GetTimeOfDay()
     {
-        float curTime = Time.time;
-        float dayTime = (((curTime - timeStart) / 60) / timeOfDayLength) % lengthOfDay;
+        float totalMinutes = (Time.time - timeStart) / 60;
+        float dayTime = (totalMinutes / timeOfDayLength) % lengthOfDay;
 
         if (dayTime < timeOfDayLength)
             return timeOfDay.morning;
@@ -82,9 +80,24 @@ public class World : MonoBehaviour {
     {
         chaos += delta;
 
-        if (chaos <= 0)
+        if (chaos < 0)
             chaos = 0;
-        else if (chaos >= 100)
+        else if (chaos > 100)
             chaos = 100;
+    }
+
+    // Gets the number of psychopaths in the world
+    public static int GetNumPsychopaths()
+    {
+        return numPsychopaths;
+    }
+
+    // Adds or decreases number of psychopaths
+    public static void AddPsychopath(int delta)
+    {
+        numPsychopaths += delta;
+
+        if (numPsychopaths < 0)
+            numPsychopaths = 0;
     }
 }

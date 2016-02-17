@@ -148,10 +148,6 @@ public class TileManager : MonoBehaviour
     public List<GameObject> walls = new List<GameObject>();         // prefabs for the walls
     public List<GameObject> npcs = new List<GameObject>();          // prefabs for the npcs
 
-    // Outside references
-    public MapManager map;
-
-
 
     // Tells the tile what to use as sprites
     public void SetupSprites(GameObject[] outerwall, GameObject[] floor, GameObject[] building, GameObject[] wall)
@@ -214,39 +210,6 @@ public class TileManager : MonoBehaviour
             npcCount = new Count(0, 0);
             bSizeX = 2;
             bSizeY = 2;
-        }
-        // Tile is a home; has beds and dressers
-        else if (tileType.Equals("RESIDENTIAL"))
-        {
-            buildingCount = new Count(1, 3);    // beds
-            wallCount = new Count(5, 10);       // home objects
-            npcCount = new Count(0, 0);
-            bSizeX = 1;
-            bSizeY = 1;
-        }
-        else if (tileType.Equals("FARM"))
-        {
-            buildingCount = new Count(2, 4);    // animals
-            wallCount = new Count(5, 10);       // hay and stuff
-            npcCount = new Count(0, 0);
-            bSizeX = 1;
-            bSizeY = 1;
-        }
-        else if (tileType.Equals("CAVE"))
-        {
-            buildingCount = new Count(0, 2);    // precious gems
-            wallCount = new Count(20, 30);      // rocks
-            npcCount = new Count(0, 0);
-            bSizeX = 1;
-            bSizeY = 1;
-        }
-        else if (tileType.Equals("INN"))
-        {
-            buildingCount = new Count(5, 10);   // beds
-            wallCount = new Count(1, 3);        // home objects
-            npcCount = new Count(0, 0);
-            bSizeX = 1;
-            bSizeY = 1;
         }
 
         // Creates a new grid and sets up the floor and outerwalls
@@ -426,7 +389,7 @@ public class TileManager : MonoBehaviour
             randomPosition.z = 10 - randomPosition.y;
             GameObject instance = Instantiate(npc, randomPosition, Quaternion.identity) as GameObject;
             instance.transform.SetParent(boardHolder);
-            instance.GetComponent<NPC>().PlaceAt(tileCol, tileRow, (int)randomPosition.x, (int)randomPosition.y, (int)randomPosition.z);
+            instance.GetComponent<NPC>().PlaceAt(tileCol, tileRow, (int)randomPosition.x, (int)randomPosition.y);
             instance.SetActive(false);
             npcs.Add(instance);
         }

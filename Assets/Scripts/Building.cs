@@ -8,48 +8,33 @@ using System;
 public class Building : Object
 {
     // Building information
-    public string tag;              // The type of this building
-    public TileManager inside;      // The inside of the building
-    public TileManager outside;     // Reference to the tile the building is on
-    public List<NPC> owners;        // Reference to the NPCs who live/work here
-    public Vector3 loc;             // x = map, y = tile
-
-    // Prefab objects
-    public GameObject[] outerWalls, walls, floors, objects;
-
-    // Outside references
-    public MapManager map;
+    public string buildingType;                 // The type of this building
+    public List<NPC> owners = new List<NPC>();  // Reference to the NPCs who live/work here
 
 
-
-    // Sets up the building
-    public void SetUp(TileManager o, string t)
-    {
-        outside = o;
-        tag = t;
-        owners = new List<NPC>();
-    }
-
+    // Gets the name of the building
     public String getName()
     {
         String name = "";
-        String type = "";
 
         foreach (NPC npc in owners)
             name += " " + npc.name;
-        if (tag == "RESIDENTIAL")
-            type = "'s home";
-        else if (tag == "MARKET")
-            type = "'s market";
-        else if (tag == "FARM")
-            type = "'s farm";
-        else if (tag == "CAVE")
-        {
-            name = "";
-            type = "cave";
-        }
+        if (buildingType == "RESIDENTIAL")
+            name += "'s home";
+        else if (buildingType == "MARKET")
+            name += "'s market";
+        else if (buildingType == "FARM")
+            name += "'s farm";
+        else if (buildingType == "CAVE")
+            name += "cave";
 
-        return name + type;
+        return name;
+    }
+
+    // 
+    public Vector3 getLocation()
+    {
+        return new Vector3(tileX + mapX * 10, tileY * mapY * 10, 0);
     }
 
     // Draws the inside of the building when Player enters
@@ -58,11 +43,13 @@ public class Building : Object
         World.textbox.Write("Entered " + getName());
 
         // Building can be entered
-        if (tag != "MARKET")
-            World.player.insideBuilding = true;
-        // Building is a market; display goods that can be bought
-        else
+        if (buildingType == "MARKET")
             World.player.insideMarket = true;
+        // Building is a market; display goods that can be bought
+        else {
+            World.player.insideBuilding = true;
+            World.player.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0f);
+        }
     }
 
     // Draws the outside of the building when Player exits
@@ -70,12 +57,15 @@ public class Building : Object
     {
         World.textbox.Write("Exited " + getName());
 
-        if (tag != "MARKET")
-            World.player.insideBuilding = false;
-        else
+        if (buildingType == "MARKET")
             World.player.insideMarket = false;
+        else {
+            World.player.insideBuilding = false;
+            World.player.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+        }
     }
 
+    // Interact with the building (enter or exit)
     public override Items.Item Interact(Items.Item item = null)
     {
         Items.Item toReturn = null;

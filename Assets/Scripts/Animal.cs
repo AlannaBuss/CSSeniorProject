@@ -19,7 +19,6 @@ public class Animal : Object {
     {
         Items.Item toReturn = null;
 
-
         // ANIMAL has died
         if (tags.Contains("DEAD"))
             World.textbox.Write("It's dead.");
