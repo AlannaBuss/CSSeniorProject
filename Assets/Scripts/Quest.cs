@@ -13,6 +13,7 @@ public class Quest : MonoBehaviour
 	//How many rotations do we want to wait?
 	private static int k_numRotations = 2;
 	private NPC questGiver;
+	private NPC questGiver2;
 
 	public Quest ()
 	{
@@ -60,13 +61,21 @@ public class Quest : MonoBehaviour
 	{
 		return true;
 	}
+		
+
+	//Returns true if this person matches what the quest needs for the second person and false if not
+	public Boolean secondPersonCheck(NPC person)
+	{
+		return false;
+	}
 
 
 	//When the quest gets given out it takes in the NPC it is being given to
-	public void startQuest (NPC person)
+	public void startQuest (NPC person, NPC person2)
 	{
 		inUse = true;
 		questGiver = person;
+		questGiver2 = person2;
 		speechCounter = 0;
 	}
 		

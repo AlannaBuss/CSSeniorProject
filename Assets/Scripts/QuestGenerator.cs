@@ -39,16 +39,40 @@ public class QuestGenerator : MonoBehaviour
 			{
 				NPC ranPerson = npcs.ElementAt(count).GetComponent<NPC> ();
 				if (ranQuest.personCheck(ranPerson)) {
-					print ("Quest given out");
-					ranQuest.startQuest (ranPerson);
-					ranPerson.hasQuest = true;
-					ranPerson.mission = ranQuest;
-					ranPerson.draw();
-					ranPerson.initQuest (ranQuest);
-					ranPerson.draw ();
-					return true;
+					if (ranQuest.numPerson () == 2) {
+						int changeX = Random.Range (-1, 1);
+						int changeY = Random.Range (-1, 1);
+						List<GameObject> npcs2 = map.map [mapX + changeX] [mapY + changeY].npcs;
+						int count2;
+						for (count2 = 0; count2 < npcs2.Count; count2++) {
+							NPC ranPerson2 = npcs.ElementAt (count2).GetComponent<NPC> ();
+							if (ranQuest.secondPersonCheck (ranPerson2)) {
+								print ("Quest given out");
+								ranQuest.startQuest (ranPerson, ranPerson2);
+								ranPerson.hasQuest = true;
+								ranPerson2.hasQuest = true;
+								ranPerson.mission = ranQuest;
+								ranPerson2.mission = ranQuest;
+								ranPerson.draw ();
+								ranPerson2.draw ();
+								ranPerson.initQuest (ranQuest);
+								ranPerson.draw ();
+								return true;
+							}
+						}
+					} else {
+						print ("Quest given out");
+						ranQuest.startQuest (ranPerson, null);
+						ranPerson.hasQuest = true;
+						ranPerson.mission = ranQuest;
+						ranPerson.draw ();
+						ranPerson.initQuest (ranQuest);
+						ranPerson.draw ();
+						return true;
+					}
 				}	
 			}
+
 		}
 		return false;
 		
