@@ -31,7 +31,7 @@ public class Items : MonoBehaviour
                     {
                         List<string> tags = new List<string>();
                         for (int i = 2; i < l.Length; i++)
-                            tags.Add(l[2]);
+                            tags.Add(l[i]);
                         item.tags = tags;
                     }
 					else if (l[0].Equals("sprite"))
