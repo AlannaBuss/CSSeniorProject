@@ -8,7 +8,6 @@ public class NPC : MovingObject
 {
     // Sprite representing this NPC
     private npcSprite sprite;
-
     // States this npc currently has
     public string name;
     public string personality;
@@ -18,24 +17,20 @@ public class NPC : MovingObject
     public Boolean asleep = false;
     public Jobs.Job job;
     public Dictionary<Items.Item, int> inventory = new Dictionary<Items.Item, int>();
-
     // Talking stuff
     public Boolean talking = false;
     public string interactionType;
     private NPC interactingWith;
-
     // Movement stuff
     public Building home, work;
     private float timeloc;
     private float movementSpeed;
-    
     // Economy Stuff
     int gold;
     private int eaten = 0;
     private bool hasFood = true;
     private bool goingToStore = false;
     private NPC storeTarget;
-
 
 
     // Use this for initialization
@@ -137,8 +132,6 @@ public class NPC : MovingObject
             MakeHappy();
     }
 
-
-
 	// NPCS should have an interaction special to them
     public override Items.Item Interact(Items.Item item = null)
 	{
@@ -178,7 +171,6 @@ public class NPC : MovingObject
 
         return moved;
     }
-
 
 
     // Decides what the NPC's initial state will be

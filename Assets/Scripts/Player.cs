@@ -9,12 +9,10 @@ public class Player : MovingObject
     // Player stats
     public int money = 0;
     public List<Items.Item> inventory = new List<Items.Item>();
-
     // Tells player if it is inside a building, market, or checking inventory
     public bool insideBuilding;
     public bool insideMarket;
     public bool inInventory;
-
     // Detect but don't collide with NPCs
     public LayerMask npcLayer;
 
@@ -32,34 +30,32 @@ public class Player : MovingObject
     // Update is called once per frame
     void Update()
     {
-        // Check number keys
+        // Check number (item) keys
         if (Input.GetKeyDown(KeyCode.Alpha0))
-            checkNumberKey(0);
+            useItem(0);
         else if (Input.GetKeyDown(KeyCode.Alpha1))
-            checkNumberKey(1);
+            useItem(1);
         else if (Input.GetKeyDown(KeyCode.Alpha2))
-            checkNumberKey(2);
+            useItem(2);
         else if (Input.GetKeyDown(KeyCode.Alpha3))
-            checkNumberKey(3);
+            useItem(3);
         else if (Input.GetKeyDown(KeyCode.Alpha4))
-            checkNumberKey(4);
+            useItem(4);
         else if (Input.GetKeyDown(KeyCode.Alpha5))
-            checkNumberKey(5);
+            useItem(5);
         else if (Input.GetKeyDown(KeyCode.Alpha6))
-            checkNumberKey(6);
+            useItem(6);
         else if (Input.GetKeyDown(KeyCode.Alpha7))
-            checkNumberKey(7);
+            useItem(7);
         else if (Input.GetKeyDown(KeyCode.Alpha8))
-            checkNumberKey(8);
+            useItem(8);
         else if (Input.GetKeyDown(KeyCode.Alpha9))
-            checkNumberKey(9);
-
+            useItem(9);
         // Interaction
         else if (Input.GetKeyDown(KeyCode.Z))
             tryToInteract();
         if (insideMarket || insideBuilding)
             return;
-
         // Move left
         if (Input.GetKeyDown(KeyCode.LeftArrow))
             AttemptMove<Player>(-1, 0);
@@ -82,24 +78,6 @@ public class Player : MovingObject
         }
     }
 
-    private void checkNumberKey(int num)
-    {
-        if (inventory.Count >= num)
-        {
-            if (inInventory || insideMarket) {
-                List<string> text = new List<string>();
-                text.Add(inventory[num].name);
-                text.Add(inventory[num].description);
-                World.textbox.WriteAll(text);
-            }
-            else if (inventory[num].tags.Contains("FOOD")) {
-                World.textbox.Write("You ate the " + inventory[num].name);
-                inventory.RemoveAt(num);
-            }
-            else
-                tryToInteract(inventory[num]);
-        }
-    }
 
     //Sees if there is building or NPC in the surrounding tiles 
     protected virtual bool tryToInteract(Items.Item with = null)
@@ -141,19 +119,7 @@ public class Player : MovingObject
         return false;
     }
 
-    private void doInteraction(Items.Item with, Object target)
-    {
-        Items.Item received = target.Interact(with);
-
-        if (received != null)
-        {
-            if (inventory.Count < 10)
-                inventory.Add(received);
-            else
-                World.textbox.Write("Your inventory is full.");
-        }
-    }
-
+    // Tries to move in the given direction
     protected override void AttemptMove<T>(int xDir, int yDir)
     {
         // Reference to the previous map we were on
@@ -168,9 +134,59 @@ public class Player : MovingObject
         World.map.Draw(mapX, mapY);
     }
 
+    // Cannot move in that direction (blocked by something)
     protected override void OnCantMove<T>(T component)
     {
+        //TODO: play sound effect
+    }
 
+    // Moves in the given direction
+    protected override bool MoveToTile(int xDir, int yDir)
+    {
+        // There's an object on the other map blocking movement
+        if (tileX == 0 && xDir == -1 && World.map.map[mapX - 1][mapY].ObjectAt(9, tileY) ||
+            tileX == 9 && xDir == 1 && World.map.map[mapX + 1][mapY].ObjectAt(0, tileY) ||
+            tileY == 0 && yDir == -1 && World.map.map[mapX][mapY - 1].ObjectAt(tileX, 9) ||
+            tileY == 9 && yDir == 1 && World.map.map[mapX][mapY + 1].ObjectAt(tileX, 0))
+            return false;
+        return base.MoveToTile(xDir, yDir);
+    }
+
+
+    // Interact with the given target with the used item
+    private void doInteraction(Items.Item with, Object target)
+    {
+        Items.Item received = target.Interact(with);
+
+        if (received != null)
+        {
+            if (inventory.Count < 10)
+                inventory.Add(received);
+            else
+                World.textbox.Write("Your inventory is full.");
+        }
+    }
+
+    // Check if we are using or checking the selected item
+    private void useItem(int num)
+    {
+        if (inventory.Count >= num)
+        {
+            if (inInventory || insideMarket)
+            {
+                List<string> text = new List<string>();
+                text.Add(inventory[num].name);
+                text.Add(inventory[num].description);
+                World.textbox.WriteAll(text);
+            }
+            else if (inventory[num].tags.Contains("FOOD"))
+            {
+                World.textbox.Write("You ate the " + inventory[num].name);
+                inventory.RemoveAt(num);
+            }
+            else
+                tryToInteract(inventory[num]);
+        }
     }
 
     // Another object entered a trigger collider attached to this object

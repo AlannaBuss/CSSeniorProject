@@ -6,11 +6,22 @@ public abstract class MovingObject : Object
 {
     public float moveTime = 0.1f;           //Frames it will take object to move
     public LayerMask blockingLayer;         //Layer on which collision will be checked.
-
     protected BoxCollider2D boxCollider;    //The BoxCollider2D component attached to this object.
     protected Rigidbody2D rb2D;             //The Rigidbody2D component attached to this object.
     private float inverseMoveTime;          //Used to make movement more efficient.
 
+
+    //Because you can't call your parent's parent's methods
+    public override void initQuest(Quest givenMission)
+    {
+        base.initQuest(givenMission);
+    }
+
+    //Interactions for moving objects change the title
+    public override Items.Item Interact(Items.Item item = null)
+    {
+        return null;
+    }
 
     // Sets up the initial physics stuff
     protected virtual void Start()
@@ -55,66 +66,35 @@ public abstract class MovingObject : Object
         // Move to the map to the left
         if (tileX == 0 && xDir == -1)
         {
-            // There's an object on the other side blocking movement
-            if (World.map.map[mapX - 1][mapY].ObjectAt(9, tileY))
-                return false;
-            // Move onto the tile next to us
-            else
-            {
-                tileX = 9;
-                mapX -= 1;
-                return true;
-            }
+            tileX = 9;
+            mapX -= 1;
         }
         // Move to the map to the right
         else if (tileX == 9 && xDir == 1)
         {
-            // There's an object on the other side blocking movement
-            if (World.map.map[mapX + 1][mapY].ObjectAt(0, tileY))
-                return false;
-            // Move onto the tile next to us
-            else
-            {
-                tileX = 0;
-                mapX += 1;
-                return true;
-            }
+            tileX = 0;
+            mapX += 1;
         }
         // Move to the map below
         else if (tileY == 0 && yDir == -1)
         {
-            // There's an object on the other side blocking movement
-            if (World.map.map[mapX][mapY - 1].ObjectAt(tileX, 9))
-                return false;
-            // Move onto the tile next to us
-            else
-            {
-                tileY = 9;
-                mapY -= 1;
-                return true;
-            }
+            tileY = 9;
+            mapY -= 1;
         }
         // Move to the map above
         else if (tileY == 9 && yDir == 1)
         {
-            // There's an object on the other side blocking movement
-            if (World.map.map[mapX][mapY + 1].ObjectAt(tileX, 0))
-                return false;
-            // Move onto the tile next to us
-            else
-            {
-                tileY = 0;
-                mapY += 1;
-                return true;
-            }
+            tileY = 0;
+            mapY += 1;
         }
         // Nothing was hit
         else
         {
             tileX += xDir;
             tileY += yDir;
-            return true;
         }
+
+        return true;
     }
 
     //AttemptMove takes a generic parameter T to specify the type of component we expect our unit to interact with if blocked (Player for Enemies, Wall for Player).
@@ -136,20 +116,7 @@ public abstract class MovingObject : Object
             OnCantMove(hitComponent);
     }
 
-
     //OnCantMove will be overriden by functions in the inheriting classes.
     protected abstract void OnCantMove<T>(T component)
         where T : Component;
-
-    //Because you can't call your parent's parent's methods
-	public override void initQuest(Quest givenMission)
-    {
-		base.initQuest(givenMission);
-    }
-
-    //Interactions for moving objects change the title
-    public override Items.Item Interact(Items.Item item = null)
-    {
-        return null;
-    }
 }

@@ -59,6 +59,7 @@ public class Object : MonoBehaviour
         return toReturn;
     }
 
+
     protected void TurnInto(GameObject becomes)
     {
         Object newObject = becomes.GetComponent<Object>();

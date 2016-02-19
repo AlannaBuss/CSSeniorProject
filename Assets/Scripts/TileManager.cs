@@ -24,6 +24,7 @@ public class Grid
     public List<Vector3> gridPositions = new List<Vector3>();
     public int columns, rows;
 
+
     // Clears the list of gridPositions and prepares it to generate a new tile
     public Grid(int col, int row)
     {
@@ -67,6 +68,7 @@ public class Grid
         if (find != -1)
             gridPositions.RemoveAt(find);
     }
+
     public void removeAt(int index)
     {
         gridPositions.RemoveAt(index);
@@ -122,27 +124,21 @@ public class TileManager : MonoBehaviour
     // Constants
     private int columns = 10;       // # of columns in a tile
     private int rows = 10;          // # of rows in a tile
-
     // Tile information
-    public String tileType;        // the type of tile this is
+    public String tileType;         // the type of tile this is
     private int tileRow, tileCol;   // location of this tile on the map
     private int bSizeX, bSizeY;     // size of buildings on this tile
-    private Count buildingCount;    // # of buildings that can spawn on this tile
-    private Count wallCount;        // # of walls that can spawn on this tile
-    private Count npcCount;         // # of people that can spawn on this tile
-
     // Prefab objects
     public GameObject npc;               // prefab for an npc
     private GameObject[] outerWallTiles; // prefab for the outer-wall tile
     private GameObject[] floorTiles;     // Array of floor prefabs
     private GameObject[] buildingTiles;  // Array of building prefabs
     private GameObject[] wallTiles;      // Array of wall prefabs
-
     // Grid information
     private Transform boardHolder;       // Reference to the transform of the tile
     public Grid grid;                    // Possible locations to place tiles
-
     // All objects on this tile
+    public GameObject questItem;         // possible quest item
     public List<GameObject> floors = new List<GameObject>();        // prefabs for the floor
     public List<GameObject> buildings = new List<GameObject>();     // prefabs for the buildings
     public List<GameObject> walls = new List<GameObject>();         // prefabs for the walls
@@ -165,6 +161,9 @@ public class TileManager : MonoBehaviour
         tileType = type;            // what type of tile is this?
         tileRow = tRow;             // where is the tile on the map?
         tileCol = tCol;
+        Count buildingCount;        // # of buildings that can spawn on this tile
+        Count wallCount;            // # of walls that can spawn on this tile
+        Count npcCount;             // # of people that can spawn on this tile
 
         // Tile is a market; has lots of stalls and people
         if (tileType.Equals("Market"))
@@ -203,7 +202,7 @@ public class TileManager : MonoBehaviour
             bSizeY = 2;
         }
         // Tile is a farm; has crops and animals
-        else if (tileType.Equals("Farm"))
+        else
         {
             buildingCount = new Count(1, 2);    // farm house
             wallCount = new Count(5, 10);       // crops
@@ -219,7 +218,7 @@ public class TileManager : MonoBehaviour
         // Instantiates and places a random number of objects
         LayoutObjectAtRandom(buildingTiles, buildingCount.minimum, buildingCount.maximum, bSizeX, bSizeY, buildings);
         LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum, 1, 1, walls);
-        LayoutNPCs();
+        LayoutNPCs(npcCount.minimum, npcCount.maximum);
     }
 
     // Draw this tile to the screen
@@ -235,11 +234,13 @@ public class TileManager : MonoBehaviour
         for (int i = 0; i < buildings.Count; i++)
             buildings[i].SetActive(true);
         // Draw the people
-        for (int i = 0; i < npcs.Count; i++)
-        {
+        for (int i = 0; i < npcs.Count; i++) {
             npcs[i].SetActive(true);
             npcs[i].GetComponent<NPC>().draw();
         }
+        // Undraw the quest item
+        if (questItem != null)
+            questItem.GetComponent<QuestItem>().Draw();
     }
 
     // Removes the tile from the screen
@@ -255,11 +256,13 @@ public class TileManager : MonoBehaviour
         for (int i = 0; i < buildings.Count; i++)
             buildings[i].SetActive(false);
         // Undraw the people
-        for (int i = 0; i < npcs.Count; i++)
-        {
+        for (int i = 0; i < npcs.Count; i++) {
             npcs[i].SetActive(false);
             npcs[i].GetComponent<NPC>().undraw();
         }
+        // Undraw the quest item
+        if (questItem != null)
+            questItem.GetComponent<QuestItem>().Undraw();
     }
 
     // Finds and returns a random empty location on this tile, if there is one
@@ -282,14 +285,12 @@ public class TileManager : MonoBehaviour
     public Boolean ObjectAt(int x, int y)
     {
         // There's a building here
-        foreach (GameObject building in buildings)
-        {
+        foreach (GameObject building in buildings) {
             if (building.transform.position.x == x && building.transform.position.y == y)
                 return true;
         }
         // There's a wall here
-        foreach (GameObject wall in walls)
-        {
+        foreach (GameObject wall in walls) {
             if (wall.transform.position.x == x && wall.transform.position.y == y)
                 return true;
         }
@@ -333,9 +334,7 @@ public class TileManager : MonoBehaviour
                 }
                 // Roads; don't allow anything to go here
                 if (x == 4 || x == 5 || y == 4 || y == 5)
-                {
                     grid.removeTile(x, y);
-                }
 
                 // Add the tile to the game
                 GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
@@ -360,16 +359,11 @@ public class TileManager : MonoBehaviour
     {
         int objectCount = Random.Range(min, max + 1);
 
-        // Nothing can be placed on the current tile
-        if (grid.count() == 0)
-            return;
-
-        for (int i = 0; i < objectCount; i++)
+        for (int i = 0; i < objectCount && grid.count() != 0; i++)
         {
             // Where and what to place
             Vector3 randomPosition = grid.RandomPosition(sizeX, sizeY);
             GameObject tileChoice = tileArray[Random.Range(0, tileArray.Length)];
-            randomPosition.z = 10 - randomPosition.y;
             // Add the object
             GameObject instance = Instantiate(tileChoice, randomPosition, Quaternion.identity) as GameObject;
             instance.transform.SetParent(boardHolder);
@@ -379,14 +373,13 @@ public class TileManager : MonoBehaviour
     }
 
     // Places NPCs randomly on the map
-    private void LayoutNPCs()
+    private void LayoutNPCs(int min, int max)
     {
-        int objectCount = Random.Range(npcCount.minimum, npcCount.maximum + 1);
+        int objectCount = Random.Range(min, max + 1);
 
-        for (int i = 0; i < objectCount; i++)
+        for (int i = 0; i < objectCount && grid.count() != 0; i++)
         {
             Vector3 randomPosition = grid.RandomPosition(1, 1);
-            randomPosition.z = 10 - randomPosition.y;
             GameObject instance = Instantiate(npc, randomPosition, Quaternion.identity) as GameObject;
             instance.transform.SetParent(boardHolder);
             instance.GetComponent<NPC>().PlaceAt(tileCol, tileRow, (int)randomPosition.x, (int)randomPosition.y);
