@@ -11,7 +11,7 @@ public class Quest : MonoBehaviour
 	//We want to wait some amount of quests before this one is used again
 	protected int waitPeriod;
 	//How many rotations do we want to wait?
-	private static int k_numRotations = 20000;
+	protected static int k_numRotations = 20000;
 	protected NPC questGiver;
 	protected NPC questGiver2;
 
