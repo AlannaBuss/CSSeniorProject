@@ -8,7 +8,7 @@ using System.Linq;
 
 public class QuestGenerator : MonoBehaviour
 {
-	private Quest[] questSet = new Quest[1];
+	private Quest[] questSet = new Quest[2];
 	private MapManager map;
 	private int numQuests;
 	private const int k_maxQuests = 2;
@@ -18,6 +18,7 @@ public class QuestGenerator : MonoBehaviour
 	public QuestGenerator ()
 	{
 		questSet[0] = new Quest();
+		questSet [1] = new ItemQuest ();
 		mapSet = false;
 	}
 
@@ -47,7 +48,7 @@ public class QuestGenerator : MonoBehaviour
 						for (count2 = 0; count2 < npcs2.Count; count2++) {
 							NPC ranPerson2 = npcs.ElementAt (count2).GetComponent<NPC> ();
 							if (ranQuest.secondPersonCheck (ranPerson2)) {
-								print ("Quest given out");
+								print ("Quest number " + questNum + " given out");
 								ranQuest.startQuest (ranPerson, ranPerson2);
 								ranPerson.hasQuest = true;
 								ranPerson2.hasQuest = true;
@@ -61,7 +62,7 @@ public class QuestGenerator : MonoBehaviour
 							}
 						}
 					} else {
-						print ("Quest given out");
+						print ("Quest number " + questNum + " given out");
 						ranQuest.startQuest (ranPerson, null);
 						ranPerson.hasQuest = true;
 						ranPerson.mission = ranQuest;
