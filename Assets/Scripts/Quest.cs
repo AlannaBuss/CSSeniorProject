@@ -6,13 +6,14 @@ using System;
 
 public class Quest : MonoBehaviour
 {
-	private Boolean inUse;
-	private int speechCounter;
+	protected Boolean inUse;
+	protected int speechCounter;
 	//We want to wait some amount of quests before this one is used again
-	private int waitPeriod;
+	protected int waitPeriod;
 	//How many rotations do we want to wait?
-	private static int k_numRotations = 2;
-	private NPC questGiver;
+	protected static int k_numRotations = 20000;
+	protected NPC questGiver;
+	protected NPC questGiver2;
 
 	public Quest ()
 	{
@@ -58,21 +59,29 @@ public class Quest : MonoBehaviour
 	//Returns true if the person matches what the quest needs and false if not
 	public Boolean personCheck (NPC person)
 	{
-		return true;
+		return !person.hasQuest;
+	}
+		
+
+	//Returns true if this person matches what the quest needs for the second person and false if not
+	public Boolean secondPersonCheck(NPC person)
+	{
+		return false;
 	}
 
 
 	//When the quest gets given out it takes in the NPC it is being given to
-	public void startQuest (NPC person)
+	public void startQuest (NPC person, NPC person2)
 	{
 		inUse = true;
 		questGiver = person;
+		questGiver2 = person2;
 		speechCounter = 0;
 	}
 		
 
 	//What happens when an NPC is interacted with when they have a quest
-	public string interact()
+	virtual public string interact()
 	{
 		string forReturn;
 		if (speechCounter == 0) {
