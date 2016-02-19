@@ -9,6 +9,13 @@ public class Player : MovingObject
     // Player stats
     public int money = 0;
     public List<Items.Item> inventory = new List<Items.Item>();
+    // Player sprite animation
+    public Sprite[] anim;
+    public Sprite[] evilAnim;
+    private float timeLoc;
+    private float timeAnim = 0.5f;
+    private int curAnim = 0;
+
     // Tells player if it is inside a building, market, or checking inventory
     public bool insideBuilding;
     public bool insideMarket;
@@ -25,57 +32,24 @@ public class Player : MovingObject
         // Put default items in inventory
         inventory.Add(Items.getItemWithName("sword"));
         inventory.Add(Items.getItemWithName("axe"));
+
+        // Initialize time animation
+        timeLoc = Time.time;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Check number (item) keys
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-            useItem(0);
-        else if (Input.GetKeyDown(KeyCode.Alpha1))
-            useItem(1);
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-            useItem(2);
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-            useItem(3);
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-            useItem(4);
-        else if (Input.GetKeyDown(KeyCode.Alpha5))
-            useItem(5);
-        else if (Input.GetKeyDown(KeyCode.Alpha6))
-            useItem(6);
-        else if (Input.GetKeyDown(KeyCode.Alpha7))
-            useItem(7);
-        else if (Input.GetKeyDown(KeyCode.Alpha8))
-            useItem(8);
-        else if (Input.GetKeyDown(KeyCode.Alpha9))
-            useItem(9);
-        // Interaction
-        else if (Input.GetKeyDown(KeyCode.Z))
-            tryToInteract();
-        if (insideMarket || insideBuilding)
-            return;
-        // Move left
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-            AttemptMove<Player>(-1, 0);
-        // Move right
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-            AttemptMove<Player>(1, 0);
-        // Move up
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-            AttemptMove<Player>(0, 1);
-        // Move down
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-            AttemptMove<Player>(0, -1);
-        // Hide or show textbox
-        else if (Input.GetKeyDown(KeyCode.H))
-            World.textbox.Hide();
-        // Hide or show inventory
-        else if (Input.GetKeyDown(KeyCode.I)) {
-            World.inventoryBox.ShowInventory(inventory);
-            inInventory = World.inventoryBox.isDrawn;
+        // Animate sprite
+        if (Time.time - timeLoc > timeAnim)
+        {
+            curAnim = (curAnim + 1) % anim.Length;
+            GetComponent<SpriteRenderer>().sprite = anim[curAnim];
+            timeLoc = Time.time;
         }
+
+        // Check for a button press
+        KeyPressCheck();
     }
 
 
@@ -152,6 +126,59 @@ public class Player : MovingObject
         return base.MoveToTile(xDir, yDir);
     }
 
+
+
+    // Check for key press events
+    private void KeyPressCheck()
+    {
+        // Check number (item) keys
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+            useItem(0);
+        else if (Input.GetKeyDown(KeyCode.Alpha1))
+            useItem(1);
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+            useItem(2);
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+            useItem(3);
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+            useItem(4);
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+            useItem(5);
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
+            useItem(6);
+        else if (Input.GetKeyDown(KeyCode.Alpha7))
+            useItem(7);
+        else if (Input.GetKeyDown(KeyCode.Alpha8))
+            useItem(8);
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
+            useItem(9);
+        // Interaction
+        else if (Input.GetKeyDown(KeyCode.Z))
+            tryToInteract();
+        if (insideMarket || insideBuilding)
+            return;
+        // Move left
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            AttemptMove<Player>(-1, 0);
+        // Move right
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+            AttemptMove<Player>(1, 0);
+        // Move up
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+            AttemptMove<Player>(0, 1);
+        // Move down
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+            AttemptMove<Player>(0, -1);
+        // Hide or show textbox
+        else if (Input.GetKeyDown(KeyCode.H))
+            World.textbox.Hide();
+        // Hide or show inventory
+        else if (Input.GetKeyDown(KeyCode.I))
+        {
+            World.inventoryBox.ShowInventory(inventory);
+            inInventory = World.inventoryBox.isDrawn;
+        }
+    }
 
     // Interact with the given target with the used item
     private void doInteraction(Items.Item with, Object target)

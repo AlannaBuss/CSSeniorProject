@@ -7,12 +7,14 @@ using System.Collections;
  *   MILKCOW    // can be milked once a day for milk
  *  PIG         // can be killed (WEAPON) for pork
  */
-public class Animal : Object {
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+public class Animal : Object
+{
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     // Called when an object is interacted with.
     public override Items.Item Interact(Items.Item with = null)
@@ -23,9 +25,11 @@ public class Animal : Object {
         if (tags.Contains("DEAD"))
             World.textbox.Write("It's dead.");
         // ANIMAL is a PIG
-        else if (tags.Contains("PIG")) {
-            if (with != null && with.tags.Contains("WEAPON")) {
-                World.textbox.Write("You butchered your own brother.");
+        else if (tags.Contains("PIG"))
+        {
+            if (with != null && with.tags.Contains("WEAPON"))
+            {
+                World.textbox.Write("You butchered this innocent pig.");
                 toReturn = Items.getItemWithName("pork");
                 TurnInto(afterInteraction[0]);
                 World.AddChaos(World.KILL_ANIMAL);
@@ -34,14 +38,17 @@ public class Animal : Object {
                 World.textbox.Write("Oink!");
         }
         // ANIMAL is a milkable COW
-        else if (tags.Contains("MILKCOW")) {
-            if (with != null && with.tags.Contains("WEAPON")) {
+        else if (tags.Contains("MILKCOW"))
+        {
+            if (with != null && with.tags.Contains("WEAPON"))
+            {
                 World.textbox.Write("You butchered this gentle cow.");
                 toReturn = Items.getItemWithName("beef");
                 TurnInto(afterInteraction[1]);
                 World.AddChaos(World.KILL_ANIMAL);
             }
-            else {
+            else
+            {
                 World.textbox.Write("You took some milk.");
                 toReturn = Items.getItemWithName("milk");
                 TurnInto(afterInteraction[0]);
@@ -49,8 +56,10 @@ public class Animal : Object {
             }
         }
         // ANIMAL is a regular COW
-        else if (tags.Contains("COW")) {
-            if (with != null && with.tags.Contains("WEAPON")) {
+        else if (tags.Contains("COW"))
+        {
+            if (with != null && with.tags.Contains("WEAPON"))
+            {
                 World.textbox.Write("You butchered this gentle cow.");
                 toReturn = Items.getItemWithName("beef");
                 TurnInto(afterInteraction[0]);

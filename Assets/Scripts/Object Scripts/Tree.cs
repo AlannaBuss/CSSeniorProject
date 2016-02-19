@@ -22,7 +22,7 @@ public class Tree : Object {
         }
         else if (tags.Contains("ORANGETREE"))
         {
-            World.textbox.Write("You got some...oranges.");
+            World.textbox.Write("You got some 'oranges'.");
             toReturn = Items.getItemWithName("orange");
             TurnInto(afterInteraction[Random.Range(0, afterInteraction.Length)]);
             World.AddChaos(World.TAKE_ITEM);

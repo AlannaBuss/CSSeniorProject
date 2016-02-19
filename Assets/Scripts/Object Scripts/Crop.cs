@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Crop : Object {
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+public class Crop : Object
+{
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     // Called when an object is interacted with.
     public override Items.Item Interact(Items.Item item = null)

@@ -69,6 +69,11 @@ public class World : MonoBehaviour {
         return timeOfDay.morning;
     }
 
+    public static float GetTime()
+    {
+        return Time.time;
+    }
+
     // Gets the chaos in the world
     public static int GetChaos()
     {

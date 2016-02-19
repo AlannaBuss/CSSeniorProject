@@ -14,19 +14,23 @@ using System.Collections;
  *   WOODFENCE    
  *   METALFENCE   
  */
-public class Wall : Object {
-	
-	// Update is called once per frame
-	void Update () {
+public class Wall : Object
+{
 
-	}
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     // Handles wall interactions
-    public override Items.Item Interact(Items.Item item = null) {
+    public override Items.Item Interact(Items.Item item = null)
+    {
         Items.Item toReturn = null;
 
         // WALL is a ROSEBUSH
-        if (tags.Contains("ROSEBUSH")) {
+        if (tags.Contains("ROSEBUSH"))
+        {
             World.textbox.Write("You took some roses.");
             toReturn = Items.getItemWithName("rose");
             TurnInto(afterInteraction[Random.Range(0, afterInteraction.Length)]);
@@ -36,16 +40,20 @@ public class Wall : Object {
         else if (tags.Contains("BUSH"))
             World.textbox.Write("This bush smells nice.");
         // WALL is a VINEWALL
-        else if (tags.Contains("VINEWALL")) {
-            if (item != null && item.tags.Contains("WEAPON")) {
+        else if (tags.Contains("VINEWALL"))
+        {
+            if (item != null && item.tags.Contains("WEAPON"))
+            {
                 World.textbox.Write("You hacked the vines.");
                 TurnInto(afterInteraction[Random.Range(0, afterInteraction.Length)]);
                 World.AddChaos(World.DESTROY);
-            } else
+            }
+            else
                 World.textbox.Write("What a lovely " + tags[tags.Count - 1]);
         }
         // WALL is an OREWALL
-        else if (tags.Contains("OREWALL")) {
+        else if (tags.Contains("OREWALL"))
+        {
             World.textbox.Write("You took some ore.");
             TurnInto(afterInteraction[Random.Range(0, afterInteraction.Length)]);
             World.AddChaos(World.TAKE_ITEM);
