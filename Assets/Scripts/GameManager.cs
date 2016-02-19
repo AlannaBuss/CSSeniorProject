@@ -109,6 +109,7 @@ public class GameManager : MonoBehaviour
 		//Set up the Quest generator
         questGen = Instantiate(questGen) as GameObject;
         questGenManager = questGen.GetComponent<QuestGenerator>();
+        questGenManager.Setup();
         questGenManager.setMap(mapManager);
 
         // Where are we on the map?

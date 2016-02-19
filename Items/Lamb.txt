@@ -1,6 +1,6 @@
 name = lamb
 value = 15
-tags = FOOD MEAT
+tags = MEAT FOOD
 canWield = false
 isArmor = false
 heal = 25

@@ -1,6 +1,6 @@
 name = halibutt
 value = 10
-tags = FOOD FISH
+tags = FISH FOOD
 canWield = false
 isArmor = false
 heal = 15

@@ -8,6 +8,9 @@ using System.Linq;
 
 public class QuestGenerator : MonoBehaviour
 {
+    // Prefabs
+    public GameObject itemquest;
+
 	private Quest[] questSet = new Quest[2];
 	private MapManager map;
 	private int numQuests;
@@ -15,14 +18,15 @@ public class QuestGenerator : MonoBehaviour
 	private const int k_pause = 500;
 	private Boolean mapSet;
 
-	public QuestGenerator ()
+
+	public void Setup()
 	{
 		questSet[0] = new Quest();
-		questSet [1] = new ItemQuest ();
+        questSet[1] = new ItemQuest(itemquest);
 		mapSet = false;
 	}
 
-	public void setMap (MapManager map2)
+	public void setMap(MapManager map2)
 	{
 		map = map2;
 		mapSet = true;
@@ -31,8 +35,9 @@ public class QuestGenerator : MonoBehaviour
 	//Tries to generate a quest starting on a given tile.
 	public Boolean generateQuest(int mapX, int mapY)
 	{
-		int questNum = Random.Range (0, questSet.Length); 
-		Quest ranQuest = questSet [questNum];
+		int questNum = Random.Range(0, questSet.Length); 
+		Quest ranQuest = questSet[questNum];
+
 		if (ranQuest.canBeGivenOut()) {
 			List<GameObject> npcs = map.map[mapX][mapY].npcs;
 			int count;

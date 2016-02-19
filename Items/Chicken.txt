@@ -1,6 +1,6 @@
 name = chicken
 value = 10
-tags = FOOD MEAT
+tags = MEAT FOOD
 canWield = false
 isArmor = false
 heal = 15

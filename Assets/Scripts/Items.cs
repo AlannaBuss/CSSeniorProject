@@ -127,5 +127,10 @@ public class Items : MonoBehaviour
         }
         return null;
     }
-	
+
+    public static Item getRandomItem()
+    {
+        int item = Random.Range(0, items.Count);
+        return items[item];
+    }
 }

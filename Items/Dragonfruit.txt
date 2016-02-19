@@ -1,6 +1,6 @@
 name = dragon_fruit
 value = 5
-tags = FOOD FRUIT WEAPON
+tags = FRUIT FOOD WEAPON
 canWield = true
 isArmor = false
 damage = 10

@@ -1,6 +1,6 @@
 name = beef
 value = 20
-tags = FOOD MEAT
+tags = MEAT FOOD
 canWield = false
 isArmor = false
 heal = 9999

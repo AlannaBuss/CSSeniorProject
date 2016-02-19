@@ -36,7 +36,7 @@ public class Object : MonoBehaviour
     {
 		mission = givenMission;
         hasQuest = true;
-		quest.active = false;
+		quest.SetActive(false);
         quest = Instantiate(quest) as GameObject;
 
         PlaceAt(mapX, mapY, tileX, tileY);
@@ -51,9 +51,9 @@ public class Object : MonoBehaviour
 
         World.textbox.Write("It's a thingy.");
         
-		if(hasQuest = false) 
+		if(hasQuest == false) 
 		{
-			quest.active = false;
+			quest.SetActive(false);
 		}
 
         return toReturn;

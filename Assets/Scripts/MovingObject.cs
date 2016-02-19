@@ -63,6 +63,13 @@ public abstract class MovingObject : Object
     // Attempts to move to the tile in the given direction
     protected virtual bool MoveToTile(int xDir, int yDir)
     {
+        // Edge of map
+        if (tileX == 0 && mapX == 0 && xDir == -1 ||
+            tileX == 9 && mapX == 9 && xDir == 1 ||
+            tileY == 0 && mapY == 0 && yDir == -1 ||
+            tileY == 9 && mapY == 9 && yDir == 1)
+            return false;
+
         // Move to the map to the left
         if (tileX == 0 && xDir == -1)
         {

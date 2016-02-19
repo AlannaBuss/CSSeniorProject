@@ -1,6 +1,6 @@
 name = lettuce
 value = 3
-tags = FOOD VEGETABLE
+tags = VEGETABLE FOOD
 canWield = false
 isArmor = false
 heal = 7

@@ -1,6 +1,6 @@
 name = apple
 value = 1
-tags = FOOD FRUIT
+tags = FRUIT FOOD
 canWield = false
 isArmor = false
 heal = 5

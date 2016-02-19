@@ -34,7 +34,7 @@ public class Building : Object
     // 
     public Vector3 getLocation()
     {
-        return new Vector3(tileX + mapX * 10, tileY * mapY * 10, 0);
+        return new Vector3(tileX + mapX * 10, tileY + mapY * 10, 0);
     }
 
     // Draws the inside of the building when Player enters

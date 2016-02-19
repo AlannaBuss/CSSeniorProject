@@ -138,7 +138,7 @@ public class NPC : MovingObject
         Items.Item toReturn = null;
 
 		if (hasQuest)
-			World.textbox.Write(mission.interact (), sprite); 
+			World.textbox.Write(mission.interact(), sprite); 
 		else
             World.textbox.Write(Dialogue.getDialogue(personality, "player_response"), sprite);
 

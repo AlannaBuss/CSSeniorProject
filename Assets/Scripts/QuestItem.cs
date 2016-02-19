@@ -3,36 +3,41 @@ using System.Collections;
 
 public class QuestItem : Object {
 
+    // Prefabs
+    public GameObject fish, meat, fruit, vegetable, flower, misc;
+
     private GameObject sprite;
     private Items.Item item;
     private Items.Item requiredItem;
     private bool requiresItem;
 
+
     // Create a new ground item that can be retrieved
-    public QuestItem(GameObject sprite, Items.Item i)
+    public void Setup(Items.Item i)
     {
-        this.sprite = Instantiate(sprite);
+        for (int n = 0; n < i.tags.Count; n++)
+        {
+            print(i.tags[n] + "\n");
+        }
+
         tags = new System.Collections.Generic.List<string>();
         tags.Add("QUEST");
         item = i;
         requiresItem = false;
+        sprite = Instantiate(decideSprite());
         Undraw();
     }
 
     // Create a new ground item that requires another item to be retrieved
-    public QuestItem(GameObject sprite, Items.Item i, Items.Item required)
+    public void Setup(Items.Item i, Items.Item required)
     {
-        this.sprite = Instantiate(sprite);
-        tags = new System.Collections.Generic.List<string>();
-        tags.Add("QUEST");
-        item = i;
+        Setup(i);
         requiresItem = true;
         requiredItem = required;
-        Undraw();
     }
 
     // Interact with this item
-    public override Items.Item Interact(Items.Item item = null)
+    public override Items.Item Interact(Items.Item i = null)
     {
         // Check if this item can be retrieved
         if (requiresItem && requiredItem.Equals(item) || !requiresItem)
@@ -96,5 +101,31 @@ public class QuestItem : Object {
     {
         sprite.SetActive(false);
         this.gameObject.SetActive(false);
+    }
+
+    public string getLocationName()
+    {
+        TileManager tile = World.map.map[mapX][mapY];
+        return tile.tileType;
+    }
+
+
+    // Decides which sprite to use for the item
+    private GameObject decideSprite()
+    {
+        GameObject sprite = misc;
+
+        if (item.tags.Contains("MEAT"))
+            sprite = meat;
+        else if (item.tags.Contains("VEGETABLE"))
+            sprite = vegetable;
+        else if (item.tags.Contains("FISH"))
+            sprite = fish;
+        else if (item.tags.Contains("FLOWER"))
+            sprite = flower;
+        else if (item.tags.Contains("FRUIT"))
+            sprite = fruit;
+
+        return sprite;
     }
 }
