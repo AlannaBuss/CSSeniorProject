@@ -8,22 +8,24 @@ public enum timeOfDay
 
 public class World : MonoBehaviour {
     // CHAOS CONSTANTS
-    public static int NPC_DIES = +5; // chaos
-    public static int NPC_PSYCHOTIC = +5;
-    public static int NPC_UPSET = +2;
+    public static int NPC_PSYCHOTIC = 5;
+    public static int NPC_DIES = 5; // chaos
+    public static int NPC_UPSET = 1;
     public static int NPC_HAPPY = -1;
     public static int QUEST_COMPLETE = -5;
-    public static int KILL_ANIMAL = +2;
-    public static int STEAL = +1;
-    public static int DESTROY = +1;
+    public static int KILL_ANIMAL = 2;
+    public static int STEAL = 1;
+    public static int DESTROY = 1;
     public static int TAKE_ITEM = 0;
 
     // World Chaos
     private static int chaos;
     private static int numPsychopaths;
+    public static int numKilled;
+    public static int numUnhappy;
 
     // World Time
-    private static float timeOfDayLength = 3;    // length of morning
+    private static float timeOfDayLength = 1;    // length of morning
     private static float timeStart;              // Time the world was created
     private static timeOfDay dayTime;            // Current time of day
     private static float lengthOfDay = timeOfDayLength * 3;
@@ -40,6 +42,8 @@ public class World : MonoBehaviour {
     {
         chaos = 0;
         numPsychopaths = 0;
+        numKilled = 0;
+        numUnhappy = 0;
         timeStart = Time.time;
         dayTime = timeOfDay.morning;
 	}
@@ -104,5 +108,17 @@ public class World : MonoBehaviour {
 
         if (numPsychopaths < 0)
             numPsychopaths = 0;
+        if (delta > 0)
+            AddChaos(NPC_PSYCHOTIC);
+    }
+
+    public static int PsychopathInfectChance()
+    {
+        return chaos / 5;
+    }
+
+    public static int PsychopathKillChance()
+    {
+        return PsychopathInfectChance() * 2;
     }
 }

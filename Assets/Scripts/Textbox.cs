@@ -163,6 +163,12 @@ public class Textbox : MonoBehaviour
             mesh.text += t[i] + "\n";
     }
 
+    // Empties the list of text pushed to the textbox
+    public void Clear()
+    {
+        queue.Clear();
+    }
+
     // Hides or shows the textbox
     public void Hide()
     {

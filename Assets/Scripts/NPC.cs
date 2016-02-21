@@ -4,17 +4,49 @@ using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using System;
 
+public enum Personality
+{
+    // interactive
+    helpful,        // positive
+    outgoing,
+    aggressive,     // negtive
+    greedy,
+    // reactive
+    brave,
+    shy,
+    // disactive
+    lazy,
+    // disruptive
+    alcoholic,
+    // bad
+    amoral,
+    // PSYCHOTIC
+    psychotic
+}
+
+public enum State
+{
+    // moods
+    normal,
+    happy,
+    sad,
+    angry,
+    // status
+    drunk,
+    tired,
+    dead,
+    psychotic
+}
+
 public class NPC : MovingObject
 {
     // Sprite representing this NPC
     private npcSprite sprite;
     // States this npc currently has
     public string name;
-    public string personality;
-    public List<string> states = new List<string>();
-    public Boolean atWork = false;
-    public Boolean atHome = false;
-    public Boolean asleep = false;
+    public Personality personality;
+    public List<State> states = new List<State>();
+    public Boolean atWork = false, atHome = false, asleep = false;
     public Jobs.Job job;
     public Dictionary<Items.Item, int> inventory = new Dictionary<Items.Item, int>();
     // Talking stuff
@@ -43,6 +75,9 @@ public class NPC : MovingObject
     // Update is called once per frame
     public void Update()
     {
+        if (states.Contains(State.dead))
+            return;
+
         timeStep();       // walking
         checkGreeting();  // check for interactions
     }
@@ -59,6 +94,7 @@ public class NPC : MovingObject
         // Create a random sprite and initialize it
         sprite = GetComponent<npcSprite>();
         sprite.init();
+        fillInventoy();
 
         // Create a random state and personality for the npc
         initState();
@@ -66,10 +102,8 @@ public class NPC : MovingObject
         sprite.placeAt(new Vector3(tileX, tileY, 0));
         sprite.undraw();
 
-        fillInventoy();
-
         // How fast the NPC moves
-        if (personality == "lazy")
+        if (personality == Personality.lazy)
             movementSpeed = Random.Range(1.0f, 1.5f);
         else
             movementSpeed = Random.Range(0.5f, 1.0f);
@@ -92,9 +126,9 @@ public class NPC : MovingObject
     }
 
     //So we still know how to init our quests.
-	public override void initQuest(Quest givenMission)
+    public override void initQuest(Quest givenMission)
     {
-		base.initQuest(givenMission);
+        base.initQuest(givenMission);
     }
 
     // Draws the NPC to the screen
@@ -113,37 +147,112 @@ public class NPC : MovingObject
             quest.SetActive(false);
     }
 
-    // NPC is saying something
+    // NPC is interacting with another NPC
     public void speak(Boolean display)
     {
-        string dialogue = Dialogue.getDialogue(personality, interactionType);
+        string dialogue = Dialogue.getDialogue(Enum.GetName(typeof(Personality), personality), interactionType);
+
+        // DEAD
+        if (states.Contains(State.dead)) {
+            dialogue = "...";
+        }
+        // Talking to a dead person
+        else if (interactingWith.states.Contains(State.dead)) {
+            dialogue = "eek!!";
+        }
+        // SHY: chance to become sad
+        else if (personality == Personality.shy)
+        {
+            // Helpful person
+            if (interactingWith.personality == Personality.helpful)
+                SetState(State.happy);
+            // Aggressive person, or NPC is just too shy
+            else if (interactingWith.personality == Personality.aggressive || Random.Range(0, 10) == 0)
+                SetState(State.sad);
+        }
+        // OUTGOING: Becomes happy
+        else if (personality == Personality.outgoing)
+            SetState(State.happy);
+        // PSYCHOTIC: chance to infect or kill
+        else if (personality == Personality.psychotic &&
+            interactingWith.personality != Personality.psychotic && !interactingWith.states.Contains(State.psychotic))
+        {
+            // Kill the NPC
+            if (states.Contains(State.psychotic)) {
+                if (Random.Range(0, 100) < World.PsychopathKillChance())
+                    interactingWith.SetState(State.dead);
+            }
+            // Turn person into a psychopath
+            else if (Random.Range(0, 100) < World.PsychopathInfectChance() &&
+                (interactingWith.states.Contains(State.sad) || interactingWith.states.Contains(State.angry) || interactingWith.personality == Personality.amoral)) {
+                interactingWith.personality = Personality.psychotic;
+                interactingWith.SetState(State.psychotic);
+            }
+        }
 
         // Write the text if the player is on the same screen
         if (display)
             World.textbox.Write(dialogue, sprite, false);
-
-        // 10% chance to become sad
-        if (personality == "shy") {
-            if (Random.Range(0, 10) == 0)
-                MakeSad();
-        }
-        // Becomes happy
-        else if (personality == "outgoing")
-            MakeHappy();
+        talking = false;
     }
 
-	// NPCS should have an interaction special to them
+    // NPCS should have an interaction special to them
     public override Items.Item Interact(Items.Item item = null)
-	{
+    {
         Items.Item toReturn = null;
 
-		if (hasQuest)
-			World.textbox.Write(mission.interact(), sprite); 
-		else
-            World.textbox.Write(Dialogue.getDialogue(personality, "player_response"), sprite);
+
+        if (item != null && item.tags.Contains("WEAPON")) {
+            if (personality == Personality.psychotic)
+                World.textbox.Write("You've stopped a psycopath!");
+            else if (World.player.killed >= 5) {
+                World.textbox.Write("The true psychopath is you.");
+                World.player.killed++;
+            }
+            else {
+                World.textbox.Write("Murderer.");
+                World.player.killed++;
+            }
+            SetState(State.dead);
+        }
+        else if (states.Contains(State.dead))
+            World.textbox.Write("This NPC is dead...");
+        else if (hasQuest)
+            World.textbox.Write(mission.interact(), sprite);
+        else
+            World.textbox.Write(Dialogue.getDialogue(Enum.GetName(typeof(Personality), personality), "player_response"), sprite);
 
         return toReturn;
-	}
+    }
+
+    public static void Transaction(string tag, int amount, NPC buyer, NPC seller)
+    {
+        do
+        {
+            Items.Item tobuy = Items.getRandomItemOfTag(tag, seller.inventory);
+            if (tobuy == null)
+            {
+                break;
+            }
+
+            seller.inventory[tobuy]--;
+            if (seller.inventory[tobuy] == 0)
+            {
+                seller.inventory.Remove(tobuy);
+            }
+
+            if (!buyer.inventory.ContainsKey(tobuy))
+            {
+                buyer.inventory.Add(tobuy, 0);
+            }
+            buyer.inventory[tobuy]++;
+            buyer.gold -= tobuy.value;
+            seller.gold += tobuy.value;
+            print(tobuy.name + " bought for " + tobuy.value + " buyer now has " + buyer.gold + " gold and seller now has " + seller.gold);
+            amount--;
+        } while (buyer.gold > 0 && amount > 0);
+    }
+
 
 
     // Called when the object cannot move
@@ -164,7 +273,8 @@ public class NPC : MovingObject
         // Collision checking with player
         if (distance(tileX, pTileX, tileY, pTileY) <= 1 && pMapX == mapX && pMapY == mapY)
             moved = false;
-        else {
+        else
+        {
             moved = base.MoveToTile(xDir, yDir);
             PlaceAt(mapX, mapY, tileX, tileY);
         }
@@ -173,41 +283,26 @@ public class NPC : MovingObject
     }
 
 
+
     // Decides what the NPC's initial state will be
     private void initState()
     {
-        int mood = 0;
-        string[] default_states = { "normal", "happy", "sad", "angry" };
-
-        // 25% chance to be something other than neutral state on default
-        if (Random.Range(0, 4) == 0)
-            mood = Random.Range(0, default_states.Length);
-        if (default_states[mood] == "happy")
-            World.AddChaos(World.NPC_HAPPY);
-        else if (default_states[mood] == "sad" || default_states[mood] == "angry")
-            World.AddChaos(World.NPC_UPSET);
-
-        // update sprite to match state
-        states.Add(default_states[mood]);
-        sprite.setState(states[0]);
+        State state = (State)Random.Range(0, 4);
+        SetState(state);
     }
 
     // Decides what the NPC's initial personality will be
     private void initPersonality()
     {
         // Initiate the personality
-        string[] personalities = { "helpful", "aggressive", "outgoing", "alcoholic", "greedy", "shy", "brave", "amoral", "lazy"};
-        personality = personalities[Random.Range(0, personalities.Length)];
+        personality = (Personality)Random.Range(0, 10);
 
         // 5% chance of being psychotic
-        if (Random.Range(0, 100) < 5 && World.GetNumPsychopaths() < 5) {
-            personality = "psychotic";
-            World.AddChaos(World.NPC_PSYCHOTIC);
+        if (Random.Range(0, 100) < 5 && World.GetNumPsychopaths() < 2)
+        {
+            personality = Personality.psychotic;
             World.AddPsychopath(1);
         }
-
-        // update sprite to match personality
-        sprite.setState(personality);
     }
 
     private void fillInventoy()
@@ -282,7 +377,8 @@ public class NPC : MovingObject
     // Timebased checking for what NPC is doing
     private void timeStep()
     {
-        if (goingToStore && goTowards(storeTarget.work.getLocation()) && Time.time - timeloc > movementSpeed) {
+        if (goingToStore && goTowards(storeTarget.work.getLocation()) && Time.time - timeloc > movementSpeed)
+        {
             atWork = false;
             Transaction("FOOD", Random.Range(2, 6), this, storeTarget);
             hasFood = true;
@@ -290,7 +386,8 @@ public class NPC : MovingObject
         }
 
         // NPC goes to work
-        if (World.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed) {
+        if (World.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed)
+        {
             // NPC wakes up
             asleep = false;
             atHome = false;
@@ -298,23 +395,27 @@ public class NPC : MovingObject
 
             if (eaten < 1)
                 eat();
-            if (atWork && !hasFood && !goingToStore) {
+            if (atWork && !hasFood && !goingToStore)
+            {
                 //sends them to get food at a randomized time
-                if (Random.Range(0, 5) == 0) {
+                if (Random.Range(0, 5) == 0)
+                {
                     goingToStore = true;
                     storeTarget = World.map.getRandomNpcWithTag("FARM", false);
                 }
             }
-            
+
             // NPC begins walking to work
-            if (!atWork && goTowards(work.getLocation())) {
+            if (!atWork && goTowards(work.getLocation()))
+            {
                 // enter work
                 atWork = true;
             }
         }
 
         // NPC goes home
-        if (World.GetTimeOfDay() == timeOfDay.evening && Time.time - timeloc > movementSpeed) {
+        if (World.GetTimeOfDay() == timeOfDay.evening && Time.time - timeloc > movementSpeed)
+        {
             // NPC stops working
             atWork = false;
             timeloc = Time.time;
@@ -322,7 +423,8 @@ public class NPC : MovingObject
             if (eaten < 2)
                 eat();
             // NPC begins walking home
-            if (!atHome && goTowards(home.getLocation())) {
+            if (!atHome && goTowards(home.getLocation()))
+            {
                 // enter home
                 atHome = true;
             }
@@ -336,41 +438,13 @@ public class NPC : MovingObject
             eaten = 0;
 
             // NPC begins walking home (if not already there)
-            if (!atHome && goTowards(home.getLocation())) {
+            if (!atHome && goTowards(home.getLocation()))
+            {
                 // enter home and start sleeping
                 atHome = true;
                 asleep = true;
             }
         }
-    }
-
-
-    public static  void Transaction(string tag, int amount, NPC buyer, NPC seller)
-    {
-        do
-        {
-            Items.Item tobuy = Items.getRandomItemOfTag(tag, seller.inventory);
-            if (tobuy == null)
-            {
-                break;
-            }
-
-            seller.inventory[tobuy]--;
-            if (seller.inventory[tobuy] == 0)
-            {
-                seller.inventory.Remove(tobuy);
-            }
-
-            if (!buyer.inventory.ContainsKey(tobuy))
-            {
-                buyer.inventory.Add(tobuy, 0);
-            }
-            buyer.inventory[tobuy]++;
-            buyer.gold -= tobuy.value;
-            seller.gold += tobuy.value;
-            print(tobuy.name + " bought for " + tobuy.value + " buyer now has " + buyer.gold + " gold and seller now has " + seller.gold);
-            amount--;
-        } while (buyer.gold > 0 && amount > 0);
     }
 
     private void eat()
@@ -405,33 +479,27 @@ public class NPC : MovingObject
             return;
 
         // Check for people to interact with
-        for (int i = 0; i < npcs.Count; i++)
-        {
+        for (int i = 0; i < npcs.Count; i++) {
             NPC npc = npcs[i].GetComponent<NPC>();
 
             // Check in a 2 square radius
-            if (distance(npc.tileX, npc.tileY, tileX, tileY) <= 2 && tileX != npc.tileX && tileY != npc.tileY)
+            if (distance(npc.tileX, npc.tileY, tileX, tileY) <= 2 && npc != this && interactingWith != npc)
             {
-                // Check to make sure we haven't already talked to each other
-                if (interactingWith == npc)
-                    return;
-
                 // Check if this NPC wants to initiate interaction
-                if (personality == "outgoing") {
+                if (personality == Personality.outgoing)
+                {
                     // 100% chance
                     talking = true;
                     interactionType = "greeting";
                 }
-                else if (personality == "shy" && Random.Range(0, 10) == 0) {
+                else if (personality == Personality.shy && Random.Range(0, 10) == 0)
+                {
                     // 10% chance
                     talking = true;
                     interactionType = "greeting";
                 }
-                else if (personality == "psychotic") {
-                    // % chance to talk
-                    // % chance to kill NPC
-                }
-                else if (Random.Range(0, 2) == 0) {
+                else if (Random.Range(0, 2) == 0)
+                {
                     // 50% chance
                     talking = true;
                     interactionType = "greeting";
@@ -439,6 +507,7 @@ public class NPC : MovingObject
 
                 interactingWith = npc;
                 interactingWith.talking = true;
+                interactingWith.interactingWith = this;
                 interactingWith.interactionType = "greeting_response";
             }
         }
@@ -451,7 +520,7 @@ public class NPC : MovingObject
     }
 
     // Removes the given state from the NPC
-    private void RemoveState(string toRemove)
+    private void RemoveState(State toRemove)
     {
         for (int i = 0; i < states.Count; i++)
         {
@@ -460,40 +529,44 @@ public class NPC : MovingObject
         }
     }
 
-    private void MakeHappy()
+    private void SetState(State state)
     {
-        if (states.Contains("happy"))
+        if (states.Contains(state))
             return;
 
-        World.AddChaos(World.NPC_HAPPY);
-        RemoveState("normal");
-        RemoveState("sad");
-        RemoveState("angry");
-        states.Add("happy");
-        sprite.setState("happy");
-    }
+        if (state == State.happy)
+        {
+            World.AddChaos(World.NPC_HAPPY);
+            RemoveState(State.normal);
+            RemoveState(State.sad);
+            RemoveState(State.angry);
+        }
+        else if (state == State.angry || state == State.sad)
+        {
+            World.AddChaos(World.NPC_UPSET);
+            RemoveState(State.normal);
+            RemoveState(State.happy);
+            World.numUnhappy++;
+        }
+        else if (state == State.normal)
+        {
+            RemoveState(State.happy);
+            RemoveState(State.sad);
+            RemoveState(State.angry);
+        }
+        else if (state == State.dead)
+        {
+            if (personality != Personality.psychotic)
+                World.AddChaos(World.NPC_DIES);
+            World.numKilled++;
+        }
+        else if (state == State.psychotic)
+        {
+            World.AddChaos(World.NPC_PSYCHOTIC);
+            World.AddPsychopath(1);
+        }
 
-    private void MakeSad()
-    {
-        if (states.Contains("sad"))
-            return;
-
-        World.AddChaos(World.NPC_UPSET);
-        RemoveState("normal");
-        RemoveState("happy");
-        states.Add("sad");
-        sprite.setState("sad");
-    }
-
-    private void MakeAngry()
-    {
-        if (states.Contains("angry"))
-            return;
-
-        World.AddChaos(World.NPC_UPSET);
-        RemoveState("normal");
-        RemoveState("happy");
-        states.Add("angry");
-        sprite.setState("angry");
+        states.Add(state);
+        sprite.setState(Enum.GetName(typeof(State), state));
     }
 }

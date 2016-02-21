@@ -9,6 +9,7 @@ public class Player : MovingObject
     // Player stats
     public int money = 0;
     public List<Items.Item> inventory = new List<Items.Item>();
+    public int killed = 0;
     // Player sprite animation
     public Sprite[] anim;
     public Sprite[] evilAnim;
@@ -44,7 +45,10 @@ public class Player : MovingObject
         if (Time.time - timeLoc > timeAnim)
         {
             curAnim = (curAnim + 1) % anim.Length;
-            GetComponent<SpriteRenderer>().sprite = anim[curAnim];
+            if (killed >= 5)
+                GetComponent<SpriteRenderer>().sprite = evilAnim[curAnim];
+            else
+                GetComponent<SpriteRenderer>().sprite = anim[curAnim];
             timeLoc = Time.time;
         }
 
@@ -117,12 +121,21 @@ public class Player : MovingObject
     // Moves in the given direction
     protected override bool MoveToTile(int xDir, int yDir)
     {
-        // There's an object on the other map blocking movement
+        // Moving to a different map tile
         if (tileX == 0 && xDir == -1 && World.map.map[mapX - 1][mapY].ObjectAt(9, tileY) ||
             tileX == 9 && xDir == 1 && World.map.map[mapX + 1][mapY].ObjectAt(0, tileY) ||
             tileY == 0 && yDir == -1 && World.map.map[mapX][mapY - 1].ObjectAt(tileX, 9) ||
             tileY == 9 && yDir == 1 && World.map.map[mapX][mapY + 1].ObjectAt(tileX, 0))
-            return false;
+        {
+            World.textbox.Clear();
+            int x = xDir == -1 ? 9 : xDir == 1 ? 0 : tileX;
+            int y = yDir == -1 ? 9 : yDir == 1 ? 0 : tileY;
+
+            // Something blocking on the other tile
+            if (World.map.map[mapX + xDir][mapY + yDir].ObjectAt(x, y))
+                return false;
+        }
+
         return base.MoveToTile(xDir, yDir);
     }
 

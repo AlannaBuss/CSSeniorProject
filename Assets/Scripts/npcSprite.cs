@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 public class npcSprite : MonoBehaviour
 {
     // Defines the different pieces that an NPC's sprite can be constructed of
+    public GameObject dead;
     public GameObject[] _outline;
     public GameObject[] _hair;
     public GameObject[] _eyes;
@@ -54,98 +55,6 @@ public class npcSprite : MonoBehaviour
     // Zoomed in image
     GameObject zoom_mouth, zoom_eyes, zoom_eye_color, zoomHair, zoomHairOutline, zoomSkin, zoomTop, zoomOutline;
 
-
-
-    // Returns a random color
-    private Color randomColorPicker()
-    {
-        Color color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-        return color;
-    }
-
-    // Returns a random skintone
-    private Color skinColorPicker()
-    {
-        int skinType = Random.Range(0, 3);
-
-        // Peach
-        if (skinType == 0)
-            return new Color(1f, .92f, .77f);
-        // Tan
-        else if (skinType == 1)
-            return new Color(.66f, .53f, .36f);
-        // Brown
-        else
-            return new Color(.4f, .29f, .14f);
-    }
-
-    // Define how the npc's sprite will look
-    private void initSprite()
-    {
-        // Mouth
-        int mouthType = (spriteType * _typesMouths) + _neutral;
-        mouth = Instantiate(_mouth[mouthType]) as GameObject;
-        zoom_mouth = Instantiate(_zoom_outline_mouth[_neutral], new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
-
-        // Eyes
-        Color eyecolor = randomColorPicker();
-        eyes = Instantiate(_eyes[spriteType]) as GameObject;
-        eyes.GetComponent<SpriteRenderer>().color = eyecolor;
-        zoom_eyes = Instantiate(_zoom_outline_eyes[_normal], new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
-        zoom_eye_color = Instantiate(_zoom_eyes, new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
-        zoom_eye_color.GetComponent<SpriteRenderer>().color = eyecolor;
-
-        // Hair
-        Color haircolor = randomColorPicker();
-        GameObject npcHair = Instantiate(_hair[spriteType]) as GameObject;
-        npcHair.GetComponent<SpriteRenderer>().color = haircolor;
-        zoomHair = Instantiate(_zoom_hair[spriteType], new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
-        zoomHair.GetComponent<SpriteRenderer>().color = haircolor;
-        zoomHairOutline = Instantiate(_zoom_outline_hair[spriteType], new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
-
-        // Skin
-        Color skinColor = skinColorPicker();
-        GameObject npcSkin = Instantiate(_skin[spriteType]) as GameObject;
-        npcSkin.GetComponent<SpriteRenderer>().color = skinColor;
-        zoomSkin = Instantiate(_zoom_face, new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
-        zoomSkin.GetComponent<SpriteRenderer>().color = skinColor;
-
-        // Top
-        Color topColor = randomColorPicker();
-        GameObject npcTop = Instantiate(_top[spriteType]) as GameObject;
-        npcTop.GetComponent<SpriteRenderer>().color = topColor;
-        zoomTop = Instantiate(_zoom_shirt, new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
-        zoomTop.GetComponent<SpriteRenderer>().color = topColor;
-        // Bottom
-        GameObject npcBottom = Instantiate(_bottom[spriteType]) as GameObject;
-        npcBottom.GetComponent<SpriteRenderer>().color = randomColorPicker();
-        // Shoes
-        GameObject npcShoes = Instantiate(_shoes[spriteType]) as GameObject;
-        npcShoes.GetComponent<SpriteRenderer>().color = randomColorPicker();
-        // Extras
-        initExtras();
-
-        zoomOutline = Instantiate(_zoom_outline, new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
-        pieces.Add(Instantiate(_outline[spriteType]));
-        pieces.Add(npcHair);
-        pieces.Add(npcSkin);
-        pieces.Add(npcTop);
-        pieces.Add(npcBottom);
-        pieces.Add(npcShoes);
-    }
-
-    // Define if and what the sprite's extra features will be
-    private void initExtras()
-    {
-        // Hat (30% chance)
-        if (Random.Range(0, 10) <= 2)
-        {
-            int type = (_typesPeople * _hat1) + spriteType;
-            GameObject hat = Instantiate(_extra[type], new Vector3(0f, 0f, 10f), Quaternion.identity) as GameObject;
-            hat.GetComponent<SpriteRenderer>().color = randomColorPicker();
-            extras.Add(hat);
-        }
-    }
 
 
     // Create the initial NPC sprite
@@ -264,8 +173,117 @@ public class npcSprite : MonoBehaviour
             int bloodType = (spriteType * _blood) + spriteType;
             extras.Add(Instantiate(_extra[bloodType]));
         }
+        else if (state.Equals("dead"))
+        {
+            Vector3 pos = mouth.transform.position;
+            mouth = Instantiate(dead, pos, Quaternion.identity) as GameObject;
+            eyes = new GameObject();
+            pieces.Clear();
+            extras.Clear();
+
+            zoom_mouth = Instantiate(dead, new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
+            zoom_eyes = new GameObject();
+            zoom_eye_color = new GameObject();
+            zoomOutline = new GameObject();
+            zoomHair = new GameObject();
+            zoomHairOutline = new GameObject();
+            zoomSkin = new GameObject();
+            zoomTop = new GameObject();
+        }
 
         undraw();
         undrawZoom();
+    }
+
+
+    // Returns a random color
+    private Color randomColorPicker()
+    {
+        Color color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+        return color;
+    }
+
+    // Returns a random skintone
+    private Color skinColorPicker()
+    {
+        int skinType = Random.Range(0, 3);
+
+        // Peach
+        if (skinType == 0)
+            return new Color(1f, .92f, .77f);
+        // Tan
+        else if (skinType == 1)
+            return new Color(.66f, .53f, .36f);
+        // Brown
+        else
+            return new Color(.4f, .29f, .14f);
+    }
+
+    // Define how the npc's sprite will look
+    private void initSprite()
+    {
+        // Mouth
+        int mouthType = (spriteType * _typesMouths) + _neutral;
+        mouth = Instantiate(_mouth[mouthType]) as GameObject;
+        zoom_mouth = Instantiate(_zoom_outline_mouth[_neutral], new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
+
+        // Eyes
+        Color eyecolor = randomColorPicker();
+        eyes = Instantiate(_eyes[spriteType]) as GameObject;
+        eyes.GetComponent<SpriteRenderer>().color = eyecolor;
+        zoom_eyes = Instantiate(_zoom_outline_eyes[_normal], new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
+        zoom_eye_color = Instantiate(_zoom_eyes, new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
+        zoom_eye_color.GetComponent<SpriteRenderer>().color = eyecolor;
+
+        // Hair
+        Color haircolor = randomColorPicker();
+        GameObject npcHair = Instantiate(_hair[spriteType]) as GameObject;
+        npcHair.GetComponent<SpriteRenderer>().color = haircolor;
+        zoomHair = Instantiate(_zoom_hair[spriteType], new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
+        zoomHair.GetComponent<SpriteRenderer>().color = haircolor;
+        zoomHairOutline = Instantiate(_zoom_outline_hair[spriteType], new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
+
+        // Skin
+        Color skinColor = skinColorPicker();
+        GameObject npcSkin = Instantiate(_skin[spriteType]) as GameObject;
+        npcSkin.GetComponent<SpriteRenderer>().color = skinColor;
+        zoomSkin = Instantiate(_zoom_face, new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
+        zoomSkin.GetComponent<SpriteRenderer>().color = skinColor;
+
+        // Top
+        Color topColor = randomColorPicker();
+        GameObject npcTop = Instantiate(_top[spriteType]) as GameObject;
+        npcTop.GetComponent<SpriteRenderer>().color = topColor;
+        zoomTop = Instantiate(_zoom_shirt, new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
+        zoomTop.GetComponent<SpriteRenderer>().color = topColor;
+        // Bottom
+        GameObject npcBottom = Instantiate(_bottom[spriteType]) as GameObject;
+        npcBottom.GetComponent<SpriteRenderer>().color = randomColorPicker();
+        // Shoes
+        GameObject npcShoes = Instantiate(_shoes[spriteType]) as GameObject;
+        npcShoes.GetComponent<SpriteRenderer>().color = randomColorPicker();
+        // Extras
+        initExtras();
+
+        zoomOutline = Instantiate(_zoom_outline, new Vector3(0.5f, 0.5f, -2f), Quaternion.identity) as GameObject;
+        pieces.Add(Instantiate(_outline[spriteType]));
+        pieces.Add(npcHair);
+        pieces.Add(npcSkin);
+        pieces.Add(npcTop);
+        pieces.Add(npcBottom);
+        pieces.Add(npcShoes);
+    }
+
+    // Define if and what the sprite's extra features will be
+    private void initExtras()
+    {
+        // Hat (30% chance)
+        if (Random.Range(0, 10) <= 2)
+        {
+            int type = (_typesPeople * _hat1) + spriteType;
+            GameObject hat = Instantiate(_extra[type], new Vector3(0f, 0f, 10f), Quaternion.identity) as GameObject;
+            hat.GetComponent<SpriteRenderer>().color = randomColorPicker();
+            extras.Add(hat);
+        }
     }
 }

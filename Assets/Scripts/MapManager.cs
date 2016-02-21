@@ -53,10 +53,8 @@ public class MapManager : MonoBehaviour
             map[character.mapX][character.mapY].npcs.Add(npc);
 
             // Check for interactions
-            if (character.talking == true) {
+            if (character.talking == true)
                 character.speak(character.mapX == World.player.mapX && character.mapY == World.player.mapY);
-                character.talking = false;
-            }
         }
 
         // Redraw the map tile
