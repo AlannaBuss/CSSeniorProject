@@ -40,6 +40,7 @@ public class Jobs : MonoBehaviour {
                     job.item_weights.Add(line[0], int.Parse(line[1].Split(')')[0]));
                 }
                 job.job_weight = int.Parse(jobFile["job_weight"][2]);
+                job.wages = int.Parse(jobFile["wages"][2]);
                 jobs.Add(job);
                 totalWeight += job.job_weight;
             }
@@ -94,5 +95,6 @@ public class Jobs : MonoBehaviour {
         public int inventoryMax;
         public Dictionary<string, int> item_weights;
         public int job_weight;
+        public int wages;
     }
 }

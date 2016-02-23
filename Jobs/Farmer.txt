@@ -4,3 +4,4 @@ work_tag = MARKET
 inventory = 10-30
 item_weights = FOOD(75) COMMON(24) VALUABLE(1)
 job_weight = 20
+wages = 0

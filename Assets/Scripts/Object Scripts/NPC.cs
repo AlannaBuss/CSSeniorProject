@@ -63,7 +63,7 @@ public class NPC : MovingObject
     private bool hasFood = true;
     private bool goingToStore = false;
     private NPC storeTarget;
-
+    private bool payed = false;
 
     // Use this for initialization
     public void Start()
@@ -393,8 +393,9 @@ public class NPC : MovingObject
             asleep = false;
             atHome = false;
             timeloc = Time.time;
-
-            if (eaten < 1)
+            payed = false;
+            
+			if (eaten < 1)
                 eat();
             if (atWork && !hasFood && !goingToStore)
             {
@@ -420,6 +421,11 @@ public class NPC : MovingObject
             // NPC stops working
             atWork = false;
             timeloc = Time.time;
+            if (payed == false)
+            {
+                gold += job.wages;
+                payed = true;
+            }
 
             if (eaten < 2)
                 eat();
