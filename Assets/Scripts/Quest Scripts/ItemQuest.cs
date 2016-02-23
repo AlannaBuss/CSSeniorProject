@@ -30,7 +30,7 @@ public class ItemQuest : Quest
 		string forReturn = "";
 
 		if (speechCounter == 0) {
-			forReturn = "Hey! Would you mind getting me an" + "\n" + "item?";
+			forReturn = "Hey! Would you mind getting me an" + "\n" + "item that I lost?";
 		}
         else if (speechCounter == 1) {
 
@@ -55,14 +55,9 @@ public class ItemQuest : Quest
 			} else {
 				locationY = " " + (itemY * -1) + " blocks north ";
 			}
-
-			string correctArticle = "a";
-
-			if (vowels.Contains(item.name.ToCharArray()[0].ToString()))
-				correctArticle = "an";
-			forReturn = "Thanks! Can you get me " + correctArticle + "\n" +
-				item.name + "? I think I left it " + "\n" + locationY + 
-				"and" + locationX;
+				
+			forReturn = "Thanks! I think I left it " + "\n" + locationY + 
+				"and" + locationX + ".";
 		}
         else {
 			if (World.player.inventory.Contains(item)) {
