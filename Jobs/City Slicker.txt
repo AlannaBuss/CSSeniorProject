@@ -4,3 +4,4 @@ work_tag = RESIDENTIAL
 inventory = 5-10
 item_weights = FOOD(40) COMMON(40) VALUABLE(20)
 job_weight = 80
+wages = 15
