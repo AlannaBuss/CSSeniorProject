@@ -25,7 +25,7 @@ public class ItemQuest : Quest
 	}
 
 	//What happens to this NPC when it is interacted with.
-	public override string interact ()
+	public override string interact (Items.Item item)
 	{
 		string forReturn = "";
 
@@ -64,9 +64,11 @@ public class ItemQuest : Quest
 				forReturn = "Thanks for getting me that " +  item.name + "!" + 
 					"\n" + "It helped me a lot!";
 				World.AddChaos (World.QUEST_COMPLETE);
+				questGiver.inventory.Add (item, 1);
 				questGiver.hasQuest = false;
 				questGiver.mission = null;
 				questGiver.quest.SetActive(false);
+				questGiver.SetState (State.happy);
 				inUse = false;
 				waitPeriod = k_numRotations;
 

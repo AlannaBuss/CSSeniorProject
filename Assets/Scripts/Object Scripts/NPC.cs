@@ -202,8 +202,10 @@ public class NPC : MovingObject
     {
         Items.Item toReturn = null;
 
-
-        if (item != null && item.tags.Contains("WEAPON")) {
+		if (hasQuest) {
+			World.textbox.Write (mission.interact (item), sprite);
+		}
+        else if (item != null && item.tags.Contains("WEAPON")) {
             if (personality == Personality.psychotic)
                 World.textbox.Write("You've stopped a psycopath!");
             else if (World.player.killed >= 5) {
@@ -218,8 +220,6 @@ public class NPC : MovingObject
         }
         else if (states.Contains(State.dead))
             World.textbox.Write("This NPC is dead...");
-        else if (hasQuest)
-            World.textbox.Write(mission.interact(), sprite);
         else
             World.textbox.Write(Dialogue.getDialogue(Enum.GetName(typeof(Personality), personality), "player_response"), sprite);
 
@@ -531,7 +531,7 @@ public class NPC : MovingObject
         }
     }
 
-    private void SetState(State state)
+    public void SetState(State state)
     {
         if (states.Contains(state))
             return;

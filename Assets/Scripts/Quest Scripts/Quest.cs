@@ -15,6 +15,7 @@ public class Quest : MonoBehaviour
 	protected NPC questGiver;
 	protected NPC questGiver2;
 
+
 	public Quest ()
 	{
 		inUse = false;
@@ -51,20 +52,21 @@ public class Quest : MonoBehaviour
 	}
 
 	//Returns true if the quest is reliant on a person type
-	public int numPerson ()
+	virtual public int numPerson ()
 	{
 		return 1;
 	}
 
 	//Returns true if the person matches what the quest needs and false if not
-	public Boolean personCheck (NPC person)
+	virtual public Boolean personCheck (NPC person)
 	{
-		return !person.hasQuest;
+		return (!person.hasQuest && person.personality != Personality.psychotic
+			&& !person.states.Contains(State.angry) && !person.states.Contains(State.dead));
 	}
 		
 
 	//Returns true if this person matches what the quest needs for the second person and false if not
-	public Boolean secondPersonCheck(NPC person)
+	virtual public Boolean secondPersonCheck(NPC person)
 	{
 		return false;
 	}
@@ -81,7 +83,7 @@ public class Quest : MonoBehaviour
 		
 
 	//What happens when an NPC is interacted with when they have a quest
-	virtual public string interact()
+	virtual public string interact(Items.Item item)
 	{
 		string forReturn;
 		if (speechCounter == 0) {
@@ -99,6 +101,7 @@ public class Quest : MonoBehaviour
 			questGiver.quest.active = false;
 			inUse = false;
 			waitPeriod = k_numRotations;
+			questGiver.SetState (State.happy);
 			forReturn = "Thanks for listening. You've really" + "\n" + "helped.";
 		}
 		speechCounter++;
