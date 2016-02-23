@@ -41,13 +41,28 @@ public class ItemQuest : Quest
             questItem.Setup(item);
             questItem.PlaceRandomly();
 
-            string location = questItem.getLocationName();
+			int itemX = World.player.mapX - questItem.mapX;
+			int itemY = World.player.mapY - questItem.mapY;
+			string locationX = "";
+			string locationY = "";
+			if (itemX > 0) {
+				locationX = " " + itemX + " blocks west.";
+			} else {
+				locationX = " " + (itemX * -1) + " blocks east.";
+			}
+			if (itemY > 0) {
+				locationY = " " + itemY + " blocks south ";
+			} else {
+				locationY = " " + (itemY * -1) + " blocks north ";
+			}
+
 			string correctArticle = "a";
 
-            if (vowels.Contains(item.name.ToCharArray()[0].ToString()))
+			if (vowels.Contains(item.name.ToCharArray()[0].ToString()))
 				correctArticle = "an";
 			forReturn = "Thanks! Can you get me " + correctArticle + "\n" +
-				item.name + " from " + location + "?";
+				item.name + "? I think I left it " + "\n" + locationY + 
+				"and" + locationX;
 		}
         else {
 			if (World.player.inventory.Contains(item)) {
