@@ -10,7 +10,7 @@ public class ItemQuest : Quest
     // Prefabs
     private GameObject questPrefab;
 
-    private Items.Item item;
+    private Items.Item ranItem;
     private QuestItem questItem;
     private string vowels = "a e i o u";
 
@@ -35,10 +35,10 @@ public class ItemQuest : Quest
         else if (speechCounter == 1) {
 
             // Decide which item we need to get
-            item = Items.getRandomItem();
+            ranItem = Items.getRandomItem();
             questPrefab = Instantiate(questPrefab) as GameObject;
             questItem = questPrefab.GetComponent<QuestItem>();
-            questItem.Setup(item);
+            questItem.Setup(ranItem);
             questItem.PlaceRandomly();
 
 			int itemX = World.player.mapX - questItem.mapX;
@@ -60,11 +60,11 @@ public class ItemQuest : Quest
 				"and" + locationX + ".";
 		}
         else {
-			if (World.player.inventory.Contains(item)) {
-				forReturn = "Thanks for getting me that " +  item.name + "!" + 
+			if (World.player.inventory.Contains(ranItem)) {
+				forReturn = "Thanks for getting me that " +  ranItem.name + "!" + 
 					"\n" + "It helped me a lot!";
 				World.AddChaos (World.QUEST_COMPLETE);
-				questGiver.inventory.Add (item, 1);
+				questGiver.inventory.Add (ranItem, 1);
 				questGiver.hasQuest = false;
 				questGiver.mission = null;
 				questGiver.quest.SetActive(false);
@@ -73,11 +73,11 @@ public class ItemQuest : Quest
 				waitPeriod = k_numRotations;
 
                 // Remove the item from the player's inventory
-                int itemIndex = World.player.inventory.IndexOf(item);
+                int itemIndex = World.player.inventory.IndexOf(ranItem);
                 World.player.inventory.RemoveAt(itemIndex);
 			}
             else {
-				forReturn = "Hey did you get me that "  + item.name +"?";
+				forReturn = "Hey did you get me that "  + ranItem.name +"?";
 			}
 		}
 		speechCounter++;
