@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
 
         textMesh.text += "\n\nPsychopaths: " + World.GetNumPsychopaths();
         textMesh.text += "\nDead: " + World.numKilled;
+
+        textMesh.text += "\n\nmap: " + World.player.mapX + ", " + World.player.mapY;
     }
 
     public static void logger(String str)

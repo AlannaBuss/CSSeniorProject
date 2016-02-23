@@ -158,7 +158,8 @@ public class NPC : MovingObject
         }
         // Talking to a dead person
         else if (interactingWith.states.Contains(State.dead)) {
-            dialogue = "eek!!";
+            if (personality != Personality.psychotic)
+                dialogue = "eek!!";
         }
         // SHY: chance to become sad
         else if (personality == Personality.shy)
@@ -475,7 +476,7 @@ public class NPC : MovingObject
         List<GameObject> npcs = World.map.map[mapX][mapY].npcs;
 
         // NPC is already talking to someone else
-        if (talking)
+        if (talking || atHome || atWork)
             return;
 
         // Check for people to interact with
@@ -483,7 +484,8 @@ public class NPC : MovingObject
             NPC npc = npcs[i].GetComponent<NPC>();
 
             // Check in a 2 square radius
-            if (distance(npc.tileX, npc.tileY, tileX, tileY) <= 2 && npc != this && interactingWith != npc)
+            if (distance(npc.tileX, npc.tileY, tileX, tileY) <= 2 && npc != this && interactingWith != npc &&
+                !npc.atWork && !npc.atHome)
             {
                 // Check if this NPC wants to initiate interaction
                 if (personality == Personality.outgoing)

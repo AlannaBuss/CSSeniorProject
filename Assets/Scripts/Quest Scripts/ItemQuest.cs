@@ -39,7 +39,6 @@ public class ItemQuest : Quest
             questPrefab = Instantiate(questPrefab) as GameObject;
             questItem = questPrefab.GetComponent<QuestItem>();
             questItem.Setup(item);
-            //questItem.PlaceAt(World.player.mapX, World.player.mapY, 4, 4);
             questItem.PlaceRandomly();
 
             string location = questItem.getLocationName();

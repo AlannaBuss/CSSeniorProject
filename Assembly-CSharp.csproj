@@ -45,30 +45,30 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\Building.cs" />
-     <Compile Include="Assets\Scripts\Dialogue.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Inventory.cs" />
-     <Compile Include="Assets\Scripts\Items.cs" />
-     <Compile Include="Assets\Scripts\Jobs.cs" />
      <Compile Include="Assets\Scripts\Loader.cs" />
-     <Compile Include="Assets\Scripts\MapManager.cs" />
-     <Compile Include="Assets\Scripts\MovingObject.cs" />
-     <Compile Include="Assets\Scripts\NPC.cs" />
+     <Compile Include="Assets\Scripts\Map Scripts\MapManager.cs" />
+     <Compile Include="Assets\Scripts\Map Scripts\TileManager.cs" />
+     <Compile Include="Assets\Scripts\Map Scripts\World.cs" />
      <Compile Include="Assets\Scripts\Object Scripts\Animal.cs" />
+     <Compile Include="Assets\Scripts\Object Scripts\Building.cs" />
      <Compile Include="Assets\Scripts\Object Scripts\Crop.cs" />
+     <Compile Include="Assets\Scripts\Object Scripts\MovingObject.cs" />
+     <Compile Include="Assets\Scripts\Object Scripts\NPC.cs" />
      <Compile Include="Assets\Scripts\Object Scripts\Object.cs" />
+     <Compile Include="Assets\Scripts\Object Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\Object Scripts\Tree.cs" />
      <Compile Include="Assets\Scripts\Object Scripts\Wall.cs" />
-     <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\Object Scripts\npcSprite.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\ItemQuest.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\Quest.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\QuestGenerator.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\QuestItem.cs" />
+     <Compile Include="Assets\Scripts\Static Scripts\Dialogue.cs" />
+     <Compile Include="Assets\Scripts\Static Scripts\Items.cs" />
+     <Compile Include="Assets\Scripts\Static Scripts\Jobs.cs" />
      <Compile Include="Assets\Scripts\Textbox.cs" />
-     <Compile Include="Assets\Scripts\TileManager.cs" />
-     <Compile Include="Assets\Scripts\World.cs" />
-     <Compile Include="Assets\Scripts\npcSprite.cs" />
  <Reference Include="UnityEngine.Advertisements">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
  </Reference>

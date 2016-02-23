@@ -79,6 +79,7 @@ public class QuestItem : Object {
             loc = World.map.map[x][y].EmptyLocation();
         }
 
+        print("Item placed at map " + x + ", " + y);
         PlaceAt(x, y, (int)loc.x, (int)loc.y);
     }
 
