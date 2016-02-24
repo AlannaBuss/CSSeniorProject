@@ -65,9 +65,7 @@ public class ItemQuest : Quest
 					"\n" + "It helped me a lot!";
 				World.AddChaos (World.QUEST_COMPLETE);
 				questGiver.inventory.Add (ranItem, 1);
-				questGiver.hasQuest = false;
-				questGiver.mission = null;
-				questGiver.quest.SetActive(false);
+				deactivateQuest (questGiver);
 				questGiver.SetState (State.happy);
 				inUse = false;
 				waitPeriod = k_numRotations;

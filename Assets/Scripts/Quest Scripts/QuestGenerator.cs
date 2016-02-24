@@ -11,7 +11,7 @@ public class QuestGenerator : MonoBehaviour
     // Prefabs
     public GameObject itemquest;
 
-	private Quest[] questSet = new Quest[3];
+	private Quest[] questSet = new Quest[4];
 	private MapManager map;
 	private int numQuests;
 	private const int k_maxQuests = 2;
@@ -24,6 +24,7 @@ public class QuestGenerator : MonoBehaviour
 		questSet [0] = new Quest();
         questSet [1] = new ItemQuest(itemquest);
 		questSet [2] = new PsychopathKillingQuest ();
+		questSet [3] = new ItemDeliveryQuest ();
 		mapSet = false;
 	}
 
@@ -47,16 +48,17 @@ public class QuestGenerator : MonoBehaviour
 				NPC ranPerson = npcs.ElementAt(count).GetComponent<NPC> ();
 				if (ranQuest.personCheck(ranPerson)) {
 					if (ranQuest.numPerson () == 2) {
-						int changeX = Random.Range (-1, 1);
-						int changeY = Random.Range (-1, 1);
+						int changeX = Random.Range (-1, 2);
+						int changeY = Random.Range (-1, 2);
 						List<GameObject> npcs2 = map.map [mapX + changeX] [mapY + changeY].npcs;
 						int count2;
+						ranPerson.hasQuest = true;
 						for (count2 = 0; count2 < npcs2.Count; count2++) {
 							NPC ranPerson2 = npcs.ElementAt (count2).GetComponent<NPC> ();
 							if (ranQuest.secondPersonCheck (ranPerson2)) {
 								print ("Quest number " + questNum + " given out");
 								ranQuest.startQuest (ranPerson, ranPerson2);
-								ranPerson.hasQuest = true;
+
 								ranPerson2.hasQuest = true;
 								ranPerson.mission = ranQuest;
 								ranPerson2.mission = ranQuest;
@@ -67,6 +69,7 @@ public class QuestGenerator : MonoBehaviour
 								return true;
 							}
 						}
+						ranPerson.hasQuest = false;
 					} else {
 						print ("Quest number " + questNum + " given out");
 						ranQuest.startQuest (ranPerson, null);

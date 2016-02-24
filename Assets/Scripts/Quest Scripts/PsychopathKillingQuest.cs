@@ -26,9 +26,7 @@ public class PsychopathKillingQuest : Quest
 				"\n" + "to going crazy too!";
 			questGiver.SetState (State.dead);
 			World.AddChaos (World.QUEST_COMPLETE);
-			questGiver.hasQuest = false;
-			questGiver.mission = null;
-			questGiver.quest.SetActive(false);
+			deactivateQuest (questGiver);
 			inUse = false;
 			waitPeriod = 10;
 		}

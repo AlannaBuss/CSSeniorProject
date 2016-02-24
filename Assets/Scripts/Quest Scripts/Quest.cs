@@ -96,9 +96,7 @@ public class Quest : MonoBehaviour
 			forReturn = "But...I guess I have to go" + "\n" + "and make myself important!";
 		} else {
 			World.AddChaos (World.QUEST_COMPLETE);
-			questGiver.hasQuest = false;
-			questGiver.mission = null;
-			questGiver.quest.active = false;
+			deactivateQuest (questGiver);
 			inUse = false;
 			waitPeriod = k_numRotations;
 			questGiver.SetState (State.happy);
@@ -107,6 +105,12 @@ public class Quest : MonoBehaviour
 		speechCounter++;
 		return forReturn;
 		
+	}
+
+	protected void deactivateQuest(NPC person) {
+		person.hasQuest = false;
+		person.mission = null;
+		person.quest.active = false;
 	}
 }
 

@@ -33,24 +33,22 @@ public class ItemDeliveryQuest : Quest
 		String forReturn = "";
 
 		if (speechCounter == 0) {
-			forReturn = "Hey, I'm really busy would you deliver" + "\n" + "this " + randomItem.tags + " for me?";
+			forReturn = "Hey, I'm really busy would" + "\n" + "you deliver this " + 
+				"\n" + randomItem.tags + " for me?";
 		} else if (speechCounter == 1 && World.player.inventory.Count < 9) {
 			forReturn = "Okay thanks, I think they should be near by.";
 			World.player.inventory.Add (randomItem);
-			questGiver.hasQuest = false;
-			questGiver.mission = null;
-			questGiver.quest.active = false;
+			deactivateQuest (questGiver);
 			questGiver.SetState (State.happy);
 			questGiver2.initQuest (this);
 			questGiver2.draw ();
 		} else if (speechCounter == 1) {
 			forReturn = "Oh, it seems like your hands are full." + "\n" + "Come back when you have some room.";
+			speechCounter -= 1;
 		} else {
 			forReturn = "Oh thanks so much. I really needed this!";
 			World.AddChaos (World.QUEST_COMPLETE);
-			questGiver2.hasQuest = false;
-			questGiver2.mission = null;
-			questGiver2.quest.active = false;
+			deactivateQuest (questGiver2);
 			inUse = false;
 			waitPeriod = k_numRotations;
 			questGiver2.SetState (State.happy);
