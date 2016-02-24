@@ -5,7 +5,6 @@ public class QuestItem : Object {
 
     // Prefabs
     public GameObject fish, meat, fruit, vegetable, flower, misc;
-
     private GameObject sprite;
     private Items.Item item;
     private Items.Item requiredItem;
@@ -15,11 +14,6 @@ public class QuestItem : Object {
     // Create a new ground item that can be retrieved
     public void Setup(Items.Item i)
     {
-        for (int n = 0; n < i.tags.Count; n++)
-        {
-            print(i.tags[n] + "\n");
-        }
-
         tags = new System.Collections.Generic.List<string>();
         tags.Add("QUEST");
         item = i;
@@ -78,8 +72,6 @@ public class QuestItem : Object {
             y = Random.Range(0, 11);
             loc = World.map.map[x][y].EmptyLocation();
         }
-
-        print("Item placed at map " + x + ", " + y);
         PlaceAt(x, y, (int)loc.x, (int)loc.y);
     }
 

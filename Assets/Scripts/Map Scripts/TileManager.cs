@@ -141,7 +141,7 @@ public class TileManager : MonoBehaviour
     public GameObject questItem;         // possible quest item
     public List<GameObject> floors = new List<GameObject>();        // prefabs for the floor
     public List<GameObject> buildings = new List<GameObject>();     // prefabs for the buildings
-    public List<GameObject> walls = new List<GameObject>();         // prefabs for the walls
+    public List<GameObject> objects = new List<GameObject>();         // prefabs for the walls
     public List<GameObject> npcs = new List<GameObject>();          // prefabs for the npcs
 
 
@@ -162,14 +162,14 @@ public class TileManager : MonoBehaviour
         tileRow = tRow;             // where is the tile on the map?
         tileCol = tCol;
         Count buildingCount;        // # of buildings that can spawn on this tile
-        Count wallCount;            // # of walls that can spawn on this tile
+        Count objectCount;            // # of walls that can spawn on this tile
         Count npcCount;             // # of people that can spawn on this tile
 
         // Tile is a market; has lots of stalls and people
         if (tileType.Equals("Market"))
         {
             buildingCount = new Count(2, 3);    // stalls
-            wallCount = new Count(0, 0);
+            objectCount = new Count(0, 0);
             npcCount = new Count(1, 2);
             bSizeX = 2;
             bSizeY = 2;
@@ -178,7 +178,7 @@ public class TileManager : MonoBehaviour
         else if (tileType.Equals("Town"))
         {
             buildingCount = new Count(1, 2);    // houses
-            wallCount = new Count(0, 5);        // fences
+            objectCount = new Count(0, 5);        // fences
             npcCount = new Count(1, 2);
             bSizeX = 2;
             bSizeY = 2;
@@ -187,7 +187,7 @@ public class TileManager : MonoBehaviour
         else if (tileType.Equals("Forest"))
         {
             buildingCount = new Count(0, 0);    // mushrooms and flowers
-            wallCount = new Count(10, 30);      // trees
+            objectCount = new Count(10, 30);      // trees
             npcCount = new Count(0, 0);
             bSizeX = 1;
             bSizeY = 1;
@@ -196,7 +196,7 @@ public class TileManager : MonoBehaviour
         else if (tileType.Equals("Cave"))
         {
             buildingCount = new Count(1, 1);    // cave entrance
-            wallCount = new Count(5, 10);       // rocks
+            objectCount = new Count(5, 10);       // rocks
             npcCount = new Count(0, 0);
             bSizeX = 2;
             bSizeY = 2;
@@ -205,7 +205,7 @@ public class TileManager : MonoBehaviour
         else
         {
             buildingCount = new Count(1, 2);    // farm house
-            wallCount = new Count(5, 10);       // crops
+            objectCount = new Count(5, 10);       // crops
             npcCount = new Count(0, 0);
             bSizeX = 2;
             bSizeY = 2;
@@ -217,16 +217,16 @@ public class TileManager : MonoBehaviour
 
         // Instantiates and places a random number of objects
         LayoutObjectAtRandom(buildingTiles, buildingCount.minimum, buildingCount.maximum, bSizeX, bSizeY, buildings);
-        LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum, 1, 1, walls);
+        LayoutObjectAtRandom(wallTiles, objectCount.minimum, objectCount.maximum, 1, 1, objects);
         LayoutNPCs(npcCount.minimum, npcCount.maximum);
     }
 
     // Draw this tile to the screen
     public void Draw()
     {
-        // Draw the walls
-        for (int i = 0; i < walls.Count; i++)
-            walls[i].SetActive(true);
+        // Draw the objects
+        for (int i = 0; i < objects.Count; i++)
+            objects[i].SetActive(true);
         // Draw the floor
         for (int i = 0; i < floors.Count; i++)
             floors[i].SetActive(true);
@@ -249,9 +249,9 @@ public class TileManager : MonoBehaviour
         // Undraw the floor
         for (int i = 0; i < floors.Count; i++)
             floors[i].SetActive(false);
-        // Undraw the walls
-        for (int i = 0; i < walls.Count; i++)
-            walls[i].SetActive(false);
+        // Undraw the objects
+        for (int i = 0; i < objects.Count; i++)
+            objects[i].SetActive(false);
         // Undraw the buildings
         for (int i = 0; i < buildings.Count; i++)
             buildings[i].SetActive(false);
@@ -290,7 +290,7 @@ public class TileManager : MonoBehaviour
                 return true;
         }
         // There's a wall here
-        foreach (GameObject wall in walls) {
+        foreach (GameObject wall in objects) {
             if (wall.transform.position.x == x && wall.transform.position.y == y)
                 return true;
         }

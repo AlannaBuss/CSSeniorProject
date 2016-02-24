@@ -61,7 +61,9 @@
      <Compile Include="Assets\Scripts\Object Scripts\Tree.cs" />
      <Compile Include="Assets\Scripts\Object Scripts\Wall.cs" />
      <Compile Include="Assets\Scripts\Object Scripts\npcSprite.cs" />
+     <Compile Include="Assets\Scripts\Quest Scripts\ItemDeliveryQuest.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\ItemQuest.cs" />
+     <Compile Include="Assets\Scripts\Quest Scripts\PsychopathKillingQuest.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\Quest.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\QuestGenerator.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\QuestItem.cs" />
