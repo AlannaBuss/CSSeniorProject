@@ -95,21 +95,22 @@ public class World : MonoBehaviour {
             chaos = 100;
     }
 
-	//Finds out how many of an animal there are
-	public static int getAnimalCount(string animalName) {
+	//Finds out how many of an Item there are
+	public static int getItemCount(string tileType, string animalName) {
 		int count = 0;
 		int xTileCount;
 		int yTileCount;
 		for (xTileCount = 0; xTileCount < map.map.GetLength (0); xTileCount++) {
 			for (yTileCount = 0; yTileCount < map.map.GetLength (1); yTileCount++) {
 				TileManager tile = map.map [xTileCount] [yTileCount];
-				if (tile.tileType == "Farm") {
-					GameObject[] objects = tile.objects.ToArray;
+				if (tile.tileType == tileType) {
+					GameObject[] objects = tile.objects.ToArray();
 					int objectCount;
 					for (objectCount = 0; objectCount < objects.Length; objectCount++) {
-						Object thing = objects [objectCount].GetComponent<Object>;
-
-
+						Object thing = objects [objectCount].GetComponent<Object>();
+						if (thing.tags.Contains (animalName)) {
+							count++;
+						}
 					}
 				}
 			}
