@@ -95,6 +95,28 @@ public class World : MonoBehaviour {
             chaos = 100;
     }
 
+	//Finds out how many of an animal there are
+	public static int getAnimalCount(string animalName) {
+		int count = 0;
+		int xTileCount;
+		int yTileCount;
+		for (xTileCount = 0; xTileCount < map.map.GetLength (0); xTileCount++) {
+			for (yTileCount = 0; yTileCount < map.map.GetLength (1); yTileCount++) {
+				TileManager tile = map.map [xTileCount] [yTileCount];
+				if (tile.tileType == "Farm") {
+					GameObject[] objects = tile.objects.ToArray;
+					int objectCount;
+					for (objectCount = 0; objectCount < objects.Length; objectCount++) {
+						Object thing = objects [objectCount].GetComponent<Object>;
+
+
+					}
+				}
+			}
+		}
+		return count;
+	}
+
     // Gets the number of psychopaths in the world
     public static int GetNumPsychopaths()
     {
