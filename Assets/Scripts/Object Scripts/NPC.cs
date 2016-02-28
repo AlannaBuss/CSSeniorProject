@@ -38,6 +38,24 @@ public enum State
     psychotic
 }
 
+public enum Recreation
+{
+    // lazy
+    sleeping,
+    // shy
+    staying_home,
+    // outgoing, helpful
+    exploring_town,
+    // alcoholic, aggressive
+    drinking,
+    // brave
+    exploring_outdoors,
+    // psychotic
+    killing,
+    // amoral, greedy
+    stealing,
+}
+
 public class NPC : MovingObject
 {
     // Sprite representing this NPC
@@ -46,29 +64,36 @@ public class NPC : MovingObject
     public string name;
     public Personality personality;
     public List<State> states = new List<State>();
-    public Boolean atWork = false, atHome = false, asleep = false;
-    public Jobs.Job job;
     public Dictionary<Items.Item, int> inventory = new Dictionary<Items.Item, int>();
+    public Boolean asleep = false, stealing = false;
     // Talking stuff
     public Boolean talking = false;
     public string interactionType;
     private NPC interactingWith;
     // Movement stuff
     public Building home, work;
-    private float timeloc;
+    public Boolean atWork = false, atHome = false;
+    public Boolean atRecreation = false, hasRecreation = false;
+    public Recreation recreation;
+    private Vector3 recreationLoc;
     private float movementSpeed;
+    private float timeloc, timeloc2;
     // Economy Stuff
-    int gold;
+    public Jobs.Job job;
     private int eaten = 0;
     private bool hasFood = true;
     private bool goingToStore = false;
-    private NPC storeTarget;
     private bool payed = false;
+    private NPC storeTarget;
+    int gold;
+
+
 
     // Use this for initialization
     public void Start()
     {
         timeloc = Time.time;
+        timeloc2 = Time.time;
         base.Start();
     }
 
@@ -165,29 +190,37 @@ public class NPC : MovingObject
         else if (personality == Personality.shy)
         {
             // Helpful person
-            if (interactingWith.personality == Personality.helpful)
+            if (interactingWith.personality == Personality.helpful) {
                 SetState(State.happy);
+                print("TALKED TO SOMEONE AND BECAME HAPPY");
+            }
             // Aggressive person, or NPC is just too shy
-            else if (interactingWith.personality == Personality.aggressive || Random.Range(0, 10) == 0)
+            else if (interactingWith.personality == Personality.aggressive || Random.Range(0, 10) == 0) {
                 SetState(State.sad);
+                print("TALKED TO SOMEONE AND BECAME SAD");
+            }
         }
         // OUTGOING: Becomes happy
-        else if (personality == Personality.outgoing)
+        else if (personality == Personality.outgoing) {
             SetState(State.happy);
+            print("TALKED TO SOMEONE AND BECAME HAPPY");
+        }
         // PSYCHOTIC: chance to infect or kill
         else if (personality == Personality.psychotic &&
-            interactingWith.personality != Personality.psychotic && !interactingWith.states.Contains(State.psychotic))
-        {
+            interactingWith.personality != Personality.psychotic && !interactingWith.states.Contains(State.psychotic)) {
             // Kill the NPC
             if (states.Contains(State.psychotic)) {
-                if (Random.Range(0, 100) < World.PsychopathKillChance())
+                if (Random.Range(0, 100) < World.PsychopathKillChance()) {
                     interactingWith.SetState(State.dead);
+                    print("DEAD COUNT: " + World.numKilled);
+                }
             }
             // Turn person into a psychopath
             else if (Random.Range(0, 100) < World.PsychopathInfectChance() &&
                 (interactingWith.states.Contains(State.sad) || interactingWith.states.Contains(State.angry) || interactingWith.personality == Personality.amoral)) {
                 interactingWith.personality = Personality.psychotic;
                 interactingWith.SetState(State.psychotic);
+                print("PSYCHOPATH COUNT: " + World.GetNumPsychopaths());
             }
         }
 
@@ -202,9 +235,8 @@ public class NPC : MovingObject
     {
         Items.Item toReturn = null;
 
-		if (hasQuest) {
+		if (hasQuest)
 			World.textbox.Write (mission.interact (item), sprite);
-		}
         else if (item != null && item.tags.Contains("WEAPON")) {
             if (personality == Personality.psychotic)
                 World.textbox.Write("You've stopped a psycopath!");
@@ -228,24 +260,16 @@ public class NPC : MovingObject
 
     public static void Transaction(string tag, int amount, NPC buyer, NPC seller)
     {
-        do
-        {
+        do {
             Items.Item tobuy = Items.getRandomItemOfTag(tag, seller.inventory);
             if (tobuy == null)
-            {
                 break;
-            }
 
             seller.inventory[tobuy]--;
             if (seller.inventory[tobuy] == 0)
-            {
                 seller.inventory.Remove(tobuy);
-            }
-
             if (!buyer.inventory.ContainsKey(tobuy))
-            {
                 buyer.inventory.Add(tobuy, 0);
-            }
             buyer.inventory[tobuy]++;
             buyer.gold -= tobuy.value;
             seller.gold += tobuy.value;
@@ -303,6 +327,7 @@ public class NPC : MovingObject
         {
             personality = Personality.psychotic;
             World.AddPsychopath(1);
+            print("PSYCHOPATH COUNT: " + World.GetNumPsychopaths());
         }
     }
 
@@ -313,10 +338,7 @@ public class NPC : MovingObject
         for (int i = 0; i < invSize; i++)
         {
             Items.Item item = Jobs.getRandomItem(job);
-            if (inventory.ContainsKey(item))
-                inventory[item]++;
-            else
-                inventory.Add(item, 1);
+            AddToInventory(item, 1);
         }
     }
 
@@ -369,7 +391,7 @@ public class NPC : MovingObject
         else if (tx != 0)
             MoveToTile(tx / (Math.Abs(tx)), 0);
         // Reached the target destination
-        else
+        else if (my == 0 && mx == 0)
             reachedDestination = true;
 
         return reachedDestination;
@@ -378,78 +400,173 @@ public class NPC : MovingObject
     // Timebased checking for what NPC is doing
     private void timeStep()
     {
-        if (goingToStore && goTowards(storeTarget.work.getLocation()) && Time.time - timeloc > movementSpeed)
-        {
-            atWork = false;
-            Transaction("FOOD", Random.Range(2, 6), this, storeTarget);
-            hasFood = true;
-            goingToStore = false;
-        }
-
-        // NPC goes to work
-        if (World.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed)
-        {
-            // NPC wakes up
-            asleep = false;
-            atHome = false;
+        // NPC goes to the store
+        if (goingToStore && Time.time - timeloc > movementSpeed) {
             timeloc = Time.time;
-            payed = false;
+            atWork = atHome = atRecreation = hasRecreation = asleep = false;
+
+            if (goTowards(storeTarget.work.getLocation())) {
+                Transaction("FOOD", Random.Range(2, 6), this, storeTarget);
+                hasFood = true;
+                goingToStore = false;
+            }
+        }
+        // NPC goes to work
+        else if (World.GetTimeOfDay() == timeOfDay.morning && Time.time - timeloc > movementSpeed) {
+            // NPC wakes up
+            timeloc = Time.time;
+            asleep = atHome = atRecreation = hasRecreation = payed = false;
             
+            // NPC eats breakfast
 			if (eaten < 1)
                 eat();
-            if (atWork && !hasFood && !goingToStore)
-            {
-                //sends them to get food at a randomized time
-                if (Random.Range(0, 5) == 0)
-                {
+
+            // Sends them to get food at a randomized time
+            if (atWork && !hasFood && !goingToStore) {
+                if (Random.Range(0, 5) == 0) {
                     goingToStore = true;
                     storeTarget = World.map.getRandomNpcWithTag("FARM", false);
                 }
             }
-
             // NPC begins walking to work
             if (!atWork && goTowards(work.getLocation()))
-            {
-                // enter work
                 atWork = true;
-            }
         }
 
-        // NPC goes home
-        if (World.GetTimeOfDay() == timeOfDay.evening && Time.time - timeloc > movementSpeed)
-        {
+        // NPC goes to recreational activity
+        if (World.GetTimeOfDay() == timeOfDay.evening && Time.time - timeloc > movementSpeed) {
             // NPC stops working
-            atWork = false;
             timeloc = Time.time;
-            if (payed == false)
-            {
+            atWork = false;
+
+            // NPC gets paid for their job
+            if (!payed) {
                 gold += job.wages;
                 payed = true;
             }
-
+            // NPC eats dinner
             if (eaten < 2)
                 eat();
-            // NPC begins walking home
-            if (!atHome && goTowards(home.getLocation()))
-            {
-                // enter home
-                atHome = true;
-            }
-        }
 
-        // NPC goes to sleep
-        if (World.GetTimeOfDay() == timeOfDay.night)
-        {
-            atWork = false;
+            // NPC begins walking to recreational activity
+            if (!hasRecreation)
+                recreationLoc = getRecreation();
+            if (hasRecreation && !atRecreation && goTowards(recreationLoc))
+                doRecreation();
+        }
+        // NPC goes home to sleep
+        if (World.GetTimeOfDay() == timeOfDay.night && Time.time - timeloc > movementSpeed) {
+            atRecreation = hasRecreation = false;
             timeloc = Time.time;
             eaten = 0;
 
-            // NPC begins walking home (if not already there)
+            // NPC begins walking home
             if (!atHome && goTowards(home.getLocation()))
+                atHome = asleep = true;
+        }
+    }
+
+    private Vector3 getRecreation()
+    {
+        Vector3 loc = new Vector3(0, 0, 0);
+        hasRecreation = true;
+
+        // Person wants to go to a tavern
+        if (personality == Personality.alcoholic || personality == Personality.aggressive) {
+            recreation = Recreation.drinking;
+            loc = World.findRandomBuilding(World.BUILDING_TAVERN);
+        }
+        // Person wants to walk around town talking to people
+        if (personality == Personality.outgoing || personality == Personality.helpful) {
+            recreation = Recreation.exploring_town;
+            String[] areas = { World.AREA_TOWN, World.AREA_MARKET, World.AREA_FARM };
+            loc = World.findRandomArea(areas[Random.Range(0, areas.Length)]);
+        }
+        // Person wants to explore the outdoors
+        if (personality == Personality.brave) {
+            recreation = Recreation.exploring_outdoors;
+            String[] areas = { World.AREA_CAVE, World.AREA_FOREST, World.AREA_FARM };
+            loc = World.findRandomArea(areas[Random.Range(0, areas.Length)]);
+        }
+        // Person wants to go sleep
+        if (personality == Personality.lazy) {
+            recreation = Recreation.sleeping;
+            loc = home.getLocation();
+        }
+        // Person wants to go home
+        if (personality == Personality.shy) {
+            recreation = Recreation.staying_home;
+            loc = home.getLocation();
+        }
+        // Person wants to steal
+        if (personality == Personality.greedy || personality == Personality.amoral) {
+            recreation = Recreation.stealing;
+            storeTarget = World.map.getRandomNpcWithTag("MARKET", true);
+            loc = storeTarget.work.getLocation();
+        }
+        // Person wants to go looking for people to kill
+        if (personality == Personality.psychotic) {
+            String[] places = { World.AREA_TOWN, World.AREA_MARKET, World.AREA_FARM, World.AREA_FOREST, World.AREA_CAVE };
+            recreation = Recreation.killing;
+            loc = World.findRandomArea(places[Random.Range(0, places.Length)]);
+        }
+
+        return loc;
+    }
+
+    private void doRecreation()
+    {
+        // Start recreation
+        if (!atRecreation) {
+            atRecreation = true;
+            timeloc2 = Time.time;
+        }
+        // Do recreation
+        if (atRecreation) {
+            // Get drunk
+            if (recreation == Recreation.drinking && !states.Contains(State.drunk))
             {
-                // enter home and start sleeping
-                atHome = true;
+                states.Add(State.drunk);
+                print("GOT DRUNK");
+            }
+            // Explore the area
+            if (recreation == Recreation.exploring_outdoors && Time.time - timeloc2 > movementSpeed * 3) {
+                timeloc2 = Time.time;
+                atRecreation = false;
+                recreationLoc = World.map.map[mapX][mapY].EmptyLocation();
+                print("EXPLORE MORE");
+            }
+            // Take a nap
+            if (recreation == Recreation.sleeping || (recreation == Recreation.staying_home && Time.time - timeloc2 > 30))
+            {
                 asleep = true;
+                print("TOOK A NAP");
+            }
+            // Find another person
+            if ((recreation == Recreation.killing || recreation == Recreation.exploring_town) && World.numPeopleOnTile(mapX, mapY) <= 1)
+            {
+                hasRecreation = false;
+                print("LOOK FOR MORE PEOPLE");
+            }
+            // Attempt to steal something
+            if (recreation == Recreation.stealing) {
+                if (!stealing)
+                    stealing = true;
+                if (stealing && Time.time - timeloc2 > movementSpeed * 2) {
+                    timeloc2 = Time.time;
+                    print("TRYING TO STEAL");
+
+                    // Succeeded in stealing something
+                    if (Random.Range(0, 20) == 0) {
+                        List<Items.Item> items = new List<Items.Item>(storeTarget.inventory.Keys);
+                        Items.Item stolen = items[Random.Range(0, items.Count)];
+                        AddToInventory(stolen, 1);
+                        storeTarget.AddToInventory(stolen, -1);
+                        storeTarget.SetState(State.angry);
+                        hasRecreation = stealing = false;
+                        print("SOMETHING WAS STOLEN");
+                    }
+                }
             }
         }
     }
@@ -466,14 +583,9 @@ public class NPC : MovingObject
         }
         i = inventory[toEat];
         if (i < 2)
-        {
             inventory.Remove(toEat);
-        }
         else
-        {
             inventory[toEat]--;
-        }
-
     }
 
     // Sees if it can interact with anyone
@@ -481,50 +593,40 @@ public class NPC : MovingObject
     {
         List<GameObject> npcs = World.map.map[mapX][mapY].npcs;
 
-        // NPC is already talking to someone else
+        // NPC is already doing something else
         if (talking || atHome || atWork)
             return;
 
         // Check for people to interact with
-        for (int i = 0; i < npcs.Count; i++) {
-            NPC npc = npcs[i].GetComponent<NPC>();
+        foreach (GameObject npcObject in npcs) {
+            NPC npc = npcObject.GetComponent<NPC>();
 
-            // Check in a 2 square radius
-            if (distance(npc.tileX, npc.tileY, tileX, tileY) <= 2 && npc != this && interactingWith != npc &&
-                !npc.atWork && !npc.atHome)
-            {
-                // Check if this NPC wants to initiate interaction
-                if (personality == Personality.outgoing)
-                {
-                    // 100% chance
-                    talking = true;
-                    interactionType = "greeting";
-                }
-                else if (personality == Personality.shy && Random.Range(0, 10) == 0)
-                {
-                    // 10% chance
-                    talking = true;
-                    interactionType = "greeting";
-                }
-                else if (Random.Range(0, 2) == 0)
-                {
-                    // 50% chance
-                    talking = true;
-                    interactionType = "greeting";
-                }
+            // Check if the npc can speak
+            if (!npc.atHome && !npc.atWork && npc != this && npc != interactingWith && distance(npc.tileX, npc.tileY, tileX, tileY) <= 2) {
 
-                interactingWith = npc;
-                interactingWith.talking = true;
-                interactingWith.interactingWith = this;
-                interactingWith.interactionType = "greeting_response";
+                // Check if we want to initiate interaction
+                if (wantsToTalk()) {
+                    talking = true;
+                    interactionType = "greeting";
+                    interactingWith = npc;
+
+                    interactingWith.talking = true;
+                    interactingWith.interactingWith = this;
+                    interactingWith.interactionType = "greeting_response";
+                }
             }
         }
     }
 
-    // Distance formula
-    private double distance(int x1, int x2, int y1, int y2)
+    // Checks whether the NPC wishes to talk to another NPC
+    private Boolean wantsToTalk()
     {
-        return Math.Sqrt(Math.Pow(Math.Abs(x1 - x2), 2) + Math.Pow(Math.Abs(y1 - y2), 2));
+        if (personality == Personality.outgoing)
+            return true;
+        else if (personality == Personality.shy)
+            return Random.Range(0, 10) == 0;
+        else
+            return Random.Range(0, 2) == 0;
     }
 
     // Removes the given state from the NPC
@@ -576,5 +678,23 @@ public class NPC : MovingObject
 
         states.Add(state);
         sprite.setState(Enum.GetName(typeof(State), state));
+    }
+
+    // Distance formula
+    private double distance(int x1, int x2, int y1, int y2)
+    {
+        return Math.Sqrt(Math.Pow(Math.Abs(x1 - x2), 2) + Math.Pow(Math.Abs(y1 - y2), 2));
+    }
+
+    // Adds or removes an item from the inventory
+    private void AddToInventory(Items.Item item, int amount)
+    {
+        if (inventory.ContainsKey(item))
+            inventory[item] += amount;
+        else
+            inventory.Add(item, amount);
+
+        if (inventory[item] <= 0)
+            inventory.Remove(item);
     }
 }

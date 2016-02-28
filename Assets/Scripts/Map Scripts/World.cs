@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
+using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 public enum timeOfDay
 {
@@ -7,6 +9,18 @@ public enum timeOfDay
 }
 
 public class World : MonoBehaviour {
+    // WORLD CONSTANTS
+    public static string BUILDING_TAVERN = "TAVERN";
+    public static string BUILDING_HOUSE = "RESIDENTIAL";
+    public static string BUILDING_MARKET = "MARKET";
+    public static string BUILDING_FARM = "FARM";
+    public static string BUILDING_CAVE = "CAVE";
+    public static string AREA_FARM = "Farm";
+    public static string AREA_FOREST = "Forest";
+    public static string AREA_CAVE = "Cave";
+    public static string AREA_TOWN = "Town";
+    public static string AREA_MARKET = "Market";
+
     // CHAOS CONSTANTS
     public static int NPC_PSYCHOTIC = 5;
     public static int NPC_DIES = 5; // chaos
@@ -25,7 +39,7 @@ public class World : MonoBehaviour {
     public static int numUnhappy;
 
     // World Time
-    private static float timeOfDayLength = 1;    // length of morning
+    private static float timeOfDayLength = 1.5f; // length of morning
     private static float timeStart;              // Time the world was created
     private static timeOfDay dayTime;            // Current time of day
     private static float lengthOfDay = timeOfDayLength * 3;
@@ -114,11 +128,59 @@ public class World : MonoBehaviour {
 
     public static int PsychopathInfectChance()
     {
-        return chaos / 5;
+        int chance = chaos / 20;
+        if (chance <= 0)
+            chance = 1;
+        return chance;
     }
 
     public static int PsychopathKillChance()
     {
         return PsychopathInfectChance() * 2;
+    }
+
+    // Find places in the world
+    public static Vector3 findRandomBuilding(string type)
+    {
+        List<Building> buildings = map.buildings[type];
+        int random = Random.Range(0, buildings.Count);
+        return buildings[random].getLocation();
+    }
+
+    public static Vector3 findRandomArea(string type)
+    {
+        List<TileManager> areas = new List<TileManager>();
+        List<Vector2> areaLocs = new List<Vector2>();
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                if (map.map[x][y].tileType == type) {
+                    areas.Add(map.map[x][y]);
+                    areaLocs.Add(new Vector2(x, y));
+                }
+            }
+        }
+
+        int random = Random.Range(0, areas.Count);
+        TileManager tile = areas[random];
+        Vector2 tileLoc = areaLocs[random];
+        Vector3 area = tile.EmptyLocation();
+        area.x += tileLoc.x * 10;
+        area.y += tileLoc.y * 10;
+
+        return area;
+    }
+
+    // Finds how many living people are on a tile
+    public static int numPeopleOnTile(int mapX, int mapY)
+    {
+        TileManager tile = map.map[mapX][mapY];
+        List<GameObject> npcs = tile.npcs;
+        int numPeople = 0;
+
+        foreach (GameObject npc in npcs) {
+            if (!npc.GetComponent<NPC>().states.Contains(State.dead))
+                numPeople++;
+        }
+        return numPeople;
     }
 }

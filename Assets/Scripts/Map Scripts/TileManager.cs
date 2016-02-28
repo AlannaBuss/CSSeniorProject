@@ -141,7 +141,7 @@ public class TileManager : MonoBehaviour
     public GameObject questItem;         // possible quest item
     public List<GameObject> floors = new List<GameObject>();        // prefabs for the floor
     public List<GameObject> buildings = new List<GameObject>();     // prefabs for the buildings
-    public List<GameObject> objects = new List<GameObject>();         // prefabs for the walls
+    public List<GameObject> objects = new List<GameObject>();       // prefabs for the objects
     public List<GameObject> npcs = new List<GameObject>();          // prefabs for the npcs
 
 
@@ -276,7 +276,6 @@ public class TileManager : MonoBehaviour
         {
             int index = Random.Range(0, grid.count());
             emptyLoc = grid.gridPositions[index];
-            grid.removeAt(index);
         }
         return emptyLoc;
     }

@@ -33,9 +33,6 @@ public class GameManager : MonoBehaviour
         textMesh.text = "CHAOS: " + World.GetChaos();
         textMesh.text += "\nDay " + days + ", " + time;
         textMesh.text += "\n" + season;
-
-        textMesh.text += "\n\nPsychopaths: " + World.GetNumPsychopaths();
-        textMesh.text += "\nDead: " + World.numKilled;
     }
 
     public static void logger(String str)
