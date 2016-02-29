@@ -67,6 +67,7 @@
      <Compile Include="Assets\Scripts\Quest Scripts\Quest.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\QuestGenerator.cs" />
      <Compile Include="Assets\Scripts\Quest Scripts\QuestItem.cs" />
+     <Compile Include="Assets\Scripts\Quest Scripts\SlaughterQuest.cs" />
      <Compile Include="Assets\Scripts\Static Scripts\Dialogue.cs" />
      <Compile Include="Assets\Scripts\Static Scripts\Items.cs" />
      <Compile Include="Assets\Scripts\Static Scripts\Jobs.cs" />

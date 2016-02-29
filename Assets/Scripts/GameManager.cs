@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public GameObject textbox;
     public GameObject inventory;
     public GameObject questGen;
+    public GameObject questMarker;
 
     // References
     private MapManager mapManager;
@@ -33,6 +34,23 @@ public class GameManager : MonoBehaviour
         textMesh.text = "CHAOS: " + World.GetChaos();
         textMesh.text += "\nDay " + days + ", " + time;
         textMesh.text += "\n" + season;
+
+        // Display the quest markers
+        foreach (GameObject npcO in World.map.npcs) {
+            NPC npc = npcO.GetComponent<NPC>();
+            if (npc.hasQuest) {
+                Vector2 npcLoc = new Vector2(npc.mapX, npc.mapY);
+                Vector2 playerLoc = new Vector2(World.player.mapX, World.player.mapY);
+                if (npcLoc.x != playerLoc.x || npcLoc.y != playerLoc.y) {
+                    float xPos = npcLoc.x < playerLoc.x ? 0 : npcLoc.x > playerLoc.x ? 9 : 4.5f;
+                    float yPos = xPos != 4.5f ? 4.5f : npcLoc.y < playerLoc.y ? 0 : npcLoc.y > playerLoc.y ? 9 : 4.5f;
+                    questMarker.transform.position = new Vector3(xPos, yPos, 0);
+                    questMarker.SetActive(true);
+                    return;
+                }
+            }
+        }
+        questMarker.SetActive(false);
     }
 
     public static void logger(String str)
@@ -73,6 +91,9 @@ public class GameManager : MonoBehaviour
         Jobs.Start();
         Dialogue.Start();
         World.Start();
+
+        // Create the quest marker
+        questMarker = Instantiate(questMarker) as GameObject;
 
         // Create the textbox
         textbox = Instantiate(textbox, new Vector3(4.5f, 0.5f, 0f), Quaternion.identity) as GameObject;
