@@ -86,6 +86,9 @@ public class NPC : MovingObject
     private bool payed = false;
     private NPC storeTarget;
     int gold;
+    //stats
+    private static int basedmg = 1;
+    private int hp = 10;
 
 
 
@@ -192,18 +195,18 @@ public class NPC : MovingObject
             // Helpful person
             if (interactingWith.personality == Personality.helpful) {
                 SetState(State.happy);
-                print("TALKED TO SOMEONE AND BECAME HAPPY");
+             //   print("TALKED TO SOMEONE AND BECAME HAPPY");
             }
             // Aggressive person, or NPC is just too shy
             else if (interactingWith.personality == Personality.aggressive || Random.Range(0, 10) == 0) {
                 SetState(State.sad);
-                print("TALKED TO SOMEONE AND BECAME SAD");
+            //    print("TALKED TO SOMEONE AND BECAME SAD");
             }
         }
         // OUTGOING: Becomes happy
         else if (personality == Personality.outgoing) {
             SetState(State.happy);
-            print("TALKED TO SOMEONE AND BECAME HAPPY");
+          //  print("TALKED TO SOMEONE AND BECAME HAPPY");
         }
         // PSYCHOTIC: chance to infect or kill
         else if (personality == Personality.psychotic &&
@@ -229,7 +232,45 @@ public class NPC : MovingObject
             World.textbox.Write(dialogue, sprite, false);
         talking = false;
     }
-
+    //where npcs take combat damage.
+    private void Attacked(Items.Item item)
+    {
+        int dmg = Player.basedmg;
+        if (item.canWield)
+            dmg += item.damage;
+        Items.Item bestDef = null;
+        //get npcs best armor.
+        foreach (KeyValuePair<Items.Item, int> I in inventory)
+        {
+            
+            if (I.Key.isArmor)
+                if(bestDef == null || I.Key.armor > bestDef.armor)
+                    bestDef = I.Key;
+        }
+        if(bestDef != null)
+            dmg -= bestDef.armor;
+        if (dmg <= 0)
+            dmg = 1;
+        hp -= dmg;
+        print(hp);
+        //add somehting here if you want a consiquence for attacking an inecent.
+        if (hp <= 0)
+        {
+            if (personality == Personality.psychotic)
+                World.textbox.Write("You've stopped a psycopath!");
+            else if (World.player.killed >= 5)
+            {
+                World.textbox.Write("The true psychopath is you.");
+                World.player.killed++;
+            }
+            else
+            {
+                World.textbox.Write("Murderer.");
+                World.player.killed++;
+            }
+            SetState(State.dead);
+        }
+    }
     // NPCS should have an interaction special to them
     public override Items.Item Interact(Items.Item item = null)
     {
@@ -238,17 +279,8 @@ public class NPC : MovingObject
 		if (hasQuest)
 			World.textbox.Write (mission.interact (item), sprite);
         else if (item != null && item.tags.Contains("WEAPON")) {
-            if (personality == Personality.psychotic)
-                World.textbox.Write("You've stopped a psycopath!");
-            else if (World.player.killed >= 5) {
-                World.textbox.Write("The true psychopath is you.");
-                World.player.killed++;
-            }
-            else {
-                World.textbox.Write("Murderer.");
-                World.player.killed++;
-            }
-            SetState(State.dead);
+            Attacked(item);
+            
         }
         else if (states.Contains(State.dead))
             World.textbox.Write("This NPC is dead...");
@@ -400,8 +432,19 @@ public class NPC : MovingObject
     // Timebased checking for what NPC is doing
     private void timeStep()
     {
+        if (personality == Personality.psychotic && World.player.mapX == mapX &&
+            World.player.mapY == mapY && Time.time - timeloc > movementSpeed) {
+            timeloc = Time.time;
+            atWork = atHome = atRecreation = hasRecreation = asleep = false;
+            Player player = World.player;
+            if(goTowards(new Vector3(player.tileX + player.mapX * 10,
+                player.tileY + player.mapY * 10, 0))) {
+                attackPlayer(player);
+            }
+        }
+
         // NPC goes to the store
-        if (goingToStore && Time.time - timeloc > movementSpeed) {
+            if (goingToStore && Time.time - timeloc > movementSpeed) {
             timeloc = Time.time;
             atWork = atHome = atRecreation = hasRecreation = asleep = false;
 
@@ -464,6 +507,20 @@ public class NPC : MovingObject
             if (!atHome && goTowards(home.getLocation()))
                 atHome = asleep = true;
         }
+    }
+
+    private void attackPlayer(Player player)
+    {
+        int dmg = basedmg;
+        Items.Item bestAttack = null;
+        foreach (KeyValuePair<Items.Item, int> I in inventory)
+        {
+            if (I.Key.canWield)
+                if(bestAttack == null || I.Key.damage > bestAttack.damage)
+                    bestAttack = I.Key;
+        }
+        dmg += bestAttack.damage;
+        player.takeDamage(dmg);
     }
 
     private Vector3 getRecreation()

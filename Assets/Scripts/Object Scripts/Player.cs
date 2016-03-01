@@ -10,13 +10,14 @@ public class Player : MovingObject
     public int money = 0;
     public List<Items.Item> inventory = new List<Items.Item>();
     public int killed = 0;
+    public int hp = 10;
     // Player sprite animation
     public Sprite[] anim;
     public Sprite[] evilAnim;
     private float timeLoc;
     private float timeAnim = 0.5f;
     private int curAnim = 0;
-
+    public static int basedmg = 1;
     // Tells player if it is inside a building, market, or checking inventory
     public bool insideBuilding;
     public bool insideMarket;
@@ -238,5 +239,25 @@ public class Player : MovingObject
             Building building = touching.GetComponent<Building>();
             World.textbox.Write("Press z to enter " + building.getName());
         }
+    }
+
+    internal void takeDamage(int dmg)
+    {
+        Items.Item bestDef = null;
+        foreach (Items.Item I in inventory)
+        {
+            if (I.isArmor)
+                if(bestDef == null || I.armor > bestDef.armor)
+                    bestDef = I; 
+        }
+        if(bestDef != null)
+            dmg -= bestDef.armor;
+        if (dmg < 0)
+            dmg = 0;
+        hp -= dmg;
+        print("got hit " + hp);
+
+        //if hp hits 0 trigger a game over or something maybe andd invincibility frames or somehting aswell
+
     }
 }

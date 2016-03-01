@@ -63,7 +63,10 @@ public class Items : MonoBehaviour
 
     public class Item
     {
-        public Item() { }
+        public Item() {
+            isArmor = false;
+            canWield = false;
+        }
         public Item(int val, string nam, List<string> tags, string description, bool wield, bool armor)
         {
             value = val;
