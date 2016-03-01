@@ -4,7 +4,7 @@ using System.Collections;
 public class QuestItem : Object {
 
     // Prefabs
-    public GameObject fish, meat, fruit, vegetable, flower, misc;
+    public GameObject fish, meat, fruit, vegetable, flower, misc, wizard;
     private GameObject sprite;
     private Items.Item item;
     private Items.Item requiredItem;
@@ -12,13 +12,23 @@ public class QuestItem : Object {
 
 
     // Create a new ground item that can be retrieved
-    public void Setup(Items.Item i)
+    public void Setup(Items.Item i = null)
     {
         tags = new System.Collections.Generic.List<string>();
-        tags.Add("QUEST");
-        item = i;
         requiresItem = false;
-        sprite = Instantiate(decideSprite());
+        item = i;
+
+        // Create a ground item
+        if (i != null) {
+            tags.Add("ITEM");
+            sprite = Instantiate(decideSprite());
+        }
+        // Create a wizard
+        else {
+            tags.Add("WIZARD");
+            sprite = Instantiate(wizard);
+        }
+
         Undraw();
     }
 
@@ -36,9 +46,16 @@ public class QuestItem : Object {
         // Check if this item can be retrieved
         if (requiresItem && requiredItem.Equals(item) || !requiresItem)
         {
-            World.textbox.Write("You found a " + item.name + "!");
-            Remove();
-            return item;
+            // Pick up the item
+            if (tags.Contains("ITEM")) {
+                World.textbox.Write("You found a " + item.name + "!");
+                Remove();
+                return item;
+            }
+            // Talk to the wizard
+            else if (tags.Contains("WIZARD")) {
+                // DO WIZARD INTERACTION HERE ALANNA
+            }
         }
         return null;
     }
