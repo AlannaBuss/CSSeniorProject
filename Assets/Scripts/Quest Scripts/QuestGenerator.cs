@@ -11,7 +11,7 @@ public class QuestGenerator : MonoBehaviour
     // Prefabs
     public GameObject itemquest;
 
-	private Quest[] questSet = new Quest[4];
+	private Quest[] questSet = new Quest[5];
 	private MapManager map;
 	private int numQuests;
 	private const int k_maxQuests = 2;
@@ -25,6 +25,7 @@ public class QuestGenerator : MonoBehaviour
         questSet [1] = new ItemQuest(itemquest);
 		questSet [2] = new PsychopathKillingQuest ();
 		questSet [3] = new ItemDeliveryQuest ();
+		questSet [4] = new SlaughterQuest ();
 		mapSet = false;
 	}
 

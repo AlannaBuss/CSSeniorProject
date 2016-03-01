@@ -109,13 +109,15 @@ public class World : MonoBehaviour {
             chaos = 100;
     }
 
+
+
 	//Finds out how many of an Item there are
 	public static int getItemCount(string tileType, string animalName) {
 		int count = 0;
 		int xTileCount;
 		int yTileCount;
-		for (xTileCount = 0; xTileCount < map.map.GetLength (0); xTileCount++) {
-			for (yTileCount = 0; yTileCount < map.map.GetLength (1); yTileCount++) {
+		for (xTileCount = 0; xTileCount < 10; xTileCount++) {
+			for (yTileCount = 0; yTileCount < 10; yTileCount++) {
 				TileManager tile = map.map [xTileCount] [yTileCount];
 				if (tile.tileType == tileType) {
 					GameObject[] objects = tile.objects.ToArray();
