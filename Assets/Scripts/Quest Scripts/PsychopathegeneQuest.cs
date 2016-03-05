@@ -22,7 +22,7 @@ public class PsychopathegeneQuest : Quest
 		waitPeriod = 0;
 		speechCounter = 0;
 
-		hints = String[5];
+		hints = new String[5];
 		hints [0] = "If you come close to a true" + "\n" + "psychopath they'll follow you" + 
 			"\n" + "around.";
 		hints [1] = "True psychopaths don't look" + "\n" + "crazy like other psychopaths.";
