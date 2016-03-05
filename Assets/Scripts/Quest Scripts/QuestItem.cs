@@ -54,7 +54,7 @@ public class QuestItem : Object {
             }
             // Talk to the wizard
             else if (tags.Contains("WIZARD")) {
-                // DO WIZARD INTERACTION HERE ALANNA
+				World.textbox.Write(mission.interact (null));
             }
         }
         return null;

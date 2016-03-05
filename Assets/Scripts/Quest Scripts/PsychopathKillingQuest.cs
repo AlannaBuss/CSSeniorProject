@@ -5,11 +5,13 @@ using System;
 
 public class PsychopathKillingQuest : Quest 
 {
+	public int numKilled;
 	public PsychopathKillingQuest()
 	{
 		inUse = false;
 		waitPeriod = 0;
 		speechCounter = 0;
+		numKilled = 0;
 	}
 
 	public override bool personCheck (NPC person)
@@ -29,6 +31,7 @@ public class PsychopathKillingQuest : Quest
 			deactivateQuest (questGiver);
 			inUse = false;
 			waitPeriod = 10;
+			numKilled++;
 		}
 		else if (speechCounter == 0) {
 			forReturn = "Hahahaha! Killing is so much" + "\n" + "FUN isn't it?! Why don't you try?";

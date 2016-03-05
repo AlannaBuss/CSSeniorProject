@@ -42,6 +42,8 @@ public class SlaughterQuest : Quest
 		} else if (World.player.inventory.Contains (meat)) {
 			forReturn = "Thanks...please don't tell anyone...";
 			World.AddChaos (World.QUEST_COMPLETE);
+			//Counter act the killing an animal chaos.
+			World.AddChaos (-2);
 			deactivateQuest (questGiver);
 			inUse = false;
 			waitPeriod = k_numRotations;

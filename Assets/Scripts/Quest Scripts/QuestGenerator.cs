@@ -18,15 +18,20 @@ public class QuestGenerator : MonoBehaviour
 	private const int k_pause = 500;
 	private Boolean mapSet;
 	private int numPsychoKilled = 0;
+	private Boolean finalQuestStarted;
+	private PsychopathKillingQuest psychoKilling;
+	private PsychopathegeneQuest finalQuest;
 
 	public void Setup()
 	{
 		questSet [0] = new Quest();
         questSet [1] = new ItemQuest(itemquest);
-		questSet [2] = new PsychopathKillingQuest ();
+		questSet [2] = psychoKilling = new PsychopathKillingQuest ();
 		questSet [3] = new ItemDeliveryQuest ();
 		questSet [4] = new SlaughterQuest ();
+		finalQuest = new PsychopathegeneQuest (itemquest);
 		mapSet = false;
+		finalQuestStarted = false;
 	}
 
 	public void setMap(MapManager map2)
@@ -38,52 +43,62 @@ public class QuestGenerator : MonoBehaviour
 	//Tries to generate a quest starting on a given tile.
 	public Boolean generateQuest(int mapX, int mapY)
 	{
-		int questNum = Random.Range(0, questSet.Length); 
-		Quest ranQuest = questSet[questNum];
+		if (!finalQuestStarted) {
+			
+			int questNum = Random.Range (0, questSet.Length + 1); 
+			Quest ranQuest = questSet [questNum];
+			if (questNum == 5) {
+				if (World.GetChaos () <= 10 && psychoKilling.numKilled >= 6) {
+					finalQuest.start ();
+				}
+			} else if (ranQuest.canBeGivenOut ()) {
+				List<GameObject> npcs = map.map [mapX] [mapY].npcs;
+				int count;
+				for (count = 0; count < npcs.Count; count++) {
+					NPC ranPerson = npcs.ElementAt (count).GetComponent<NPC> ();
+					if (ranQuest.personCheck (ranPerson)) {
+						if (ranQuest.numPerson () == 2) {
+							int changeX = Random.Range (-1, 2);
+							int changeY = Random.Range (-1, 2);
+							List<GameObject> npcs2 = map.map [mapX + changeX] [mapY + changeY].npcs;
+							int count2;
+							ranPerson.hasQuest = true;
+							for (count2 = 0; count2 < npcs2.Count; count2++) {
+								NPC ranPerson2 = npcs.ElementAt (count2).GetComponent<NPC> ();
+								if (ranQuest.secondPersonCheck (ranPerson2)) {
+									print ("Quest number " + questNum + " given out");
+									ranQuest.startQuest (ranPerson, ranPerson2);
 
-		if (ranQuest.canBeGivenOut()) {
-			List<GameObject> npcs = map.map[mapX][mapY].npcs;
-			int count;
-			for (count = 0; count < npcs.Count; count++)
-			{
-				NPC ranPerson = npcs.ElementAt(count).GetComponent<NPC> ();
-				if (ranQuest.personCheck(ranPerson)) {
-					if (ranQuest.numPerson () == 2) {
-						int changeX = Random.Range (-1, 2);
-						int changeY = Random.Range (-1, 2);
-						List<GameObject> npcs2 = map.map [mapX + changeX] [mapY + changeY].npcs;
-						int count2;
-						ranPerson.hasQuest = true;
-						for (count2 = 0; count2 < npcs2.Count; count2++) {
-							NPC ranPerson2 = npcs.ElementAt (count2).GetComponent<NPC> ();
-							if (ranQuest.secondPersonCheck (ranPerson2)) {
-								print ("Quest number " + questNum + " given out");
-								ranQuest.startQuest (ranPerson, ranPerson2);
-
-								ranPerson2.hasQuest = true;
-								ranPerson.mission = ranQuest;
-								ranPerson2.mission = ranQuest;
-								ranPerson.draw ();
-								ranPerson2.draw ();
-								ranPerson.initQuest (ranQuest);
-								ranPerson.draw ();
-								return true;
+									ranPerson2.hasQuest = true;
+									ranPerson.mission = ranQuest;
+									ranPerson2.mission = ranQuest;
+									ranPerson.draw ();
+									ranPerson2.draw ();
+									ranPerson.initQuest (ranQuest);
+									ranPerson.draw ();
+									return true;
+								}
 							}
+							ranPerson.hasQuest = false;
+						} else {
+							print ("Quest number " + questNum + " given out");
+							ranQuest.startQuest (ranPerson, null);
+							ranPerson.hasQuest = true;
+							ranPerson.mission = ranQuest;
+							ranPerson.draw ();
+							ranPerson.initQuest (ranQuest);
+							ranPerson.draw ();
+							return true;
 						}
-						ranPerson.hasQuest = false;
-					} else {
-						print ("Quest number " + questNum + " given out");
-						ranQuest.startQuest (ranPerson, null);
-						ranPerson.hasQuest = true;
-						ranPerson.mission = ranQuest;
-						ranPerson.draw ();
-						ranPerson.initQuest (ranQuest);
-						ranPerson.draw ();
-						return true;
-					}
-				}	
-			}
+					}	
+				}
 
+			}
+		} else {
+			if (finalQuest.checkDone ()) {
+				World.textbox.Write ("Congratulations! You defeated the Psychopathegen!");
+				//TODO MICHAEL put game end stuff here.
+			}
 		}
 		return false;
 		
